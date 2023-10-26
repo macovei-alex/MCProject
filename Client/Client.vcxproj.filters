@@ -18,15 +18,19 @@
     <ClCompile Include="Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Turn.cpp">
+	<ClCompile Include="Turn.cpp">
+		<Filter>Source Files</Filter>
+	</ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Turn.h">
+		<Filter>Header Files</Filter>
+	</ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+	</ClInclude>
   </ItemGroup>
 </Project>
