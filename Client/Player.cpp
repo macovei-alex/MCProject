@@ -25,9 +25,24 @@ Player::Player(const Player& player) :
 	/*EMPTY*/
 }
 
+Player& Player::operator=(const Player& player)
+{
+	m_name = player.m_name;
+	m_score = player.m_score;
+	m_currentScore = player.m_currentScore;
+	m_flagGuessedCorrrectWord = player.m_flagGuessedCorrrectWord;
+	return *this;
+
+}
+
 Player::~Player()
 {
 	/*EMPTY*/
+}
+
+std::string Player::GetName() const
+{
+	return m_name;
 }
 
 uint16_t Player::GetScore() const
@@ -45,12 +60,18 @@ void Player::SetCurrentScore()
 	m_currentScore = 0;
 }
 
+void Player::SetScore()
+{
+	m_score = 0;
+}
+
 void Player::guessWord(std::string guessedWord, Turn turn)
 {
-	//if (guessedWord == turn.GetCorrectWord()) m_flagGuessedCorrrectWord = true;
+	if (guessedWord == turn.GetWord()) m_flagGuessedCorrrectWord = true;
 }
 
 void Player::addScore()
 {
 	m_score += m_currentScore;
 }
+
