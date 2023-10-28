@@ -1,5 +1,8 @@
 #include "GameSettings.h"
-GameSettings::GameSettings()
+GameSettings::GameSettings():
+	m_roundCount(defaultRoundCount),
+	m_drawTime(defaultDrawTime),
+	m_chooseWordOptionCount(defaultChooseWordOptionCount)
 {
 	//EMPTY
 }
