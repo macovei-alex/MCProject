@@ -1,6 +1,7 @@
 #include "Turn.h"
 #include <iostream>
 #include <limits>
+#include <array>
 
 const std::string Turn::wordsFilePath = "words.in";
 
@@ -67,14 +68,24 @@ std::string Turn::GetWord() const
 	return m_word;
 }
 
-std::string Turn::generateWord() const
+std::vector<std::string> Turn::generateWordChoices(const size_t wordsCount)
 {
-	return "";
+	std::vector<std::string> words(wordsCount);
+	for(uint8_t i = 0; i < wordsCount && !m_fin.eof(); i++)
+	{
+		m_fin >> words[i];
+	}
+	return words;
+}
+
+std::string Turn::pickWord(const std::vector<std::string>& words, const size_t wordsCount) const
+{
+	return words[wordsCount - 1];
 }
 
 void Turn::startNewTurn(std::vector<Player>& players)
 {
-	m_word = generateWord();
+	m_word = "";
 	for (auto& player : players)
 	{
 		//player.resetCurrentScore();

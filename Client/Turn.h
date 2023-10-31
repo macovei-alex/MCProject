@@ -17,12 +17,13 @@ public:
 	double_t GetChooseTime() const;
 	double_t GetPlayTime() const;
 	std::string GetWord() const;
-	std::string generateWord() const;
+	std::vector<std::string> generateWordChoices(const size_t wordsCount);
+	std::string pickWord(const std::vector<std::string>& words, const size_t wordsCount) const;
 	void startNewTurn(std::vector<Player>& players);
 	void endTurn(std::vector<Player>& players);
 
 	static const std::string wordsFilePath;
-		
+
 private:
 	uint8_t m_turnNumber;
 	std::string m_word;
