@@ -1,5 +1,8 @@
 #include "Turn.h"
 #include <iostream>
+#include <limits>
+
+const std::string Turn::wordsFilePath = "words.in";
 
 Turn::Turn(uint8_t turnNumber, const std::string& word, int8_t turnToDraw) :
 	m_turnNumber{ turnNumber },
@@ -7,32 +10,41 @@ Turn::Turn(uint8_t turnNumber, const std::string& word, int8_t turnToDraw) :
 	m_showLetterIDs{},
 	m_turnToDraw{ turnToDraw }
 {
-	m_startTime = clock();
+	m_chooseWordStartTime = clock();
+	m_startTime = std::numeric_limits<double>::max();
+	m_fin = std::ifstream(wordsFilePath);
 }
 
-Turn::Turn(const Turn& turn) :
+Turn::Turn(Turn& turn) :
 	m_turnNumber{ turn.m_turnNumber },
 	m_word{ turn.m_word },
 	m_showLetterIDs{ turn.m_showLetterIDs },
 	m_turnToDraw{ turn.m_turnToDraw },
-	m_startTime{ turn.m_startTime }
+	m_startTime{ turn.m_startTime },
+	m_chooseWordStartTime{ turn.m_chooseWordStartTime },
+	m_fin{ wordsFilePath }
 {
-	/* empty */
+	m_fin.seekg(turn.m_fin.tellg());
 }
 
-Turn& Turn::operator=(const Turn& turn)
+Turn& Turn::operator=(Turn& turn)
 {
 	m_turnNumber = turn.m_turnNumber;
 	m_word = turn.m_word;
 	m_showLetterIDs = turn.m_showLetterIDs;
 	m_turnToDraw = turn.m_turnToDraw;
 	m_startTime = turn.m_startTime;
+	m_chooseWordStartTime = turn.m_chooseWordStartTime;
+
+	m_fin = std::ifstream(wordsFilePath);
+	m_fin.seekg(turn.m_fin.tellg());
+
 	return *this;
 }
 
 Turn::~Turn()
 {
-	/* empty */
+	m_fin.close();
 }
 
 uint8_t Turn::GetTurnNumber() const
@@ -40,7 +52,12 @@ uint8_t Turn::GetTurnNumber() const
 	return m_turnNumber;
 }
 
-double_t Turn::GetTime() const
+double_t Turn::GetChooseTime() const
+{
+	return double_t(clock() - m_chooseWordStartTime) / CLOCKS_PER_SEC;
+}
+
+double_t Turn::GetPlayTime() const
 {
 	return double_t(clock() - m_startTime) / CLOCKS_PER_SEC;
 }
@@ -55,7 +72,7 @@ std::string Turn::generateWord() const
 	return "";
 }
 
-void Turn::startNewTurn(const std::vector<Player>& players)
+void Turn::startNewTurn(std::vector<Player>& players)
 {
 	m_word = generateWord();
 	for (auto& player : players)
@@ -65,10 +82,10 @@ void Turn::startNewTurn(const std::vector<Player>& players)
 	m_startTime = clock();
 }
 
-void Turn::endTurn(const std::vector<Player>& players)
+void Turn::endTurn(std::vector<Player>& players)
 {
-	for (auto& player : players)
+	for (Player& player : players)
 	{
-		//players.addScore(players.GetCurrentScore());
+		player.addScore();
 	}
 }
