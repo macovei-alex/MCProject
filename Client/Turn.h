@@ -4,6 +4,7 @@
 #include <vector>
 #include <ctime>
 #include <fstream>
+#include <random>
 #include "Player.h"
 
 class Turn
@@ -32,4 +33,7 @@ private:
 	clock_t m_startTime;
 	clock_t m_chooseWordStartTime;
 	std::ifstream m_fin;
+
+	static std::random_device seed;
+	static std::mt19937 randomNumberGenerator;
 };

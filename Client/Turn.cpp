@@ -4,6 +4,8 @@
 #include <array>
 
 const std::string Turn::wordsFilePath = "words.in";
+std::random_device Turn::seed; 
+std::mt19937 Turn::randomNumberGenerator(seed());
 
 Turn::Turn(uint8_t turnNumber, const std::string& word, int8_t turnToDraw) :
 	m_turnNumber{ turnNumber },
@@ -80,7 +82,9 @@ std::vector<std::string> Turn::generateWordChoices(const size_t wordsCount)
 
 std::string Turn::pickWord(const std::vector<std::string>& words, const size_t wordsCount) const
 {
-	return words[wordsCount - 1];
+	// random word choice
+	std::uniform_int_distribution<> distribution(0, wordsCount - 1);
+	return words[distribution(randomNumberGenerator)];
 }
 
 void Turn::startNewTurn(std::vector<Player>& players)
