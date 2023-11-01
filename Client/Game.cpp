@@ -51,3 +51,38 @@ Game& Game::operator=(const Game& game)
 	m_gameSettings = game.m_gameSettings;
 	return *this;
 }
+
+void Game::setPlayers(std::vector<Player> players)
+{
+	m_players = players;
+}
+
+void Game::setRoundNo(uint8_t roundNo)
+{
+	m_roundNo = roundNo;
+}
+
+void Game::setPlayerToDrawID(uint8_t playerToDrawID)
+{
+	m_playerToDrawID = playerToDrawID;
+}
+
+void Game::setOwnerID(uint8_t ownerID)
+{
+	m_ownerID = ownerID;
+}
+
+void Game::setShownWords(std::vector<const std::string&> shownWords)
+{
+	m_shownWords = shownWords;
+}
+
+void Game::setGameSettings(std::vector<GameSettings> gameSettings)
+{
+	m_gameSettings = gameSettings;
+}
+
+void Game::setTurn(Turn turn)
+{
+	m_turn = turn;
+}

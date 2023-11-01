@@ -22,6 +22,13 @@ public:
 	Game(const Game& game);
 	~Game();
 	Game& operator=(const Game& game);
+	void setPlayers(std::vector<Player> players);
+	void setRoundNo(uint8_t roundNo);
+	void setPlayerToDrawID(uint8_t playerToDrawID);
+	void setOwnerID(uint8_t ownerID);
+	void setShownWords(std::vector<const std::string&> shownWords);
+	void setGameSettings(std::vector<GameSettings> gameSettings);
+	void setTurn(Turn turn);
 
 private:
 	std::vector<Player> m_players;
