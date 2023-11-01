@@ -2,8 +2,9 @@
 
 #include "Game.h"
 
+// https://docs.google.com/document/d/17Up9pbhwRiUGXRCoE4aJbuTiBvuXILxOdLOBuDKdr3E/edit
+
 int main()
 {
-	std::cout << "Hello world!";
 	return 0;
 }

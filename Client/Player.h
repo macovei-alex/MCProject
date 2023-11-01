@@ -6,12 +6,16 @@
 class Player
 {
 public:
+	Player();
 	Player(const std::string& m_name);
 	Player(const Player& player);
+	Player& operator= (const Player& player);
 	~Player();
-	uint16_t GetScore();
-	uint16_t GetCurrentScore();
+	std::string GetName() const;
+	uint16_t GetScore() const;
+	uint16_t GetCurrentScore() const;
 	void SetCurrentScore();
+	void SetScore();
 	void guessWord(std::string guessedWord, Turn turn);
 	void addScore();
 
