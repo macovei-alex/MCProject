@@ -59,9 +59,19 @@ void Game::setPlayers(std::vector<Player> players)
 	m_players = players;
 }
 
+std::vector<Player> Game::getPlayers()
+{
+	return m_players;
+}
+
 void Game::setRoundNo(uint8_t roundNo)
 {
-	m_roundNo = roundNo;
+	m_roundNumber = roundNo;
+}
+
+uint8_t Game::getRoundNo()
+{
+	return m_roundNumber;
 }
 
 void Game::setPlayerToDrawID(uint8_t playerToDrawID)
@@ -69,9 +79,19 @@ void Game::setPlayerToDrawID(uint8_t playerToDrawID)
 	m_playerToDrawID = playerToDrawID;
 }
 
+uint8_t Game::getPlayerToDrawID()
+{
+	return m_playerToDrawID;
+}
+
 void Game::setOwnerID(uint8_t ownerID)
 {
 	m_ownerID = ownerID;
+}
+
+uint8_t Game::getOwnerID()
+{
+	return m_ownerID;
 }
 
 void Game::setShownWords(std::vector<const std::string&> shownWords)
@@ -79,12 +99,27 @@ void Game::setShownWords(std::vector<const std::string&> shownWords)
 	m_shownWords = shownWords;
 }
 
+std::vector<const std::string&> Game::getShownWords()
+{
+	return m_shownWords;
+}
+
 void Game::setGameSettings(std::vector<GameSettings> gameSettings)
 {
 	m_gameSettings = gameSettings;
 }
 
+GameSettings Game::getGameSettings()
+{
+	return m_gameSettings;
+}
+
 void Game::setTurn(Turn turn)
 {
 	m_turn = turn;
+}
+
+Turn Game::getTurn()
+{
+	return m_turn;
 }
