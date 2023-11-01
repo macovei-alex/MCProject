@@ -27,7 +27,7 @@ public:
 	uint8_t getOwnerID();
 	void setShownWords(std::vector<const std::string&> shownWords);
 	std::vector<const std::string&> getShownWords();
-	void setGameSettings(std::vector<GameSettings> gameSettings);
+	void setGameSettings(GameSettings gameSettings);
 	GameSettings getGameSettings();
 	void setTurn(Turn turn);
 	Turn getTurn();

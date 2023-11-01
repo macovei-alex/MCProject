@@ -1,6 +1,9 @@
 #include "Game.h"
 
-void Game::start() {}
+void Game::start() 
+{
+
+}
 
 void Game::pause() {}
 
@@ -104,7 +107,7 @@ std::vector<const std::string&> Game::getShownWords()
 	return m_shownWords;
 }
 
-void Game::setGameSettings(std::vector<GameSettings> gameSettings)
+void Game::setGameSettings(GameSettings gameSettings)
 {
 	m_gameSettings = gameSettings;
 }
