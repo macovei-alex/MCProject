@@ -5,21 +5,19 @@ class GameSettings
 public:
 
 	GameSettings();
-	void chooseSettings();
-	uint8_t GetDrawTime() const;
-	uint8_t GetRoundCount() const;
-	uint8_t GetChooseWordOptionCount() const;
-
+	GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount);
+	//fara getteri, un game settigs cu param, unu fara - cu default
+	const uint8_t m_roundCount;
+	const uint8_t m_drawTime;
+	const  uint8_t m_chooseWordOptionCount;
 
 private:
-
-	 uint8_t m_roundCount;
-	 uint8_t m_drawTime;
-	 uint8_t m_chooseWordOptionCount;
-	 // std::string customWords;
-	 static int const defaultRoundCount = 0;
-	 static int const defaultDrawTime = 80;
-	 static int const defaultChooseWordOptionCount = 2;
+	 // std::string customWords// vector de stringuri
+	//static vector de string public constant, initializez constructor 
+	// constructor de copiere
+	 static int const defaultRoundCount;
+	 static int const defaultDrawTime ;
+	 static int const defaultChooseWordOptionCount;
 
 };
 
