@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "Turn.h"
 
 class Player
 {
@@ -14,15 +13,28 @@ public:
 	std::string GetName() const;
 	uint16_t GetScore() const;
 	uint16_t GetCurrentScore() const;
-	void SetCurrentScore();
-	void SetScore();
-	void guessWord(std::string guessedWord, Turn turn);
+	void resetCurrentScore();
+	void resetScore();
 	void addScore();
+
+	enum class GameRole : uint8_t
+	{
+		person_drawing,
+		person_guessing
+	};
+
+	enum class RoomRole : uint8_t
+	{
+		owner,
+		participants
+	};
 
 private:
 	std::string m_name;
 	uint16_t m_score;
 	uint16_t m_currentScore;
-	bool m_flagGuessedCorrrectWord;
+	bool m_flagGuessedCorrectWord;
+	RoomRole : 1;
+	GameRole : 1;
 };
 

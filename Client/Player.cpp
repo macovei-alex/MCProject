@@ -3,14 +3,14 @@
 Player::Player() :
 	m_name{ "" },
 	m_score{ 0 },
-	m_flagGuessedCorrrectWord{ false },
+	m_flagGuessedCorrectWord{ false },
 	m_currentScore{ 0 }
 {}
 
 Player::Player(const std::string& name) :
 	m_name{ name },
 	m_score{ 0 },
-	m_flagGuessedCorrrectWord{ false },
+	m_flagGuessedCorrectWord{ false },
 	m_currentScore{ 0 }
 {
 	/*EMPTY*/
@@ -19,7 +19,7 @@ Player::Player(const std::string& name) :
 Player::Player(const Player& player) :
 	m_name{ player.m_name },
 	m_score{ player.m_score },
-	m_flagGuessedCorrrectWord{ player.m_flagGuessedCorrrectWord },
+	m_flagGuessedCorrectWord{ player.m_flagGuessedCorrectWord },
 	m_currentScore{ 0 }
 {
 	/*EMPTY*/
@@ -30,7 +30,7 @@ Player& Player::operator=(const Player& player)
 	m_name = player.m_name;
 	m_score = player.m_score;
 	m_currentScore = player.m_currentScore;
-	m_flagGuessedCorrrectWord = player.m_flagGuessedCorrrectWord;
+	m_flagGuessedCorrectWord = player.m_flagGuessedCorrectWord;
 	return *this;
 
 }
@@ -55,19 +55,14 @@ uint16_t Player::GetCurrentScore() const
 	return m_currentScore;
 }
 
-void Player::SetCurrentScore()
+void Player::resetCurrentScore()
 {
 	m_currentScore = 0;
 }
 
-void Player::SetScore()
+void Player::resetScore()
 {
 	m_score = 0;
-}
-
-void Player::guessWord(std::string guessedWord, Turn turn)
-{
-	if (guessedWord == turn.GetWord()) m_flagGuessedCorrrectWord = true;
 }
 
 void Player::addScore()
