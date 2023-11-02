@@ -31,6 +31,9 @@ public:
 		participants
 	};
 
+	GameRole GetGameRole() const;
+	RoomRole GetRoomRole() const;
+
 private:
 	std::string m_name;
 	uint16_t m_score;
