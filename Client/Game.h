@@ -23,6 +23,7 @@ public:
 	uint8_t getRoundNo();
 	void setPlayerToDrawID(uint8_t playerToDrawID);
 	uint8_t getPlayerToDrawID();
+	void addShownWords(const std::vector<std::string>& words);
 	std::vector<std::string> getShownWords();
 	GameSettings& getGameSettings();
 	Turn& getTurn();

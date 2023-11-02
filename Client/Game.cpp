@@ -42,7 +42,7 @@ Game::Game(const Game& game):
 
 Game::~Game() 
 {
-	/* empty */
+	
 }
 
 Game& Game::operator=(const Game& game)
