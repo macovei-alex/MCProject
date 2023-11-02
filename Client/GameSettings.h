@@ -6,12 +6,16 @@ public:
 	GameSettings();
 	GameSettings(const GameSettings& other);
 	GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount);
-	const uint8_t m_roundCount;
-	const uint8_t m_drawTime;
-	const  uint8_t m_chooseWordOptionCount;
+	GameSettings& operator =(const GameSettings& other);
+	uint16_t GetRoundCount();
+	uint16_t GetDrawTime();
+	uint16_t GetChooseWordOptionCountt();
 private:
-	 static int const defaultRoundCount;
-	 static int const defaultDrawTime ;
-	 static int const defaultChooseWordOptionCount;
+	 static uint16_t const defaultRoundCount;
+	 static uint16_t const defaultDrawTime ;
+	 static uint16_t const defaultChooseWordOptionCount;
+	 uint16_t m_roundCount;
+	 uint16_t m_drawTime;
+	 uint16_t m_chooseWordOptionCount;
 };
 
