@@ -22,7 +22,6 @@ GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseW
 GameSettings& GameSettings::operator=(const GameSettings& other)
 {
 	if (this == &other) {
-		// Evit?m auto-atribuirea
 		return *this;
 	}
 
