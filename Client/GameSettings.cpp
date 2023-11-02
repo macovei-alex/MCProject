@@ -1,4 +1,8 @@
 #include "GameSettings.h"
+const int GameSettings::defaultDrawTime = 120;
+const int GameSettings::defaultChooseWordOptionCount = 3;
+const int GameSettings::defaultRoundCount = 4;
+ 
 GameSettings::GameSettings() :
 	m_roundCount(defaultRoundCount),
 	m_drawTime(defaultDrawTime),
@@ -15,18 +19,6 @@ GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseW
 	//EMPTY
 }
 
-//GameSettings& GameSettings::operator=(const GameSettings& other)
-//{
-//	{
-//		if (this == &other) {
-//			return *this;
-//		}
-//		m_roundCount = other.m_roundCount;
-//		m_drawTime = other.m_drawTime;
-//		m_chooseWordOptionCount = other.m_chooseWordOptionCount;
-//
-//	}
-//}
 GameSettings::GameSettings(const GameSettings& other) :
 	m_roundCount(defaultRoundCount),
 	m_drawTime(defaultDrawTime),
