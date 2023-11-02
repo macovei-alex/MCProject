@@ -16,6 +16,8 @@ public:
 	void resetCurrentScore();
 	void resetScore();
 	void addScore();
+	uint16_t calculateScoreDrawingPlayer(uint16_t seconds, uint8_t playerCount);
+	uint16_t calculateScoreGuessingPlayer(uint16_t seconds);
 
 	enum class GameRole : uint8_t
 	{
@@ -34,7 +36,7 @@ private:
 	uint16_t m_score;
 	uint16_t m_currentScore;
 	bool m_flagGuessedCorrectWord;
-	RoomRole : 1;
-	GameRole : 1;
+	RoomRole m_roomRole : 1;
+	GameRole m_gameRole: 1;
 };
 

@@ -5,7 +5,9 @@ Player::Player() :
 	m_score{ 0 },
 	m_flagGuessedCorrectWord{ false },
 	m_currentScore{ 0 }
-{}
+{
+	/*EMPTY*/
+}
 
 Player::Player(const std::string& name) :
 	m_name{ name },
@@ -68,5 +70,36 @@ void Player::resetScore()
 void Player::addScore()
 {
 	m_score += m_currentScore;
+}
+
+uint16_t Player::calculateScoreDrawingPlayer(uint16_t seconds, uint8_t playerCount)
+{
+	if (playerCount == 0)
+	{
+		m_currentScore += -100;
+	}
+	else
+	{
+		m_currentScore += ((60 - (seconds / playerCount)) * 100) / 60;
+	}
+	return m_currentScore;
+}
+
+uint16_t Player::calculateScoreGuessingPlayer(uint16_t seconds)
+{
+	if (seconds < 30)
+	{
+		m_currentScore += 100;
+	}
+	else if (seconds < 60)
+	{
+		m_currentScore += ((60 - seconds) * 100) / 30;
+	}
+	else
+	{
+		m_currentScore += -50;
+	}
+
+	return m_currentScore;
 }
 
