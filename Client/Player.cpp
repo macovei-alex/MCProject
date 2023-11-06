@@ -55,12 +55,12 @@ std::string Player::GetName() const
 	return m_name;
 }
 
-uint16_t Player::GetScore() const
+int Player::GetScore() const
 {
 	return m_score;
 }
 
-uint16_t Player::GetCurrentScore() const
+int Player::GetCurrentScore() const
 {
 	return m_currentScore;
 }
@@ -80,7 +80,7 @@ void Player::addScore()
 	m_score += m_currentScore;
 }
 
-uint16_t Player::calculateScoreDrawingPlayer(uint16_t seconds, uint8_t playerCount)
+int Player::calculateScoreDrawingPlayer(int seconds, int playerCount)
 {
 	if (playerCount == 0)
 	{
@@ -93,7 +93,7 @@ uint16_t Player::calculateScoreDrawingPlayer(uint16_t seconds, uint8_t playerCou
 	return m_currentScore;
 }
 
-uint16_t Player::calculateScoreGuessingPlayer(uint16_t seconds)
+int Player::calculateScoreGuessingPlayer(int seconds)
 {
 	if (seconds < 30)
 	{
@@ -116,7 +116,17 @@ Player::GameRole Player::GetGameRole() const
 	return m_gameRole;
 }
 
+void Player::SetGameRole(GameRole gameRole)
+{
+	m_gameRole = gameRole;
+}
+
 Player::RoomRole Player::GetRoomRole() const
 {
 	return m_roomRole;
+}
+
+void Player::SetRoomRole(RoomRole roomRole)
+{
+	m_roomRole = roomRole;
 }
