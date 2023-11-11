@@ -35,6 +35,10 @@ Player::Player(const Player& player) :
 
 Player& Player::operator=(const Player& player)
 {
+	if (this == &player)
+	{
+		return *this;
+	}
 	m_name = player.m_name;
 	m_score = player.m_score;
 	m_currentScore = player.m_currentScore;
@@ -64,6 +68,29 @@ Player::Player(Player&& other) noexcept :
 	other.m_flagGuessedCorrectWord = false;
 	other.m_gameRole = Player::GameRole::person_guessing;
 	other.m_roomRole = Player::RoomRole::participants;
+}
+
+Player& Player::operator=(Player&& other) noexcept
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+	m_name = other.m_name;
+	m_score = other.m_score;
+	m_currentScore = other.m_currentScore;
+	m_flagGuessedCorrectWord = other.m_flagGuessedCorrectWord;
+	m_gameRole = other.m_gameRole;
+	m_roomRole = other.m_roomRole;
+
+	other.m_name.clear();
+	other.m_score = 0;
+	other.m_currentScore = 0;
+	other.m_flagGuessedCorrectWord = false;
+	other.m_gameRole = Player::GameRole::person_guessing;
+	other.m_roomRole = Player::RoomRole::participants;
+
+	return *this;
 }
 
 std::string Player::GetName() const

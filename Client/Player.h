@@ -11,6 +11,7 @@ public:
 	Player& operator= (const Player& player);
 	~Player();
 	Player(Player&& other) noexcept;
+	Player& operator= (Player&& other) noexcept;
 	std::string GetName() const;
 	int GetScore() const;
 	int GetCurrentScore() const;
