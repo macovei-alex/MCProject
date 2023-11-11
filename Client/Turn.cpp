@@ -1,6 +1,6 @@
 #include "Turn.h"
 
-const std::string Turn::wordsFilePath = "words.in";
+const std::string Turn::s_wordsFilePath = "words.in";
 
 Turn::Turn(uint8_t turnNumber) :
 	m_turnNumber{ turnNumber },
@@ -8,30 +8,32 @@ Turn::Turn(uint8_t turnNumber) :
 	m_showLetterIDs{}
 {
 	m_chooseWordStartTime = clock();
-	m_startTime = std::numeric_limits<double>::max();
-	m_fin = std::ifstream(wordsFilePath);
+	m_playStartTime = std::numeric_limits<double>::max();
+	m_fin = std::ifstream(s_wordsFilePath);
 }
 
-Turn::Turn(const Turn& turn) :
-	m_turnNumber{ turn.m_turnNumber },
-	m_word{ turn.m_word },
-	m_showLetterIDs{ turn.m_showLetterIDs },
-	m_startTime{ turn.m_startTime },
-	m_chooseWordStartTime{ turn.m_chooseWordStartTime },
-	m_fin{ wordsFilePath }
+Turn::Turn(const Turn& other) :
+	m_turnNumber{ other.m_turnNumber },
+	m_word{ other.m_word },
+	m_showLetterIDs{ other.m_showLetterIDs },
+	m_playStartTime{ other.m_playStartTime },
+	m_chooseWordStartTime{ other.m_chooseWordStartTime },
+	m_fin{ s_wordsFilePath }
 {
 	// m_fin.seekg(turn.m_fin.tellg());
 }
 
-Turn& Turn::operator=(const Turn& turn)
+Turn& Turn::operator=(const Turn& other)
 {
-	m_turnNumber = turn.m_turnNumber;
-	m_word = turn.m_word;
-	m_showLetterIDs = turn.m_showLetterIDs;
-	m_startTime = turn.m_startTime;
-	m_chooseWordStartTime = turn.m_chooseWordStartTime;
+	if (this == &other)
+		return *this;
+	m_turnNumber = other.m_turnNumber;
+	m_word = other.m_word;
+	m_showLetterIDs = other.m_showLetterIDs;
+	m_playStartTime = other.m_playStartTime;
+	m_chooseWordStartTime = other.m_chooseWordStartTime;
 
-	m_fin = std::ifstream(wordsFilePath);
+	m_fin = std::ifstream(s_wordsFilePath);
 	// m_fin.seekg(turn.m_fin.tellg());
 
 	return *this;
@@ -54,7 +56,7 @@ float_t Turn::GetChoiceTime() const
 
 float_t Turn::GetPlayTime() const
 {
-	return float_t(clock() - m_startTime) / CLOCKS_PER_SEC;
+	return float_t(clock() - m_playStartTime) / CLOCKS_PER_SEC;
 }
 
 std::string Turn::GetWord() const
@@ -99,7 +101,7 @@ void Turn::startNewTurn(std::vector<Player>& players)
 	{
 		// player.resetCurrentScore();
 	}
-	m_startTime = clock();
+	m_playStartTime = clock();
 }
 
 void Turn::endTurn(std::vector<Player>& players)

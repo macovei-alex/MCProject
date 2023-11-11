@@ -27,13 +27,13 @@ public:
 	void endTurn(std::vector<Player>& players);
 	void startNextTurn(std::vector<Player>& players);
 
-	static const std::string wordsFilePath;
+	static const std::string s_wordsFilePath;
 
 private:
 	uint8_t m_turnNumber;
 	std::string m_word;
 	std::vector<uint8_t> m_showLetterIDs;
-	clock_t m_startTime;
+	clock_t m_playStartTime;
 	clock_t m_chooseWordStartTime;
 	std::ifstream m_fin;
 };
