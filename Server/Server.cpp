@@ -36,13 +36,14 @@ int main()
 		return crow::response(200);
 		});
 
-	CROW_ROUTE(app, "/outputServer")([&chat]() {
+	CROW_ROUTE(app, "/outputServer/")([&chat]() {
 		std::vector<crow::json::wvalue> messages;
 		for (const auto& message : chat)
 		{
-			messages.push_back(crow::json::wvalue{ {"message", message} });
+			messages.push_back(crow::json::wvalue{ {"message", message}, {"1",1} });
 		}
-		return crow::json::wvalue{ messages };
+		auto val = crow::json::wvalue{ messages };
+		return val;
 		});
 
 	app.port(18080).multithreaded().run();

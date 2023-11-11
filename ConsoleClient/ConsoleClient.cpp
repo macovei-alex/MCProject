@@ -8,6 +8,7 @@ int main()
 {
 	while (true)
 	{
+
 		std::string message;
 	    std::getline(std::cin, message);
 		if (message == "q")
@@ -17,6 +18,17 @@ int main()
 			cpr::Url{ "http://localhost:18080/inputServer/" },
 			cpr::Parameters{ {"message", message} }
 		);
+
+		response = cpr::Get(
+			cpr::Url{ "http://localhost:18080/outputServer/" }
+		);
+
+		auto messages = crow::json::load(response.text);
+
+		for (const auto& mes : messages)
+		{
+			std::cout << mes["message"] << "\n";
+		}
 	}
 
 	return 0;
