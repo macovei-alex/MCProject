@@ -9,7 +9,7 @@ int main()
 	while (true)
 	{
 		std::string message;
-		std::cin >> message;
+	    std::getline(std::cin, message);
 		if (message == "q")
 			break;
 

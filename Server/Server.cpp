@@ -22,16 +22,27 @@ int main()
 		char* message = request.url_params.get("message");
 		if (!message)
 		{
-			std::cout << "Teapa cumetre\n";
+			std::cout << "Failure\n";
 			return crow::response(404);
 		}
-		chat.push_back(std::string{ message });
+		std::string str_message = std::string{ message };
+		chat.push_back(str_message);
 
-		for (const auto& message : chat) {
+		for (const auto& message : chat) 
+		{
 			std::cout << message << '\n';
 		}
 
 		return crow::response(200);
+		});
+
+	CROW_ROUTE(app, "/outputServer")([&chat]() {
+		std::vector<crow::json::wvalue> messages;
+		for (const auto& message : chat)
+		{
+			messages.push_back(crow::json::wvalue{ {"message", message} });
+		}
+		return crow::json::wvalue{ messages };
 		});
 
 	app.port(18080).multithreaded().run();
