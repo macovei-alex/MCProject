@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ba4bf910-c2e9-4ab0-bc55-dd57c310c2fd}</ProjectGuid>
-    <RootNamespace>Client</RootNamespace>
+    <ProjectGuid>{e4d5043e-3370-4809-8943-77c13adaf8f2}</ProjectGuid>
+    <RootNamespace>ConsoleClient</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,23 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="Turn.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Turn.h" />
-    <ClCompile Include="Game.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Game.h" />
-    <ClCompile Include="Player.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Player.h" />
-    <ClCompile Include="GameSettings.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GameSettings.h" />
+    <ClCompile Include="ConsoleClient.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
