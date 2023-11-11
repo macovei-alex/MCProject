@@ -26,9 +26,9 @@ Player::Player(const Player& player) :
 	m_name{ player.m_name },
 	m_score{ player.m_score },
 	m_flagGuessedCorrectWord{ player.m_flagGuessedCorrectWord },
-	m_currentScore{ 0 },
-	m_gameRole{ Player::GameRole::person_guessing },
-	m_roomRole{ Player::RoomRole::participants }
+	m_currentScore{ player.m_currentScore },
+	m_gameRole{ player.m_gameRole },
+	m_roomRole{ player.m_roomRole }
 {
 	/*EMPTY*/
 }
@@ -48,6 +48,22 @@ Player& Player::operator=(const Player& player)
 Player::~Player()
 {
 	/*EMPTY*/
+}
+
+Player::Player(Player&& other) noexcept :
+	m_name{ other.m_name },
+	m_score{ other.m_score },
+	m_flagGuessedCorrectWord{ other.m_flagGuessedCorrectWord },
+	m_currentScore{ other.m_currentScore },
+	m_gameRole{ other.m_gameRole },
+	m_roomRole{ other.m_roomRole }
+{
+	other.m_name.clear();
+	other.m_score = 0;
+	other.m_currentScore = 0;
+	other.m_flagGuessedCorrectWord = false;
+	other.m_gameRole = Player::GameRole::person_guessing;
+	other.m_roomRole = Player::RoomRole::participants;
 }
 
 std::string Player::GetName() const

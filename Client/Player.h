@@ -10,6 +10,7 @@ public:
 	Player(const Player& player);
 	Player& operator= (const Player& player);
 	~Player();
+	Player(Player&& other) noexcept;
 	std::string GetName() const;
 	int GetScore() const;
 	int GetCurrentScore() const;
