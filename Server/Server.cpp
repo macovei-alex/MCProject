@@ -39,50 +39,56 @@ int main()
 
 	crow::SimpleApp app;
 
+
+	// Test route
 	CROW_ROUTE(app, "/")([]() {
 		return "Test connection succesful\n";
 		});
 
-	CROW_ROUTE(app, "/inputServer/")([&chat](const crow::request& request) {
-		char* message = request.url_params.get("message");
-		if (!message)
-		{
-			std::cout << "Failure\n";
-			return crow::response(404);
-		}
-		std::string str_message = std::string{ message };
-		chat.push_back(str_message);
 
+	//// Input server route for GET
+	//CROW_ROUTE(app, "/inputServer/")([&chat](const crow::request& request) {
+	//	char* message = request.url_params.get("message");
+	//	if (!message)
+	//	{
+	//		std::cout << "Failure\n";
+	//		return crow::response(404);
+	//	}
+	//	std::string str_message = std::string{ message };
+	//	chat.push_back(str_message);
+
+	//	for (const auto& message : chat)
+	//	{
+	//		std::cout << message << '\n';
+	//	}
+
+	//	return crow::response(200);
+	//	});
+
+
+	// Input server route for PUT
+	auto& addMessage = CROW_ROUTE(app, "/inputServer/").methods(crow::HTTPMethod::PUT);
+	addMessage([&chat](const crow::request& request) {
+		auto messagesReceived = split(request.body, "=");
+		chat.push_back(messagesReceived[1]);
 		for (const auto& message : chat)
 		{
 			std::cout << message << '\n';
 		}
-
-		return crow::response(200);
-		});
-
-	auto& addMessage = CROW_ROUTE(app, "/inputServer/")
-		.methods(crow::HTTPMethod::PUT); 
-	addMessage([&chat](const crow::request& request) {
-		 auto Message=split(request.body, "=");
-		 chat.push_back(Message[1]);
-		 for (const auto& message : chat)
-		 {
-			 std::cout << message << '\n';
-		 }
 		return crow::response(200);
 		});
 
 
+	// Outut server route
 	CROW_ROUTE(app, "/outputServer/")([&chat]() {
 		std::vector<crow::json::wvalue> messages;
-		for (int i=0;i<chat.size();i++)
+		for (int i = 0; i < chat.size(); i++)
 		{
-			messages.push_back(crow::json::wvalue{ {"message", chat[i]}, {"Id",i}});
+			messages.push_back(crow::json::wvalue{ {"message", chat[i]}, {"Id",i} });
 		}
-		auto val = crow::json::wvalue{ messages };
-		return val;
+		return crow::json::wvalue{ messages };
 		});
+
 
 	app.port(18080).multithreaded().run();
 
