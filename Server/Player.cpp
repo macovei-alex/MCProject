@@ -76,7 +76,7 @@ Player& Player::operator=(Player&& other) noexcept
 	{
 		return *this;
 	}
-	m_name = other.m_name;
+	m_name = std::move(other.m_name);
 	m_score = other.m_score;
 	m_currentScore = other.m_currentScore;
 	m_flagGuessedCorrectWord = other.m_flagGuessedCorrectWord;
