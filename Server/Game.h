@@ -17,6 +17,8 @@ public:
 	Game(const Game& game);
 	~Game();
 	Game& operator=(const Game& game);
+	Game(Game&& other) noexcept;
+	Game& operator= (Game&& other) noexcept;
 	void setPlayers(std::vector<Player> players);
 	std::vector<Player>& getPlayers();
 	void setRoundNo(uint8_t roundNo);

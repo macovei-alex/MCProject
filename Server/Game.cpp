@@ -57,6 +57,41 @@ Game& Game::operator=(const Game& game)
 	return *this;
 }
 
+Game::Game(Game&& other) noexcept :
+	m_players{ std::move(other.m_players) },
+	m_roundNumber{ other.m_roundNumber },
+	m_playerToDrawID{ other.m_playerToDrawID },
+	m_ownerID{ other.m_ownerID },
+	m_shownWords{ std::move(other.m_shownWords)},
+	m_gameSettings{ std::move(other.m_gameSettings) },
+	m_turn{ std::move(other.m_turn) }
+{
+	other.m_roundNumber = 0;
+	other.m_playerToDrawID = 0;
+	other.m_ownerID = 0;
+}
+
+Game& Game::operator=(Game&& other) noexcept
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+	m_players = std::move(other.m_players);
+	m_roundNumber = std::move(other.m_roundNumber);
+	m_playerToDrawID = std::move(other.m_playerToDrawID);
+	m_ownerID = std::move(other.m_ownerID);
+	m_shownWords = std::move(other.m_shownWords);
+	m_turn = std::move(other.m_turn);
+	m_gameSettings = std::move(other.m_gameSettings);
+
+	other.m_roundNumber = 0;
+	other.m_playerToDrawID = 0;
+	other.m_ownerID = 0;
+
+	return *this;
+}
+
 void Game::setPlayers(std::vector<Player> players)
 {
 	m_players = players;
