@@ -55,7 +55,7 @@ Player::~Player()
 }
 
 Player::Player(Player&& other) noexcept :
-	m_name{ other.m_name },
+	m_name{ std::move(other.m_name) },
 	m_score{ other.m_score },
 	m_flagGuessedCorrectWord{ other.m_flagGuessedCorrectWord },
 	m_currentScore{ other.m_currentScore },
