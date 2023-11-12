@@ -76,9 +76,9 @@ int main()
 
 	CROW_ROUTE(app, "/outputServer/")([&chat]() {
 		std::vector<crow::json::wvalue> messages;
-		for (const auto& message : chat)
+		for (int i=0;i<chat.size();i++)
 		{
-			messages.push_back(crow::json::wvalue{ {"message", message}, {"1", 1} });
+			messages.push_back(crow::json::wvalue{ {"message", chat[i]}, {"Id",i}});
 		}
 		auto val = crow::json::wvalue{ messages };
 		return val;
