@@ -1,4 +1,5 @@
 #include "GameSettings.h"
+#include<algorithm>>
 const uint16_t GameSettings::defaultChooseWordOptionCount = 3;
 const uint16_t GameSettings::defaultDrawTime = 120;
 const uint16_t GameSettings::defaultRoundCount = 4;
@@ -18,20 +19,39 @@ GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseW
 {
 	//EMPTY
 }
+GameSettings::~GameSettings()
+{
+    //EMPTY
+}
+
+GameSettings& GameSettings::operator=(GameSettings&& other) noexcept
+{
+    if (this == &other) {
+        return *this;
+    }
+
+    // Copiem valorile din obiectul "other" în obiectul curent
+    m_roundCount = std::move(other.m_roundCount);
+    m_drawTime = std::move(other.m_drawTime);
+    m_chooseWordOptionCount = std::move(other.m_chooseWordOptionCount);
+
+    return *this;
+}
 
 GameSettings& GameSettings::operator=(const GameSettings& other)
 {
-	if (this == &other) {
-		return *this;
-	}
+    if (this == &other) {
+        return *this;
+    }
 
-	// Copiem valorile din obiectul "other" în obiectul curent
-	m_roundCount = other.m_roundCount;
-	m_drawTime = other.m_drawTime;
-	m_chooseWordOptionCount = other.m_chooseWordOptionCount;
+    // Copiem valorile din obiectul "other" în obiectul curent
+    m_roundCount = other.m_roundCount;
+    m_drawTime = other.m_drawTime;
+    m_chooseWordOptionCount = other.m_chooseWordOptionCount;
 
-	return *this;
+    return *this;
 }
+
 
 uint16_t GameSettings::GetRoundCount()
 {
