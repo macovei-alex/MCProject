@@ -14,17 +14,17 @@ int main()
 		if (message == "q")
 			break;
 
-		auto response = cpr::Get(
-			cpr::Url{ "http://localhost:18080/inputServer/" },
-			cpr::Parameters{ {"message", message} }
+		auto response = cpr::Put(
+			cpr::Url{ "http://localhost:18080/inputServer" },
+			cpr::Payload{ {"message", message} }
 		);
-
+	
 		response = cpr::Get(
 			cpr::Url{ "http://localhost:18080/outputServer/" }
 		);
 
 		auto messages = crow::json::load(response.text);
-
+		
 		for (const auto& mes : messages)
 		{
 			std::cout << mes["message"] << "\n";
