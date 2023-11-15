@@ -134,6 +134,8 @@
   <ItemGroup>
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="utilities.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Turn.h" />

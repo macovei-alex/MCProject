@@ -1,0 +1,15 @@
+endpoints:
+	--- graphics
+	- chat - alex
+		- get
+		- put
+	- lobby - andrei
+	- sign in/out/up - andra
+		- put
+
+database: - simona
+	- user
+	- game
+	- user_game (link)
+	- turn
+	- word

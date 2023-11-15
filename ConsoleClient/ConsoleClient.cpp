@@ -6,47 +6,65 @@
 #include <cpr/cpr.h>
 #include <crow.h>
 
-bool mainThreadGoing = true;
+bool listeningThreadGoing = true;
 std::vector<std::string> clientChat;
 
-void serverOutputHandler()
+void listener()
 {
-	using namespace  std::literals::chrono_literals;
-	while (mainThreadGoing)
+	using namespace std::literals::chrono_literals;
+	while (listeningThreadGoing)
 	{
-		auto response = cpr::Get(
-			cpr::Url{ "http://localhost:18080/outputServer/" }
-		);
-		auto messages = crow::json::load(response.text);
-		for (int i = clientChat.size(); i < messages.size(); i++)
+		try
 		{
-			clientChat.push_back(messages[i]["message"].s());
-			std::cout << messages[i]["message"] << "\n";
+			auto response = cpr::Get(
+				cpr::Url{ "http://localhost:18080/chat" }
+			);
+			auto messages = crow::json::load(response.text);
+			for (int i = clientChat.size(); i < messages.size(); i++)
+			{
+				std::string reconstructedString = messages[i]["message"].s();
+				clientChat.push_back(reconstructedString);
+				std::cout << reconstructedString << "\n";
+			}
+			std::this_thread::sleep_for(0.5s);
 		}
-
-		std::this_thread::sleep_for(1s);
+		catch (std::exception exception)
+		{
+			std::cout << "[Listener] Error detected: " << exception.what() << "\nThe app will close after you enter any character\n";
+			listeningThreadGoing = false;
+		}
 	}
- }
+}
 
 int main()
 {
-	std::thread listener(serverOutputHandler);
+	std::thread listeningThread(listener);
 
-	while (true)
+	while (listeningThreadGoing)
 	{
 		std::string message;
-	    std::getline(std::cin, message);
-		if (message == "q")
+		std::getline(std::cin, message);
+		if (message == "q" || !listeningThreadGoing)
+		{
+			listeningThreadGoing = false;
 			break;
+		}
 
-		auto response = cpr::Put(
-			cpr::Url{ "http://localhost:18080/inputServer" },
-			cpr::Payload{ {"message", message} }
-		);
+		try 
+		{
+			auto response = cpr::Put(
+				cpr::Url{ "http://localhost:18080/chat" },
+				cpr::Payload{ {"message", message} }
+			);
+		}
+		catch (const std::exception& e)
+		{
+			listeningThreadGoing = false;
+			std::cout << e.what();
+		}
 	}
 
-	mainThreadGoing = true;
-	listener.join();
+	listeningThread.join();
 
 	return 0;
 }
