@@ -5,9 +5,10 @@
 
 #include <cpr/cpr.h>
 #include <crow.h>
+#include <crow/json.h>
 
 bool listeningThreadGoing = true;
-std::vector<std::string> clientChat;
+std::vector<std::pair<std::string, std::string>> clientChat;
 
 void listener()
 {
@@ -22,9 +23,10 @@ void listener()
 			auto messages = crow::json::load(response.text);
 			for (int i = clientChat.size(); i < messages.size(); i++)
 			{
-				std::string reconstructedString = messages[i]["message"].s();
-				clientChat.push_back(reconstructedString);
-				std::cout << reconstructedString << "\n";
+				std::string sender = messages[i]["sender"].s();
+				std::string message = messages[i]["message"].s();
+				clientChat.push_back({sender, message});
+				std::cout << std::format("[{}]: {}", sender, message) << "\n";
 			}
 			std::this_thread::sleep_for(0.5s);
 		}
@@ -38,6 +40,7 @@ void listener()
 
 int main()
 {
+	const std::string name{ "Nume persoana" };
 	std::thread listeningThread(listener);
 
 	while (listeningThreadGoing)
@@ -54,7 +57,7 @@ int main()
 		{
 			auto response = cpr::Put(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Payload{ {"message", message} }
+				cpr::Payload{ {"sender", name}, {"message", message}}
 			);
 		}
 		catch (const std::exception& e)

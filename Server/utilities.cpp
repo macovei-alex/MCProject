@@ -1,6 +1,6 @@
 module utilities;
 
-std::vector<std::string> utils::split(const std::string& str, const std::string& delim)
+std::vector<std::string> utils::splitToVec(const std::string& str, const std::string& delim)
 {
 	std::vector<std::string> result;
 	size_t startIndex = 0;
@@ -13,6 +13,14 @@ std::vector<std::string> utils::split(const std::string& str, const std::string&
 	if (startIndex != str.size())
 		result.emplace_back(str.begin() + startIndex, str.end());
 	return result;
+}
+
+std::pair<std::string, std::string> utils::splitToPair(const std::string& str, const std::string& delim)
+{
+	size_t found = str.find(delim);
+	std::string first = str.substr(0, found);
+	std::string second = str.substr(found + 1, str.size() - found - 1);
+	return { first, second };
 }
 
 std::string utils::decodeMessage(const std::string& message)

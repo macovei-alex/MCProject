@@ -2,6 +2,7 @@
 #include <vector>
 #include<map>
 #include <crow.h>
+#include <format>
 
 #include "Game.h"
 import utilities;
@@ -10,7 +11,7 @@ import utilities;
 
 int main()
 {
-	std::vector<std::string> chat;
+	std::vector<std::pair<std::string, std::string>> chat;
 
 	crow::SimpleApp app;
 
@@ -23,11 +24,22 @@ int main()
 	// Input server controller
 	auto& addMessage = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::PUT);
 	addMessage([&chat](const crow::request& request) {
-		auto messagesReceived = utils::split(request.body, "=");
-		chat.push_back(utils::decodeMessage(messagesReceived[1]));
+
+		const auto informationVector{ std::move(utils::splitToVec(request.body, "&")) };
+		std::map<std::string, std::string> informationMap;
+
+		for (const auto& informationExpression : informationVector)
+		{
+			auto informationPair{ std::move(utils::splitToPair(informationExpression, "=")) };
+			informationMap.emplace(std::move(informationPair));
+		}
+
+		std::string senderDecoded{ std::move(utils::decodeMessage(informationMap["sender"])) };
+		std::string messageDecoded{ std::move(utils::decodeMessage(informationMap["message"])) };
+		chat.emplace_back(std::move(std::pair{ senderDecoded, messageDecoded }));
 		for (const auto& message : chat)
 		{
-			std::cout << message << '\n';
+			std::cout << std::format("[{}]: {}\n", message.first, message.second);
 		}
 		return crow::response(200);
 		});
@@ -38,7 +50,7 @@ int main()
 		std::vector<crow::json::wvalue> messages;
 		for (int i = 0; i < chat.size(); i++)
 		{
-			messages.push_back(crow::json::wvalue{ {"message", chat[i]} });
+			messages.push_back(crow::json::wvalue{ {"sender", chat[i].first}, {"message", chat[i].second} });
 		}
 		return crow::json::wvalue{ messages };
 		});
