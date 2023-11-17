@@ -88,6 +88,18 @@ int main()
 		return crow::response(200, "Player left Lobby");
 		});
 
+	// Game begin
+	CROW_ROUTE(app, "/gameBegin/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::game_begin;
+		return crow::response(200, "Game has begun");
+		});
+
 	app.port(18080).multithreaded().run();
 
 	return 0;
