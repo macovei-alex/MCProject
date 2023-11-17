@@ -87,14 +87,16 @@ int main()
 	auto& getMessages = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::GET);
 	getMessages([&chat](const crow::request& request) {
 		time_t from = std::stoi(request.url_params.get("from"));
+		const std::string senderName{ std::move(request.url_params.get("senderName")) };
 		std::vector<crow::json::wvalue> messages;
 		for (int i = chat.size() - 1; i >= 0 && from <= chat[i].timestamp; i--)
 		{
-			messages.insert(messages.begin(), crow::json::wvalue{
-				{"content", chat[i].content},
-				{"author", chat[i].author},
-				{"timestamp", chat[i].timestamp}
-				});
+			if (from == 0 || chat[i].author != senderName)
+				messages.insert(messages.begin(), crow::json::wvalue{
+					{"content", chat[i].content},
+					{"author", chat[i].author},
+					{"timestamp", chat[i].timestamp}
+					});
 		}
 		return crow::json::wvalue{ messages };
 		});
