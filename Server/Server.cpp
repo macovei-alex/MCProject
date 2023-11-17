@@ -22,8 +22,9 @@ int main()
 
 	crow::SimpleApp app;
 
-	// Test route
 	Lobby lobbyState;
+
+	// Test route
 
 	CROW_ROUTE(app, "/")([]() {
 		return "Test connection succesful\n";
@@ -59,6 +60,32 @@ int main()
 			messages.push_back(crow::json::wvalue{ {"sender", chat[i].first}, {"message", chat[i].second} });
 		}
 		return crow::json::wvalue{ messages };
+		});
+
+	// Lobby controller
+
+	// Player join
+	CROW_ROUTE(app, "/playerJoin/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::player_join;
+		return crow::response(200, "Player joined Lobby");
+		});
+
+	// Player left
+	CROW_ROUTE(app, "/playerLeft/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::player_left;
+		return crow::response(200, "Player left Lobby");
 		});
 
 	app.port(18080).multithreaded().run();
