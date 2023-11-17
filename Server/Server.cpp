@@ -8,11 +8,20 @@
 
 // https://docs.google.com/document/d/17Up9pbhwRiUGXRCoE4aJbuTiBvuXILxOdLOBuDKdr3E/edit
 
+enum Lobby
+{
+	player_join,
+	player_left,
+	game_begin
+};
+
 int main()
 {
 	std::vector<std::string> chat;
 
 	crow::SimpleApp app;
+
+	Lobby lobbyState;
 
 	CROW_ROUTE(app, "/")([]() {
 		return "Test connection succesful\n";
@@ -28,7 +37,7 @@ int main()
 		std::string str_message = std::string{ message };
 		chat.push_back(str_message);
 
-		for (const auto& message : chat) 
+		for (const auto& message : chat)
 		{
 			std::cout << message << '\n';
 		}
@@ -45,6 +54,17 @@ int main()
 		auto val = crow::json::wvalue{ messages };
 		return val;
 		});
+
+	CROW_ROUTE(app, "/playerJoin/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::player_join;
+		return crow::response(200, "Player joined Lobby");
+	    });
 
 	app.port(18080).multithreaded().run();
 
