@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
-
+#include<map>
 #include <crow.h>
-#include <sqlite_orm/sqlite_orm.h>
+#include <format>
 
 #include "Game.h"
+import utilities;
 
 // https://docs.google.com/document/d/17Up9pbhwRiUGXRCoE4aJbuTiBvuXILxOdLOBuDKdr3E/edit
 
@@ -17,54 +18,48 @@ enum Lobby
 
 int main()
 {
-	std::vector<std::string> chat;
+	std::vector<std::pair<std::string, std::string>> chat;
 
 	crow::SimpleApp app;
 
+	// Test route
 	Lobby lobbyState;
 
 	CROW_ROUTE(app, "/")([]() {
 		return "Test connection succesful\n";
 		});
 
-	CROW_ROUTE(app, "/inputServer/")([&chat](const crow::request& request) {
-		char* message = request.url_params.get("message");
-		if (!message)
-		{
-			std::cout << "Failure\n";
-			return crow::response(404);
-		}
-		std::string str_message = std::string{ message };
-		chat.push_back(str_message);
 
-		for (const auto& message : chat)
+	// Input server controller
+	auto& addMessage = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::PUT);
+	addMessage([&chat](const crow::request& request) {
+
+		const auto informationVector{ std::move(utils::splitToVec(request.body, "&")) };
+		std::map<std::string, std::string> informationMap;
+
+		for (const auto& informationExpression : informationVector)
 		{
-			std::cout << message << '\n';
+			auto informationPair{ std::move(utils::splitToPair(informationExpression, "=")) };
+			informationMap.emplace(std::move(informationPair));
 		}
 
+		for (const auto& message : chat) 
+		{
+			std::cout << std::format("[{}]: {}\n", message.first, message.second);
+		}
 		return crow::response(200);
 		});
 
-	CROW_ROUTE(app, "/outputServer/")([&chat]() {
-		std::vector<crow::json::wvalue> messages;
-		for (const auto& message : chat)
-		{
-			messages.push_back(crow::json::wvalue{ {"message", message}, {"1",1} });
-		}
-		auto val = crow::json::wvalue{ messages };
-		return val;
-		});
 
-	CROW_ROUTE(app, "/playerJoin/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
-		std::string name = request.url_params.get("name");
-		std::string lobbyStateParam = request.url_params.get("lobbyState");
-		if (name.empty() || lobbyStateParam.empty())
+	// Output server controller
+	CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::GET)([&chat]() {
+		std::vector<crow::json::wvalue> messages;
+		for (int i = 0; i < chat.size(); i++)
 		{
-			return crow::response(404);
+			messages.push_back(crow::json::wvalue{ {"sender", chat[i].first}, {"message", chat[i].second} });
 		}
-		lobbyState = Lobby::player_join;
-		return crow::response(200, "Player joined Lobby");
-	    });
+		return crow::json::wvalue{ messages };
+		});
 
 	app.port(18080).multithreaded().run();
 
