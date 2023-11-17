@@ -49,8 +49,8 @@ int main()
 
 
 	// Input server controller
-	auto& addMessage = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::PUT);
-	addMessage([&chat](const crow::request& request) {
+	auto& putMessage = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::PUT);
+	putMessage([&chat](const crow::request& request) {
 		char* dateTime = new char[101];
 
 		const auto informationVector{ std::move(utils::splitToVec(request.body, "&")) };
@@ -62,19 +62,19 @@ int main()
 			informationMap.emplace(std::move(informationPair));
 		}
 
-		Message message{ 
-			std::move(utils::decodeMessage(informationMap["content"])), 
-			std::move(utils::decodeMessage(informationMap["author"])), 
-			std::stoi(informationMap["timestamp"])
+		Message message{
+			std::move(utils::decodeMessage(informationMap["content"])),
+			std::move(utils::decodeMessage(informationMap["author"])),
+			time(0)
 		};
 		ctime_s(dateTime, 100, &message.timestamp);
 		dateTime[strlen(dateTime) - 1] = '\0';
 		chat.emplace_back(std::move(message));
-		for (const auto& message : chat) 
+		for (const auto& message : chat)
 		{
-			std::cout << std::format("[{} at {}]: {}\n", 
-				message.author, 
-				dateTime, 
+			std::cout << std::format("[{} at {}]: {}\n",
+				message.author,
+				dateTime,
 				message.content
 			);
 		}
@@ -84,7 +84,8 @@ int main()
 
 
 	// Output server controller
-	CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::GET)([&chat](const crow::request& request) {
+	auto& getMessages = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::GET);
+	getMessages([&chat](const crow::request& request) {
 		time_t from = std::stoi(request.url_params.get("from"));
 		std::vector<crow::json::wvalue> messages;
 		for (int i = chat.size() - 1; i >= 0 && from <= chat[i].timestamp; i--)

@@ -53,9 +53,9 @@ void listener()
 			for (int i = 0; i < messages.size(); i++)
 			{
 				Message message{ 
-					std::move(messages[i]["content"].s()), 
-					std::move(messages[i]["author"].s()), 
-					static_cast<time_t>(messages[i]["timestamp"].i()) 
+					std::move(messages[i]["content"].s()),
+					std::move(messages[i]["author"].s()),
+					static_cast<time_t>(messages[i]["timestamp"].i())
 				};
 				chat.push_back(message);
 				ctime_s(dateTime, 100, &message.timestamp);
@@ -96,7 +96,7 @@ int main()
 		{
 			auto response = cpr::Put(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Payload{ {{"author", name}, {"content", message}, {"timestamp", std::to_string(time(0))} } }
+				cpr::Payload{ {{"author", name}, {"content", message} } }
 			);
 		}
 		catch (const std::exception& e)
