@@ -44,22 +44,22 @@ Turn::~Turn()
 	m_fin.close();
 }
 
-uint8_t Turn::GetTurnNumber() const
+uint8_t Turn::GetTurnNumber() const noexcept
 {
 	return m_turnNumber;
 }
 
-float_t Turn::GetChoiceTime() const
+float_t Turn::GetChoiceTime() const noexcept
 {
 	return float_t(clock() - m_chooseWordStartTime) / CLOCKS_PER_SEC;
 }
 
-float_t Turn::GetPlayTime() const
+float_t Turn::GetPlayTime() const noexcept
 {
 	return float_t(clock() - m_playStartTime) / CLOCKS_PER_SEC;
 }
 
-std::string Turn::GetWord() const
+std::string Turn::GetWord() const noexcept
 {
 	return m_word;
 }

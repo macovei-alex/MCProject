@@ -16,10 +16,10 @@ public:
 	Turn(const Turn& turn);
 	Turn& operator=(const Turn& turn);
 	~Turn();
-	uint8_t GetTurnNumber() const;
-	float_t GetChoiceTime() const;
-	float_t GetPlayTime() const;
-	std::string GetWord() const;
+	uint8_t GetTurnNumber() const noexcept;
+	float_t GetChoiceTime() const noexcept;
+	float_t GetPlayTime() const noexcept;
+	std::string GetWord() const noexcept;
 	std::vector<std::string> generateWordChoices(const uint8_t wordsCount);
 	void sendWordChoices(const Player& player, const std::vector<std::string>& wordChoices) const;
 	void choosingWordPhase(const std::vector<Player>& players);

@@ -2,32 +2,71 @@
 #include <string>
 #include <vector>
 #include <thread>
-
-#include <cpr/cpr.h>
 #include <crow.h>
-#include <crow/json.h>
+#include <cpr/cpr.h>
+
+#define CRT_SECURE_NO_WARNINGS
+
+struct Message
+{
+	std::string content;
+	std::string author;
+	time_t timestamp;
+
+	Message() = default;
+
+	Message(const std::string& content, const std::string& author, time_t timestamp) :
+		content{ content },
+		author{ author },
+		timestamp{ timestamp }
+	{
+		std::cout << "Copy constructor\n";
+	}
+
+	Message(std::string&& content, std::string&& author, time_t timestamp) :
+		content{ std::move(content) },
+		author{ std::move(author) },
+		timestamp{ timestamp }
+	{
+		/* EMPTY */
+	}
+};
 
 bool listeningThreadGoing = true;
-std::vector<std::pair<std::string, std::string>> clientChat;
+std::vector<Message> chat;
 
 void listener()
 {
 	using namespace std::literals::chrono_literals;
+	time_t lastTimestamp = 0;
+	char* dateTime = new char[101];
+
 	while (listeningThreadGoing)
 	{
 		try
 		{
 			auto response = cpr::Get(
-				cpr::Url{ "http://localhost:18080/chat" }
+				cpr::Url{ "http://localhost:18080/chat" },
+				cpr::Parameters{ {"from", std::to_string(lastTimestamp)} }
 			);
 			auto messages = crow::json::load(response.text);
-			for (int i = clientChat.size(); i < messages.size(); i++)
+			for (int i = 0; i < messages.size(); i++)
 			{
-				std::string sender = messages[i]["sender"].s();
-				std::string message = messages[i]["message"].s();
-				clientChat.push_back({sender, message});
-				std::cout << std::format("[{}]: {}", sender, message) << "\n";
+				Message message{ 
+					std::move(messages[i]["content"].s()), 
+					std::move(messages[i]["author"].s()), 
+					static_cast<time_t>(messages[i]["timestamp"].i()) 
+				};
+				chat.push_back(message);
+				ctime_s(dateTime, 100, &message.timestamp);
+				dateTime[strlen(dateTime) - 1] = '\0';
+				std::cout << std::format("[{} at {}]: {}\n",
+					message.author,
+					dateTime,
+					message.content
+				);
 			}
+			lastTimestamp = (chat.empty() ? 0 : chat[chat.size() - 1].timestamp + 1);
 			std::this_thread::sleep_for(0.5s);
 		}
 		catch (std::exception exception)
@@ -40,7 +79,7 @@ void listener()
 
 int main()
 {
-	const std::string name{ "Nume persoana" };
+	const std::string name{ "Macovei Alexandru" };
 	std::thread listeningThread(listener);
 
 	while (listeningThreadGoing)
@@ -53,11 +92,11 @@ int main()
 			break;
 		}
 
-		try 
+		try
 		{
 			auto response = cpr::Put(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Payload{ {"sender", name}, {"message", message}}
+				cpr::Payload{ {{"author", name}, {"content", message}, {"timestamp", std::to_string(time(0))} } }
 			);
 		}
 		catch (const std::exception& e)
