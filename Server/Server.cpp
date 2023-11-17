@@ -26,13 +26,23 @@ struct Message
 	}
 };
 
+enum Lobby
+{
+	player_join,
+	player_left,
+	game_begin
+};
+
 int main()
 {
 	std::vector<Message> chat;
 
 	crow::SimpleApp app;
 
+	Lobby lobbyState;
+
 	// Test route
+
 	CROW_ROUTE(app, "/")([]() {
 		return "Test connection succesful\n";
 		});
@@ -60,7 +70,7 @@ int main()
 		ctime_s(dateTime, 100, &message.timestamp);
 		dateTime[strlen(dateTime) - 1] = '\0';
 		chat.emplace_back(std::move(message));
-		for (const auto& message : chat)
+		for (const auto& message : chat) 
 		{
 			std::cout << std::format("[{} at {}]: {}\n", 
 				message.author, 
@@ -88,6 +98,43 @@ int main()
 		return crow::json::wvalue{ messages };
 		});
 
+	// Lobby controller
+
+	// Player join
+	CROW_ROUTE(app, "/playerJoin/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::player_join;
+		return crow::response(200, "Player joined Lobby");
+		});
+
+	// Player left
+	CROW_ROUTE(app, "/playerLeft/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::player_left;
+		return crow::response(200, "Player left Lobby");
+		});
+
+	// Game begin
+	CROW_ROUTE(app, "/gameBegin/").methods(crow::HTTPMethod::GET)([&lobbyState](const crow::request& request) {
+		std::string name = request.url_params.get("name");
+		std::string lobbyStateParam = request.url_params.get("lobbyState");
+		if (name.empty() || lobbyStateParam.empty())
+		{
+			return crow::response(404);
+		}
+		lobbyState = Lobby::game_begin;
+		return crow::response(200, "Game has begun");
+		});
 
 	app.port(18080).multithreaded().run();
 
