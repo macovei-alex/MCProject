@@ -132,14 +132,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DataBase.cpp" />
+    <ClCompile Include="database.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="utilities.cppm" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataBase.h" />
+    <ClInclude Include="database.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
   </ItemGroup>

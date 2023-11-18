@@ -9,7 +9,7 @@ struct Words
 {
 	int id;
     std::string word;
-	int difficulty;
+	std::string difficulty;
 };
 
 struct Player
@@ -25,7 +25,7 @@ struct GameHistory
 	int id;
 	std::string playerName;//foreign key
 	int score;
-	int difficulty;
+	std::string difficulty;
 	std::string date;
 };
 
@@ -43,7 +43,6 @@ inline auto createStorage(const std::string& filename)
 			sql::make_column("totalScore", &Player::totalScore)),
 		sql::make_table("gameHistory",
 			sql::make_column("id", &GameHistory::id, sql::primary_key().autoincrement()),
-			//make column name same as foreign key
 			sql::make_column("playerName", &GameHistory::playerName),
 			sql::foreign_key(&GameHistory::playerName).references(&Player::playerName),
 			sql::make_column("score", &GameHistory::score),
@@ -51,3 +50,18 @@ inline auto createStorage(const std::string& filename)
 			sql::make_column("date", &GameHistory::date))
 		);
 }
+
+using Storage = decltype(createStorage(""));
+
+void populateStorage(Storage& storage);
+
+class MakePlayerAccount
+{
+public:
+	MakePlayerAccount(Storage& storage);
+
+	crow::response operator()(const crow::request& req) const;
+
+private:
+	Storage& m_db;
+};
