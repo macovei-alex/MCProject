@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Authentification.cpp" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="utilities.cppm" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Authentification.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
