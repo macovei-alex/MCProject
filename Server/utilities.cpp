@@ -1,5 +1,13 @@
 module utilities;
 
+utils::Message::Message(std::string&& content, std::string&& author, time_t timestamp) :
+	content{ std::move(content) },
+	author{ std::move(author) },
+	timestamp{ timestamp }
+{
+	/* EMPTY */
+}
+
 std::vector<std::string> utils::splitToVec(const std::string& str, const std::string& delim)
 {
 	std::vector<std::string> result;

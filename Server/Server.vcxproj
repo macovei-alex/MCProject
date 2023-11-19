@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="Authentification.cpp" />
     <ClCompile Include="database.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="utilities.cpp" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="Authentification.h" />
     <ClInclude Include="database.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
   </ItemGroup>
