@@ -1,10 +1,10 @@
-#include "DataBase.h"
+#include "database.h"
 #include <fstream>
 
 void populateStorage(Storage& storage)
 {
 	std::ifstream f("words.txt");
-	std::vector<Words> words;
+	std::vector<Word> words;
 	int index = 0;
 	while (!f.eof())
 	{
@@ -12,7 +12,7 @@ void populateStorage(Storage& storage)
 		std::string word;
 		std::string difficulty;
 		f >> word >> difficulty;
-		words.push_back(Words(index, word, difficulty));
+		words.push_back(Word(index, word, difficulty));
 	}
 	storage.insert_range(words.begin(), words.end());
 };
