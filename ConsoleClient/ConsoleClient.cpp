@@ -6,8 +6,6 @@
 #include <crow.h>
 #include <cpr/cpr.h>
 
-#define CRT_SECURE_NO_WARNINGS
-
 bool listeningThreadGoing = true;
 std::string name;
 
@@ -25,7 +23,7 @@ void listener()
 		{
 			auto response = cpr::Get(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Parameters{ {"from", std::to_string(lastTimestamp)}, {"senderName", name} }
+				cpr::Parameters{ {"from", std::to_string(lastTimestamp)}, {"author", name} }
 			);
 			if (response.status_code != 200 && response.status_code != 201)
 			{
@@ -51,8 +49,11 @@ void listener()
 					std::string{ std::move(messageJson["content"].s()) }
 				);
 			}
+
 			if (messagesJson.size() != 0)
 				lastTimestamp = static_cast<time_t>(messagesJson[messagesJson.size() - 1]["timestamp"].i()) + 1;
+			else if (lastTimestamp == 0)
+				lastTimestamp = time(0);
 			std::this_thread::sleep_for(0.5s);
 		}
 		catch (std::exception exception)
