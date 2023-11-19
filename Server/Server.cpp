@@ -54,17 +54,17 @@ int main()
 		char* dateTime = new char[101];
 
 		const auto informationVector{ std::move(utils::splitToVec(request.body, "&")) };
-		std::map<std::string, std::string> informationMap;
+		std::map<std::string, std::string> urlParamsMap;
 
 		for (const auto& informationExpression : informationVector)
 		{
-			auto informationPair{ std::move(utils::splitToPair(informationExpression, "=")) };
-			informationMap.emplace(std::move(informationPair));
+			auto urlParamPair{ std::move(utils::splitToPair(informationExpression, "=")) };
+			urlParamsMap.emplace(std::move(urlParamPair));
 		}
 
 		Message message{
-			std::move(utils::decodeMessage(informationMap["content"])),
-			std::move(utils::decodeMessage(informationMap["author"])),
+			std::move(utils::decodeMessage(urlParamsMap["content"])),
+			std::move(utils::decodeMessage(urlParamsMap["author"])),
 			time(0)
 		};
 		ctime_s(dateTime, 100, &message.timestamp);
@@ -87,9 +87,9 @@ int main()
 	auto& getMessages = CROW_ROUTE(app, "/chat").methods(crow::HTTPMethod::GET);
 	getMessages([&chat](const crow::request& request) {
 		time_t from = std::stoi(request.url_params.get("from"));
-		const std::string senderName{ std::move(request.url_params.get("senderName")) };
+		const std::string senderName{ std::move(request.url_params.get("author")) };
 		std::vector<crow::json::wvalue> messages;
-		for (int i = chat.size() - 1; i >= 0 && from <= chat[i].timestamp; i--)
+		for (int i = chat.size() - 1; i >= 0 && chat[i].timestamp >= from; i--)
 		{
 			if (from == 0 || chat[i].author != senderName)
 				messages.insert(messages.begin(), crow::json::wvalue{
