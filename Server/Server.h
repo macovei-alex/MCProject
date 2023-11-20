@@ -10,6 +10,7 @@ public:
 	Server(const Server&) = delete;
 	Server& operator=(const Server&) = delete;
 	~Server() = default;
+<<<<<<< HEAD
 
 	Server& allHandlers();
 	Server& testHandlers();
