@@ -7,8 +7,6 @@ import utilities;
 
 int main()
 {
-	Server server;
-	server.allHandlers().port(18080).run();
-
+	Server::getInstance().port(18080).allHandlers().run();
 	return 0;
 }

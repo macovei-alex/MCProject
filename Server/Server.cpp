@@ -8,6 +8,13 @@ Server::Server() :
 	/* Empty */
 }
 
+Server& Server::getInstance()
+{
+	if (!instance)
+		instance = new Server();
+	return *instance;
+}
+
 Server& Server::allHandlers()
 {
 	this->testHandlers().chatHandlers().roomHandlers();

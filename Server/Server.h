@@ -7,7 +7,6 @@ import utilities;
 class Server
 {
 public:
-	Server();
 	Server(const Server&) = delete;
 	Server& operator=(const Server&) = delete;
 	~Server() = default;
@@ -20,6 +19,13 @@ public:
 	Server& port(uint16_t port);
 
 	void run();
+
+	static Server& getInstance();
+
+private:
+	Server();
+
+	static Server* instance;
 
 private:
 	crow::SimpleApp m_app;
