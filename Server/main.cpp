@@ -8,7 +8,7 @@ import utilities;
 int main()
 {
 	Server server;
-	server.run();
+	server.allHandlers().port(18080).run();
 
 	return 0;
 }

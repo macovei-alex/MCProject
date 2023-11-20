@@ -3,14 +3,28 @@
 #include <format>
 
 Server::Server() :
-	m_app{}, m_chat{}, m_lobbyState{ utils::Lobby::player_join }
+	m_app{}, m_chat{}, m_lobbyState{ utils::Lobby::player_join }, m_port{ 0 }
 {
-	// Test route
+	/* Empty */
+}
+
+Server& Server::allHandlers()
+{
+	this->testHandlers().chatHandlers().roomHandlers();
+	return *this;
+}
+
+Server& Server::testHandlers()
+{
 	CROW_ROUTE(m_app, "/")([]() {
 		return "Test connection succesful\n";
 		});
 
+	return *this;
+}
 
+Server& Server::chatHandlers()
+{
 	// Input server controller
 	auto& putMessage = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::PUT);
 	putMessage([this](const crow::request& request) {
@@ -64,8 +78,11 @@ Server::Server() :
 		return crow::json::wvalue{ messages };
 		});
 
-	// Lobby controller
+	return *this;
+}
 
+Server& Server::roomHandlers()
+{
 	// Player join
 	CROW_ROUTE(m_app, "/playerJoin/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
 		std::string name = request.url_params.get("name");
@@ -101,9 +118,26 @@ Server::Server() :
 		this->m_lobbyState = utils::Lobby::game_begin;
 		return crow::response(200, "Game has begun");
 		});
+
+	return *this;
+}
+
+Server& Server::port(uint16_t portNumber)
+{
+	m_port = portNumber;
+	return *this;
 }
 
 void Server::run()
 {
-	m_app.port(k_port).multithreaded().run();
+	try
+	{
+		if (m_port == 0)
+			throw std::exception("Port number not set");
+		m_app.port(m_port).multithreaded().run();
+	}
+	catch (std::exception ex)
+	{
+		std::cout << ex.what() << '\n';
+	}
 }
