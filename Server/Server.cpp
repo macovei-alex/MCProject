@@ -2,6 +2,8 @@
 
 #include <format>
 
+Server* Server::instance = nullptr;
+
 Server::Server() :
 	m_app{}, m_chat{}, m_lobbyState{ utils::Lobby::player_join }, m_port{ 0 }
 {
