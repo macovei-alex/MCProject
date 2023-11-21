@@ -7,6 +7,6 @@ import utilities;
 
 int main()
 {
-	Server::getInstance().port(18080).allHandlers().run();
+	Server::getInstance().IPAddress("127.0.0.1").port(18080).allHandlers().run();
 	return 0;
 }

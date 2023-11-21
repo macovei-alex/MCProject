@@ -5,7 +5,11 @@
 Server* Server::instance = nullptr;
 
 Server::Server() :
-	m_app{}, m_chat{}, m_lobbyState{ utils::Lobby::player_join }, m_port{ 0 }
+	m_app{},
+	m_chat{},
+	m_lobbyState{ utils::Lobby::player_join },
+	m_port{ 0 },
+	m_IPAddress{ "127.0.0.1" }
 {
 	/* Empty */
 }
@@ -19,7 +23,7 @@ Server& Server::getInstance()
 
 Server& Server::allHandlers()
 {
-	this->testHandlers().chatHandlers().roomHandlers();
+	this->testHandlers().chatHandlers().roomHandlers().drawingHandlers();
 	return *this;
 }
 
@@ -131,6 +135,17 @@ Server& Server::roomHandlers()
 	return *this;
 }
 
+Server& Server::drawingHandlers()
+{
+	return *this;
+}
+
+Server& Server::IPAddress(const std::string& IPAddress)
+{
+	m_IPAddress = IPAddress;
+	return *this;
+}
+
 Server& Server::port(uint16_t portNumber)
 {
 	m_port = portNumber;
@@ -143,7 +158,9 @@ void Server::run()
 	{
 		if (m_port == 0)
 			throw std::exception("Port number not set");
-		m_app.port(m_port).multithreaded().run();
+		if(m_IPAddress.empty())
+			throw std::exception("IP Address not set");
+		m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
 	}
 	catch (std::exception ex)
 	{

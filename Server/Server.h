@@ -15,7 +15,9 @@ public:
 	Server& testHandlers();
 	Server& chatHandlers();
 	Server& roomHandlers();
+	Server& drawingHandlers();
 
+	Server& IPAddress(const std::string& IP);
 	Server& port(uint16_t port);
 
 	void run();
@@ -33,4 +35,5 @@ private:
 	utils::Lobby m_lobbyState;
 
 	uint16_t m_port;
+	std::string m_IPAddress;
 };
