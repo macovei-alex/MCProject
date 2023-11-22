@@ -150,7 +150,8 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="utilities.cpp" />
-    <ClCompile Include="utilities.cppm" />
+    <ClCompile Include="utilitiesMod.cpp" />
+    <ClCompile Include="utilitiesMod.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Authentification.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
+    <ClInclude Include="utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />

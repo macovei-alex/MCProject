@@ -1,7 +1,8 @@
 #include "Server.h"
 #include "Game.h"
 
-import utilities;
+import utilitiesMod;
+#include "utilities.h"
 
 // https://docs.google.com/document/d/17Up9pbhwRiUGXRCoE4aJbuTiBvuXILxOdLOBuDKdr3E/edit
 
