@@ -7,6 +7,6 @@ import utilities;
 
 int main()
 {
-	Server::getInstance().IPAddress("127.0.0.1").port(18080).allHandlers().run();
+	Server::getInstance().setSettingsFromFile("serverSettings.txt").run();
 	return 0;
 }

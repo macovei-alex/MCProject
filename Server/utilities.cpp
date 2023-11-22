@@ -50,3 +50,11 @@ std::string utils::decodeMessage(const std::string& message)
 	}
 	return decodedMessage;
 }
+
+//std::string utils::getHash(const std::string& input)
+//{
+//	std::string hash;
+//	CryptoPP::SHA256 sha256;
+//	CryptoPP::StringSource(input, true, new CryptoPP::HashFilter(sha256, new CryptoPP::HexEncoder(new CryptoPP::StringSink(hash))));
+//	return hash;
+//}

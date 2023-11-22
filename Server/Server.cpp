@@ -1,6 +1,7 @@
 #include "Server.h"
 
 #include <format>
+#include <map>
 
 Server* Server::instance = nullptr;
 
@@ -158,7 +159,7 @@ void Server::run()
 	{
 		if (m_port == 0)
 			throw std::exception("Port number not set");
-		if(m_IPAddress.empty())
+		if (m_IPAddress.empty())
 			throw std::exception("IP Address not set");
 		m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
 	}
@@ -166,4 +167,66 @@ void Server::run()
 	{
 		std::cout << ex.what() << '\n';
 	}
+}
+
+Server& Server::setSettingsFromFile(const std::string& filePath)
+{
+	navigateToCorrectDirectory();
+	enum ServerSetting
+	{
+		allHandlers,
+		chatHandlers,
+		roomHandlers,
+		drawingHandlers
+	};
+	const std::map<std::string, ServerSetting> settingsMap
+	{
+		{"allHandlers", allHandlers},
+		{"chatHandlers", chatHandlers},
+		{"roomHandlers", roomHandlers},
+		{"drawingHandlers", drawingHandlers}
+	};
+
+	std::ifstream file{ filePath };
+	std::string line;
+
+	std::getline(file, line);
+	this->IPAddress(line);
+	std::getline(file, line);
+	this->port(std::stoi(line));
+
+	while (std::getline(file, line))
+	{
+		ServerSetting setting = settingsMap.find(line)->second;
+		switch (setting)
+		{
+		case allHandlers:
+			this->allHandlers();
+			break;
+		case chatHandlers:
+			this->chatHandlers();
+			break;
+		case roomHandlers:
+			this->roomHandlers();
+			break;
+		case drawingHandlers:
+			this->drawingHandlers();
+			break;
+		}
+	}
+	return *this;
+}
+
+// Functie chemata pentru a putea folosi fisierele de resurse din folderul Project/Server
+// chiar daca executabilula fost rulat din Project/Server/x64/Debug
+void navigateToCorrectDirectory()
+{
+	const DWORD buffer_size = MAX_PATH;
+	TCHAR buffer[buffer_size];
+
+	DWORD length = GetCurrentDirectory(buffer_size, buffer);
+	const std::wstring currentDirectory{ buffer, length };
+
+	if (currentDirectory.find(L"x64") != std::wstring::npos)
+		SetCurrentDirectory((currentDirectory + L"\\..\\..\\Server").c_str());
 }

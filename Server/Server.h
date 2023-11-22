@@ -17,8 +17,10 @@ public:
 	Server& roomHandlers();
 	Server& drawingHandlers();
 
-	Server& IPAddress(const std::string& IP);
+	Server& IPAddress(const std::string& IPAddress);
 	Server& port(uint16_t port);
+
+	Server& setSettingsFromFile(const std::string& filePath = "serverSettings.txt");
 
 	void run();
 
@@ -37,3 +39,5 @@ private:
 	uint16_t m_port;
 	std::string m_IPAddress;
 };
+
+void navigateToCorrectDirectory();
