@@ -225,8 +225,12 @@ void navigateToCorrectDirectory()
 	TCHAR buffer[buffer_size];
 
 	DWORD length = GetCurrentDirectory(buffer_size, buffer);
-	const std::wstring currentDirectory{ buffer, length };
+	std::wstring currentDirectory{ buffer, length };
 
-	if (currentDirectory.find(L"x64") != std::wstring::npos)
-		SetCurrentDirectory((currentDirectory + L"\\..\\..\\Server").c_str());
+	size_t x64pos;
+	if ((x64pos = currentDirectory.find(L"x64")) != std::wstring::npos)
+	{
+		currentDirectory = currentDirectory.substr(0, x64pos);
+		SetCurrentDirectory((currentDirectory + L"\\Server").c_str());
+	}
 }
