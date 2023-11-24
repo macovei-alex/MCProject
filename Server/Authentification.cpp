@@ -1,29 +1,37 @@
 #include "Authentification.h"
 
-crow::response Autentificare::Register(std::string username, std::string password)
+bool Autentificare::Register(const std::string& username, const std::string& password)
 {
-    return crow::response();
+	auto players = m_dataBase.get_all<PlayerDB>(sql::where(sql::is_equal(&PlayerDB::playerName, username)));
+	if (players.empty())
+	{
+		/* Insert user into the db */
+		return true;
+	}
+	return false;
 }
-crow::response Autentificare::Login(std::string username, std::string password)
+
+bool Autentificare::Login(const std::string& username, const std::string& password)
 {
-    auto player = m_dataBase.get_all<PlayerDB>(sql::where(sql::is_equal(&PlayerDB::playerName, username)));
-     auto playerPassword = m_dataBase.get_all<PlayerDB>(sql::where(sql::is_equal(&PlayerDB::password, password)));
-     if (player.size() == 0 || playerPassword.size() == 0)
-     {
-		 return crow::response(404,"login failed");
-	 }
-     else
-     {
-         return crow::response(200,"login succesful");
-     }
-     
-     return crow::response();
+	auto player = std::move(m_dataBase.get_all<PlayerDB>(sql::where(sql::is_equal(&PlayerDB::playerName, username))));
+	auto playerPassword = std::move(m_dataBase.get_all<PlayerDB>(sql::where(sql::is_equal(&PlayerDB::password, password))));
+
+	if (player.size() == 0 || playerPassword.size() == 0)
+	{
+		return false;
+	}
+	else
+	{
+		return false;
+	}
 }
-Autentificare::Autentificare(Storage& dataBase): m_dataBase(dataBase)
+
+Autentificare::Autentificare(Storage& dataBase) : m_dataBase(dataBase)
 {
 	/*EMPTY*/
 }
+
 Autentificare::~Autentificare()
-{ 
-   /*EMPTY*/
+{
+	/*EMPTY*/
 }
