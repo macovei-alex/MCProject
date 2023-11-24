@@ -8,6 +8,6 @@ import utilitiesMod;
 
 int main()
 {
-	Server::getInstance().setSettingsFromFile("serverSettings.txt").run();
+	Server::GetInstance().SetSettingsFromFile("serverSettings.txt").Run();
 	return 0;
 }

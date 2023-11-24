@@ -3,7 +3,9 @@
 #include <format>
 #include <map>
 
-Server* Server::instance = nullptr;
+#include "utilities.h"
+
+Server* Server::s_instance = nullptr;
 
 Server::Server() :
 	m_app{},
@@ -15,20 +17,20 @@ Server::Server() :
 	/* Empty */
 }
 
-Server& Server::getInstance()
+Server& Server::GetInstance()
 {
-	if (!instance)
-		instance = new Server();
-	return *instance;
+	if (!s_instance)
+		s_instance = new Server();
+	return *s_instance;
 }
 
-Server& Server::allHandlers()
+Server& Server::AllHandlers()
 {
-	this->testHandlers().chatHandlers().roomHandlers().drawingHandlers();
+	this->TestHandlers().ChatHandlers().RoomHandlers().DrawingHandlers();
 	return *this;
 }
 
-Server& Server::testHandlers()
+Server& Server::TestHandlers()
 {
 	CROW_ROUTE(m_app, "/")([]() {
 		return "Test connection succesful\n";
@@ -37,25 +39,25 @@ Server& Server::testHandlers()
 	return *this;
 }
 
-Server& Server::chatHandlers()
+Server& Server::ChatHandlers()
 {
 	// Input server controller
 	auto& putMessage = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::PUT);
 	putMessage([this](const crow::request& request) {
 		char* dateTime = new char[101];
 
-		const auto informationVector{ std::move(utils::splitToVec(request.body, "&")) };
+		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
 		std::map<std::string, std::string> urlParamsMap;
 
 		for (const auto& informationExpression : informationVector)
 		{
-			auto urlParamPair{ std::move(utils::splitToPair(informationExpression, "=")) };
+			auto urlParamPair{ std::move(utils::SplitToPair(informationExpression, "=")) };
 			urlParamsMap.emplace(std::move(urlParamPair));
 		}
 
 		utils::Message message{
-			std::move(utils::decodeMessage(urlParamsMap["content"])),
-			std::move(utils::decodeMessage(urlParamsMap["author"])),
+			std::move(utils::DecodeMessage(urlParamsMap["content"])),
+			std::move(utils::DecodeMessage(urlParamsMap["author"])),
 			time(0)
 		};
 		ctime_s(dateTime, 100, &message.timestamp);
@@ -95,7 +97,7 @@ Server& Server::chatHandlers()
 	return *this;
 }
 
-Server& Server::roomHandlers()
+Server& Server::RoomHandlers()
 {
 	// Player join
 	CROW_ROUTE(m_app, "/playerJoin/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
@@ -136,7 +138,7 @@ Server& Server::roomHandlers()
 	return *this;
 }
 
-Server& Server::drawingHandlers()
+Server& Server::DrawingHandlers()
 {
 	return *this;
 }
@@ -147,13 +149,13 @@ Server& Server::IPAddress(const std::string& IPAddress)
 	return *this;
 }
 
-Server& Server::port(uint16_t portNumber)
+Server& Server::Port(uint16_t portNumber)
 {
 	m_port = portNumber;
 	return *this;
 }
 
-void Server::run()
+void Server::Run()
 {
 	try
 	{
@@ -169,9 +171,9 @@ void Server::run()
 	}
 }
 
-Server& Server::setSettingsFromFile(const std::string& filePath)
+Server& Server::SetSettingsFromFile(const std::string& filePath)
 {
-	navigateToCorrectDirectory();
+	utils::NavigateToProjectDirectory();
 	enum ServerSetting
 	{
 		allHandlers,
@@ -193,7 +195,7 @@ Server& Server::setSettingsFromFile(const std::string& filePath)
 	std::getline(file, line);
 	this->IPAddress(line);
 	std::getline(file, line);
-	this->port(std::stoi(line));
+	this->Port(std::stoi(line));
 
 	while (std::getline(file, line))
 	{
@@ -201,36 +203,18 @@ Server& Server::setSettingsFromFile(const std::string& filePath)
 		switch (setting)
 		{
 		case allHandlers:
-			this->allHandlers();
+			this->AllHandlers();
 			break;
 		case chatHandlers:
-			this->chatHandlers();
+			this->ChatHandlers();
 			break;
 		case roomHandlers:
-			this->roomHandlers();
+			this->RoomHandlers();
 			break;
 		case drawingHandlers:
-			this->drawingHandlers();
+			this->DrawingHandlers();
 			break;
 		}
 	}
 	return *this;
-}
-
-// Functie chemata pentru a putea folosi fisierele de resurse din folderul Project/Server
-// chiar daca executabilula fost rulat din Project/Server/x64/Debug
-void navigateToCorrectDirectory()
-{
-	const DWORD buffer_size = MAX_PATH;
-	TCHAR buffer[buffer_size];
-
-	DWORD length = GetCurrentDirectory(buffer_size, buffer);
-	std::wstring currentDirectory{ buffer, length };
-
-	size_t x64pos;
-	if ((x64pos = currentDirectory.find(L"x64")) != std::wstring::npos)
-	{
-		currentDirectory = currentDirectory.substr(0, x64pos);
-		SetCurrentDirectory((currentDirectory + L"\\Server").c_str());
-	}
 }

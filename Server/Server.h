@@ -11,25 +11,25 @@ public:
 	Server& operator=(const Server&) = delete;
 	~Server() = default;
 
-	Server& allHandlers();
-	Server& testHandlers();
-	Server& chatHandlers();
-	Server& roomHandlers();
-	Server& drawingHandlers();
+	Server& AllHandlers();
+	Server& TestHandlers();
+	Server& ChatHandlers();
+	Server& RoomHandlers();
+	Server& DrawingHandlers();
 
 	Server& IPAddress(const std::string& IPAddress);
-	Server& port(uint16_t port);
+	Server& Port(uint16_t port);
 
-	Server& setSettingsFromFile(const std::string& filePath = "serverSettings.txt");
+	Server& SetSettingsFromFile(const std::string& filePath = "serverSettings.txt");
 
-	void run();
+	void Run();
 
-	static Server& getInstance();
+	static Server& GetInstance();
 
 private:
 	Server();
 
-	static Server* instance;
+	static Server* s_instance;
 
 private:
 	crow::SimpleApp m_app;
@@ -39,5 +39,3 @@ private:
 	uint16_t m_port;
 	std::string m_IPAddress;
 };
-
-void navigateToCorrectDirectory();

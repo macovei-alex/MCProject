@@ -22,7 +22,7 @@ namespace utils
 		game_begin
 	};
 
-	export std::vector<std::string> splitToVec(const std::string& str, const std::string& delim);
-	export std::pair<std::string, std::string> splitToPair(const std::string& str, const std::string& delim);
-	export std::string decodeMessage(const std::string& message);
+	export std::vector<std::string> SplitToVec(const std::string& str, const std::string& delim);
+	export std::pair<std::string, std::string> SplitToPair(const std::string& str, const std::string& delim);
+	export std::string DecodeMessage(const std::string& message);
 }

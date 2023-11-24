@@ -8,7 +8,7 @@ utils::Message::Message(std::string&& content, std::string&& author, time_t time
 	/* EMPTY */
 }
 
-std::vector<std::string> utils::splitToVec(const std::string& str, const std::string& delim)
+std::vector<std::string> utils::SplitToVec(const std::string& str, const std::string& delim)
 {
 	std::vector<std::string> result;
 	size_t startIndex = 0;
@@ -23,7 +23,7 @@ std::vector<std::string> utils::splitToVec(const std::string& str, const std::st
 	return result;
 }
 
-std::pair<std::string, std::string> utils::splitToPair(const std::string& str, const std::string& delim)
+std::pair<std::string, std::string> utils::SplitToPair(const std::string& str, const std::string& delim)
 {
 	size_t found = str.find(delim);
 	std::string first = str.substr(0, found);
@@ -31,7 +31,7 @@ std::pair<std::string, std::string> utils::splitToPair(const std::string& str, c
 	return { first, second };
 }
 
-std::string utils::decodeMessage(const std::string& message)
+std::string utils::DecodeMessage(const std::string& message)
 {
 	std::string decodedMessage = "";
 	for (int i = 0; i < message.length(); i++)
