@@ -20,14 +20,10 @@ public:
 	float_t GetChoiceTime() const noexcept;
 	float_t GetPlayTime() const noexcept;
 	std::string GetWord() const noexcept;
-	std::vector<std::string> generateWordChoices(const uint8_t wordsCount);
-	void sendWordChoices(const Player& player, const std::vector<std::string>& wordChoices) const;
-	void choosingWordPhase(const std::vector<Player>& players);
-	void startNewTurn(std::vector<Player>& players);
-	void endTurn(std::vector<Player>& players);
-	void startNextTurn(std::vector<Player>& players);
-
-	static const std::string s_wordsFilePath;
+	void ChoosingWordPhase(const std::vector<Player>& players);
+	void StartNewTurn(std::vector<Player>& players);
+	void EndTurn(std::vector<Player>& players);
+	void StartNextTurn(std::vector<Player>& players);
 
 private:
 	uint8_t m_turnNumber;
@@ -35,5 +31,4 @@ private:
 	std::vector<uint8_t> m_showLetterIDs;
 	clock_t m_playStartTime;
 	clock_t m_chooseWordStartTime;
-	std::ifstream m_fin;
 };
