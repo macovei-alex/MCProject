@@ -29,7 +29,7 @@ struct GameHistory
 	std::string date;
 };
 
-inline auto createStorage(const std::string& filename)
+inline auto CreateStorage(const std::string& filename)
 {
 	return sql::make_storage(filename,
 		sql::make_table("words",
@@ -51,9 +51,9 @@ inline auto createStorage(const std::string& filename)
 		);
 }
 
-using Storage = decltype(createStorage(""));
+using Storage = decltype(CreateStorage(""));
 
-void populateStorage(Storage& storage);
+void PopulateStorage(Storage& storage);
 
 class MakePlayerAccount
 {

@@ -15,11 +15,11 @@ public:
 	std::string GetName() const;
 	int GetScore() const;
 	int GetCurrentScore() const;
-	void resetCurrentScore();
-	void resetScore();
-	void addScore();
-	int calculateScoreDrawingPlayer(int seconds, int playerCount);
-	int calculateScoreGuessingPlayer(int seconds);
+	void ResetCurrentScore();
+	void ResetScore();
+	void AddScore();
+	int CalculateScoreDrawingPlayer(int seconds, int playerCount, uint32_t maxSeconds);
+	int CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds);
 
 	enum class GameRole : uint8_t
 	{

@@ -1,7 +1,7 @@
 #include "database.h"
 #include <fstream>
 
-void populateStorage(Storage& storage)
+void PopulateStorage(Storage& storage)
 {
 	std::ifstream f("words.txt");
 	std::vector<Word> words;

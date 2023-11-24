@@ -108,22 +108,22 @@ int Player::GetCurrentScore() const
 	return m_currentScore;
 }
 
-void Player::resetCurrentScore()
+void Player::ResetCurrentScore()
 {
 	m_currentScore = 0;
 }
 
-void Player::resetScore()
+void Player::ResetScore()
 {
 	m_score = 0;
 }
 
-void Player::addScore()
+void Player::AddScore()
 {
 	m_score += m_currentScore;
 }
 
-int Player::calculateScoreDrawingPlayer(int seconds, int playerCount)
+int Player::CalculateScoreDrawingPlayer(int seconds, int playerCount, uint32_t maxSeconds)
 {
 	if (playerCount == 0)
 	{
@@ -131,20 +131,20 @@ int Player::calculateScoreDrawingPlayer(int seconds, int playerCount)
 	}
 	else
 	{
-		m_currentScore += ((60 - (seconds / playerCount)) * 100) / 60;
+		m_currentScore += ((maxSeconds - (seconds / playerCount)) * 100) / maxSeconds;
 	}
 	return m_currentScore;
 }
 
-int Player::calculateScoreGuessingPlayer(int seconds)
+int Player::CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds)
 {
-	if (seconds < 30)
+	if (seconds < maxSeconds / 2)
 	{
 		m_currentScore += 100;
 	}
-	else if (seconds < 60)
+	else if (seconds < maxSeconds)
 	{
-		m_currentScore += ((60 - seconds) * 100) / 30;
+		m_currentScore += ((maxSeconds - seconds) * 100) / maxSeconds;
 	}
 	else
 	{
