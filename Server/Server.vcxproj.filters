@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Server.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -30,16 +30,22 @@
     <ClCompile Include="GameSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilities.cppm">
+    <ClCompile Include="utilitiesMod.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilities.cpp">
+    <ClCompile Include="utilitiesMod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="database.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Authentification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,9 +68,18 @@
     <ClInclude Include="Authentification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="serverSettings.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
