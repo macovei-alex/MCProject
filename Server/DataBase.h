@@ -12,7 +12,7 @@ struct Words
 	std::string difficulty;
 };
 
-struct Player
+struct PlayerDB
 {
 	std::string playerName;//primary key
 	std::string password;
@@ -37,14 +37,14 @@ inline auto createStorage(const std::string& filename)
 			sql::make_column("word", &Words::word),
 			sql::make_column("difficulty", &Words::difficulty)),
 		sql::make_table("player",
-			sql::make_column("playerName", &Player::playerName, sql::primary_key()),
-			sql::make_column("password", &Player::password),
-			sql::make_column("gamesPlayed", &Player::gamesPlayed),
-			sql::make_column("totalScore", &Player::totalScore)),
+			sql::make_column("playerName", &PlayerDB::playerName, sql::primary_key()),
+			sql::make_column("password", &PlayerDB::password),
+			sql::make_column("gamesPlayed", &PlayerDB::gamesPlayed),
+			sql::make_column("totalScore", &PlayerDB::totalScore)),
 		sql::make_table("gameHistory",
 			sql::make_column("id", &GameHistory::id, sql::primary_key().autoincrement()),
 			sql::make_column("playerName", &GameHistory::playerName),
-			sql::foreign_key(&GameHistory::playerName).references(&Player::playerName),
+			sql::foreign_key(&GameHistory::playerName).references(&PlayerDB::playerName),
 			sql::make_column("score", &GameHistory::score),
 			sql::make_column("difficulty", &GameHistory::difficulty),
 			sql::make_column("date", &GameHistory::date))

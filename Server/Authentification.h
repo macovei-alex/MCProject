@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include "database.h"
+#include "Player.h"
+#include "Player.cpp"
 class Autentificare {
 public:
 	Autentificare(Storage& dataBase);
