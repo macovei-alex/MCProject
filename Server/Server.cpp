@@ -4,7 +4,7 @@
 #include <map>
 #include <stack>
 
-#include "utilities.h"
+#include "..\Common\jsonKeys.h"
 
 Server* Server::s_instance = nullptr;
 
@@ -60,8 +60,8 @@ Server& Server::ChatHandlers()
 			<std::chrono::milliseconds>
 			(now.time_since_epoch()).count();
 		utils::Message message{
-			std::move(utils::DecodeMessage(urlParamsMap["content"])),
-			std::move(utils::DecodeMessage(urlParamsMap["author"])),
+			std::move(utils::DecodeMessage(urlParamsMap[keys::message::content])),
+			std::move(utils::DecodeMessage(urlParamsMap[keys::message::author])),
 			timeMillis
 		};
 
@@ -79,17 +79,17 @@ Server& Server::ChatHandlers()
 	auto& getMessages = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::GET);
 	getMessages([this](const crow::request& request) {
 
-		uint64_t from = std::stoll(request.url_params.get("timeMillis"));
-		const std::string senderName{ std::move(request.url_params.get("author")) };
+		uint64_t from = std::stoll(request.url_params.get(keys::message::timePoint));
+		const std::string senderName{ std::move(request.url_params.get(keys::message::author))};
 
 		std::stack<crow::json::wvalue> messagesStack;
 		for (int i = this->m_chat.size() - 1; i >= 0 && this->m_chat[i].timeMilliseconds >= from; i--)
 		{
 			if (from == 0 || this->m_chat[i].author != senderName)
 				messagesStack.push(crow::json::wvalue{
-					{"content", this->m_chat[i].content},
-					{"author", this->m_chat[i].author},
-					{"timeMillis", this->m_chat[i].timeMilliseconds} });
+					{keys::message::content, this->m_chat[i].content},
+					{keys::message::author, this->m_chat[i].author},
+					{keys::message::timePoint, this->m_chat[i].timeMilliseconds} });
 		}
 
 		std::vector<crow::json::wvalue> messagesVector;

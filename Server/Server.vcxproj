@@ -154,6 +154,7 @@
     <ClCompile Include="utilitiesMod.cppm" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\jsonKeys.h" />
     <ClInclude Include="Authentification.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Server.h" />

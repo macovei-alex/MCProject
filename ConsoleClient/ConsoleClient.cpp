@@ -7,6 +7,8 @@
 #include <crow.h>
 #include <cpr/cpr.h>
 
+#include "..\Common\jsonKeys.h"
+
 bool listeningThreadGoing = true;
 std::string name;
 
@@ -25,7 +27,7 @@ void listener()
 		{
 			auto response = cpr::Get(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Parameters{ {"author", name}, {"timeMillis", std::to_string(lastTimeMillis)} }
+				cpr::Parameters{ {keys::message::author, name}, {keys::message::timePoint, std::to_string(lastTimeMillis)} }
 			);
 			if (response.status_code != 200 && response.status_code != 201)
 			{
@@ -41,21 +43,21 @@ void listener()
 
 			auto messagesJson = crow::json::load(response.text);
 			if (messagesJson.size() != 0)
-				lastTimeMillis = messagesJson[messagesJson.size() - 1]["timeMillis"].u() + 1;
+				lastTimeMillis = messagesJson[messagesJson.size() - 1][keys::message::timePoint].u() + 1;
 			else if (lastTimeMillis == 0)
 				lastTimeMillis = chr::duration_cast<chr::milliseconds>
 				(chr::system_clock::now().time_since_epoch()).count();
 
 			for (auto& messageJson : messagesJson)
 			{
-				chr::milliseconds messageTimePointMillis{ messageJson["timeMillis"].u() };
+				chr::milliseconds messageTimePointMillis{ messageJson[keys::message::timePoint].u() };
 				chr::time_point dateTime = chr::time_point<chr::system_clock, chr::seconds>
 					(chr::duration_cast<chr::seconds>
 						(chr::milliseconds{ messageTimePointMillis }));
 				std::cout << std::format("[{} at {}]: {}\n",
-					std::string{ std::move(messageJson["author"].s()) },
+					std::string{ std::move(messageJson[keys::message::author].s()) },
 					dateTime,
-					std::string{ std::move(messageJson["content"].s()) }
+					std::string{ std::move(messageJson[keys::message::content].s()) }
 				);
 			}
 
@@ -90,7 +92,7 @@ int main()
 		{
 			auto response = cpr::Put(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Payload{ {{"author", name}, {"content", message} } }
+				cpr::Payload{ {{keys::message::author, name}, {keys::message::content, message} } }
 			);
 			if (response.status_code != 200 && response.status_code != 201)
 				std::cout << "[Sender] Server connection error detected\n";

@@ -2,6 +2,7 @@
 #include <vector>
 #include <crow.h>
 
+#include "utilities.h"
 import utilitiesMod;
 
 class Server
