@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
-#include <Windows.h>
+#include <vector>
+#include <chrono>
+#include <windows.h>
 
-namespace utils 
+namespace utils
 {
 	std::string getHash(const std::string& input);
 	void NavigateToProjectDirectory();

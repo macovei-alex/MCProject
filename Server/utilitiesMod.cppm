@@ -2,17 +2,18 @@ export module utilitiesMod;
 
 import <vector>;
 import <string>;
+import <chrono>;
 
-namespace utils 
+namespace utils
 {
 	export struct Message
 	{
 		std::string content;
 		std::string author;
-		time_t timestamp;
+		uint64_t timeMilliseconds;
 
 		Message() = default;
-		Message(std::string&& content, std::string&& author, time_t timestamp);
+		Message(std::string&& content, std::string&& author, uint64_t milliseconds);
 	};
 
 	export enum Lobby

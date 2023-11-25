@@ -38,4 +38,5 @@ private:
 
 	uint16_t m_port;
 	std::string m_IPAddress;
+	//DBManager& m_db;
 };

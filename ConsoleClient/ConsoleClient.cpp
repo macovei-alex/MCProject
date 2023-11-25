@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <memory>
+#include <chrono>
 #include <crow.h>
 #include <cpr/cpr.h>
 
@@ -12,8 +13,9 @@ std::string name;
 void listener()
 {
 	using namespace std::literals::chrono_literals;
+	namespace chr = std::chrono;
 
-	time_t lastTimestamp = 0;
+	uint64_t lastTimeMillis = 0;
 	std::unique_ptr<char> dateTime{ new char[101] };
 	bool serverErrorDetected = false;
 
@@ -23,13 +25,13 @@ void listener()
 		{
 			auto response = cpr::Get(
 				cpr::Url{ "http://localhost:18080/chat" },
-				cpr::Parameters{ {"from", std::to_string(lastTimestamp)}, {"author", name} }
+				cpr::Parameters{ {"author", name}, {"timeMillis", std::to_string(lastTimeMillis)} }
 			);
 			if (response.status_code != 200 && response.status_code != 201)
 			{
 				if (!serverErrorDetected)
 				{
-					std::cout << "[Listener] Server connection error detected\n";
+					std::cout << "[Listener] Bad server response\n";
 					serverErrorDetected = true;
 				}
 				continue;
@@ -38,22 +40,25 @@ void listener()
 				serverErrorDetected = false;
 
 			auto messagesJson = crow::json::load(response.text);
+			if (messagesJson.size() != 0)
+				lastTimeMillis = messagesJson[messagesJson.size() - 1]["timeMillis"].u() + 1;
+			else if (lastTimeMillis == 0)
+				lastTimeMillis = chr::duration_cast<chr::milliseconds>
+				(chr::system_clock::now().time_since_epoch()).count();
+
 			for (auto& messageJson : messagesJson)
 			{
-				time_t messageTimestamp = static_cast<time_t>(messageJson["timestamp"].i());
-				ctime_s(dateTime.get(), 100, &messageTimestamp);
-				dateTime.get()[strlen(dateTime.get()) - 1] = '\0';
+				chr::milliseconds messageTimePointMillis{ messageJson["timeMillis"].u() };
+				chr::time_point dateTime = chr::time_point<chr::system_clock, chr::seconds>
+					(chr::duration_cast<chr::seconds>
+						(chr::milliseconds{ messageTimePointMillis }));
 				std::cout << std::format("[{} at {}]: {}\n",
 					std::string{ std::move(messageJson["author"].s()) },
-					dateTime.get(),
+					dateTime,
 					std::string{ std::move(messageJson["content"].s()) }
 				);
 			}
 
-			if (messagesJson.size() != 0)
-				lastTimestamp = static_cast<time_t>(messagesJson[messagesJson.size() - 1]["timestamp"].i()) + 1;
-			else if (lastTimestamp == 0)
-				lastTimestamp = time(0);
 			std::this_thread::sleep_for(0.5s);
 		}
 		catch (std::exception exception)
@@ -87,7 +92,7 @@ int main()
 				cpr::Url{ "http://localhost:18080/chat" },
 				cpr::Payload{ {{"author", name}, {"content", message} } }
 			);
-			if(response.status_code != 200 && response.status_code != 201)
+			if (response.status_code != 200 && response.status_code != 201)
 				std::cout << "[Sender] Server connection error detected\n";
 		}
 		catch (const std::exception& e)

@@ -32,7 +32,7 @@ struct GameHistory
 inline auto CreateStorage(const std::string& filename)
 {
 	return sql::make_storage(filename,
-		sql::make_table("words",
+		sql::make_table("word",
 			sql::make_column("id", &Word::id, sql::primary_key().autoincrement()),
 			sql::make_column("word", &Word::text),
 			sql::make_column("difficulty", &Word::difficulty)),

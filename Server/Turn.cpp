@@ -86,7 +86,7 @@ void Turn::EndTurn(std::vector<Player>& players)
 {
 	for (Player& player : players)
 	{
-		player.addScore();
+		player.AddScore();
 	}
 }
 

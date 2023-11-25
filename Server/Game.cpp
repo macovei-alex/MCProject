@@ -1,13 +1,16 @@
 #include "Game.h"
 
-void Game::start() 
+void Game::Start()
 {
 
 }
 
-void Game::pause() {}
+void Game::Pause()
+{
 
-void Game::removePlayer(uint8_t ID)
+}
+
+void Game::RemovePlayer(uint8_t ID)
 {
 	for (int i = 0; i < m_players.size(); i++)
 	{
@@ -42,7 +45,7 @@ Game::Game(const Game& game):
 
 Game::~Game() 
 {
-	
+	/*EMPTY*/
 }
 
 Game& Game::operator=(const Game& game)
@@ -92,47 +95,47 @@ Game& Game::operator=(Game&& other) noexcept
 	return *this;
 }
 
-void Game::setPlayers(std::vector<Player> players)
+void Game::SetPlayers(const std::vector<Player>& players)
 {
 	m_players = players;
 }
 
-std::vector<Player>& Game::getPlayers()
+std::vector<Player>& Game::GetPlayers()
 {
 	return m_players;
 }
 
-void Game::setRoundNo(uint8_t roundNo)
+void Game::SetRoundNo(uint8_t roundNo)
 {
 	m_roundNumber = roundNo;
 }
 
-uint8_t Game::getRoundNo()
+uint8_t Game::GetRoundNo()
 {
 	return m_roundNumber;
 }
 
-void Game::setPlayerToDrawID(uint8_t playerToDrawID)
+void Game::SetPlayerToDrawID(uint8_t playerToDrawID)
 {
 	m_playerToDrawID = playerToDrawID;
 }
 
-uint8_t Game::getPlayerToDrawID()
+uint8_t Game::GetPlayerToDrawID()
 {
 	return m_playerToDrawID;
 }
 
-std::vector<std::string> Game::getShownWords()
+std::vector<std::string> Game::GetShownWords()
 {
 	return m_shownWords;
 }
 
-GameSettings& Game::getGameSettings()
+GameSettings& Game::GetGameSettings()
 {
 	return m_gameSettings;
 }
 
-Turn& Game::getTurn()
+Turn Game::GetTurn()
 {
 	return m_turn;
 }

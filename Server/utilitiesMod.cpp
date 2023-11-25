@@ -1,9 +1,9 @@
 module utilitiesMod;
 
-utils::Message::Message(std::string&& content, std::string&& author, time_t timestamp) :
+utils::Message::Message(std::string&& content, std::string&& author, uint64_t milliseconds) :
 	content{ std::move(content) },
 	author{ std::move(author) },
-	timestamp{ timestamp }
+	timeMilliseconds{ milliseconds }
 {
 	/* EMPTY */
 }

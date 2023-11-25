@@ -2,6 +2,7 @@
 
 #include <format>
 #include <map>
+#include <queue>
 
 #include "utilities.h"
 
@@ -44,7 +45,6 @@ Server& Server::ChatHandlers()
 	// Input server controller
 	auto& putMessage = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::PUT);
 	putMessage([this](const crow::request& request) {
-		char* dateTime = new char[101];
 
 		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
 		std::map<std::string, std::string> urlParamsMap;
@@ -55,23 +55,22 @@ Server& Server::ChatHandlers()
 			urlParamsMap.emplace(std::move(urlParamPair));
 		}
 
+		auto now = std::chrono::system_clock::now();
+		uint64_t timeMillis = std::chrono::duration_cast
+			<std::chrono::milliseconds>
+			(now.time_since_epoch()).count();
 		utils::Message message{
 			std::move(utils::DecodeMessage(urlParamsMap["content"])),
 			std::move(utils::DecodeMessage(urlParamsMap["author"])),
-			time(0)
+			timeMillis
 		};
-		ctime_s(dateTime, 100, &message.timestamp);
-		dateTime[strlen(dateTime) - 1] = '\0';
+
+		std::cout << std::format("[{} at {}]: {}\n",
+			message.author,
+			message.timeMilliseconds,
+			message.content);
 		this->m_chat.emplace_back(std::move(message));
-		for (const auto& message : this->m_chat)
-		{
-			std::cout << std::format("[{} at {}]: {}\n",
-				message.author,
-				dateTime,
-				message.content
-			);
-		}
-		delete[] dateTime;
+
 		return crow::response(200);
 		});
 
@@ -79,19 +78,21 @@ Server& Server::ChatHandlers()
 	// Output server controller
 	auto& getMessages = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::GET);
 	getMessages([this](const crow::request& request) {
-		time_t from = std::stoi(request.url_params.get("from"));
+
+		uint64_t from = std::stoll(request.url_params.get("timeMillis"));
 		const std::string senderName{ std::move(request.url_params.get("author")) };
-		std::vector<crow::json::wvalue> messages;
-		for (int i = this->m_chat.size() - 1; i >= 0 && this->m_chat[i].timestamp >= from; i--)
+
+		std::vector<crow::json::wvalue> messagesQueue;
+		for (int i = this->m_chat.size() - 1; i >= 0 && this->m_chat[i].timeMilliseconds >= from; i--)
 		{
 			if (from == 0 || this->m_chat[i].author != senderName)
-				messages.insert(messages.begin(), crow::json::wvalue{
+				messagesQueue.insert(messagesQueue.begin(), crow::json::wvalue{
 					{"content", this->m_chat[i].content},
 					{"author", this->m_chat[i].author},
-					{"timestamp", this->m_chat[i].timestamp}
-					});
+					{"timeMillis", this->m_chat[i].timeMilliseconds} });
 		}
-		return crow::json::wvalue{ messages };
+		/*std::vector<crow::json::wvalue> messagesVector{ messagesQueue._Get_container().rend(), messagesQueue._Get_container().rbegin() };*/
+		return crow::json::wvalue{ messagesQueue };
 		});
 
 	return *this;
