@@ -2,7 +2,7 @@
 
 #include <format>
 #include <map>
-#include <queue>
+#include <stack>
 
 #include "utilities.h"
 
@@ -82,17 +82,25 @@ Server& Server::ChatHandlers()
 		uint64_t from = std::stoll(request.url_params.get("timeMillis"));
 		const std::string senderName{ std::move(request.url_params.get("author")) };
 
-		std::vector<crow::json::wvalue> messagesQueue;
+		std::stack<crow::json::wvalue> messagesStack;
 		for (int i = this->m_chat.size() - 1; i >= 0 && this->m_chat[i].timeMilliseconds >= from; i--)
 		{
 			if (from == 0 || this->m_chat[i].author != senderName)
-				messagesQueue.insert(messagesQueue.begin(), crow::json::wvalue{
+				messagesStack.push(crow::json::wvalue{
 					{"content", this->m_chat[i].content},
 					{"author", this->m_chat[i].author},
 					{"timeMillis", this->m_chat[i].timeMilliseconds} });
 		}
-		/*std::vector<crow::json::wvalue> messagesVector{ messagesQueue._Get_container().rend(), messagesQueue._Get_container().rbegin() };*/
-		return crow::json::wvalue{ messagesQueue };
+
+		std::vector<crow::json::wvalue> messagesVector;
+		messagesVector.reserve(messagesStack.size());
+		while (!messagesStack.empty())
+		{
+			messagesVector.emplace_back(std::move(messagesStack.top()));
+			messagesStack.pop();
+		}
+
+		return crow::json::wvalue{ messagesVector };
 		});
 
 	return *this;
