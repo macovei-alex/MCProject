@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\jsonKeys.h">
+    <ClInclude Include="..\Common\constantLiterals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

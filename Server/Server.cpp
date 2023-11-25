@@ -1,21 +1,20 @@
 #include "Server.h"
 
 #include <format>
-#include <map>
 #include <stack>
 
-#include "..\Common\jsonKeys.h"
+#include "..\Common\constantLiterals.h"
 
 Server* Server::s_instance = nullptr;
 
 Server::Server() :
-	m_app{},
-	m_chat{},
-	m_lobbyState{ utils::Lobby::player_join },
+	m_app{ },
+	m_chats{ },
+	m_lobbyState{ },
 	m_port{ 0 },
 	m_IPAddress{ "127.0.0.1" }
 {
-	/* Empty */
+	m_chats[0] = {};
 }
 
 Server& Server::GetInstance()
@@ -33,7 +32,7 @@ Server& Server::AllHandlers()
 
 Server& Server::TestHandlers()
 {
-	CROW_ROUTE(m_app, "/")([]() {
+	CROW_ROUTE(m_app, literals::routes::test)([]() {
 		return "Test connection succesful\n";
 		});
 
@@ -43,8 +42,13 @@ Server& Server::TestHandlers()
 Server& Server::ChatHandlers()
 {
 	// Input server controller
-	auto& putMessage = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::PUT);
-	putMessage([this](const crow::request& request) {
+	auto& putMessage = CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::PUT);
+	putMessage([this](const crow::request& request, uint64_t gameID) {
+
+		if (this->m_chats.find(gameID) == this->m_chats.end())
+			return crow::response(404, "Invalid game ID");
+		if (request.body.empty())
+			return crow::response(404, "Empty message");
 
 		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
 		std::map<std::string, std::string> urlParamsMap;
@@ -55,13 +59,10 @@ Server& Server::ChatHandlers()
 			urlParamsMap.emplace(std::move(urlParamPair));
 		}
 
-		auto now = std::chrono::system_clock::now();
-		uint64_t timeMillis = std::chrono::duration_cast
-			<std::chrono::milliseconds>
-			(now.time_since_epoch()).count();
+		uint64_t timeMillis = utils::DateTimeAsInteger(std::chrono::system_clock::now());
 		utils::Message message{
-			std::move(utils::DecodeMessage(urlParamsMap[keys::message::content])),
-			std::move(utils::DecodeMessage(urlParamsMap[keys::message::author])),
+			std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::content])),
+			std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::author])),
 			timeMillis
 		};
 
@@ -69,27 +70,39 @@ Server& Server::ChatHandlers()
 			message.author,
 			message.timeMilliseconds,
 			message.content);
-		this->m_chat.emplace_back(std::move(message));
+		this->m_chats[gameID].emplace_back(std::move(message));
 
 		return crow::response(200);
 		});
 
 
 	// Output server controller
-	auto& getMessages = CROW_ROUTE(m_app, "/chat").methods(crow::HTTPMethod::GET);
-	getMessages([this](const crow::request& request) {
+	auto& getMessages = CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::GET);
+	getMessages([this](const crow::request& request, uint64_t gameID) {
 
-		uint64_t from = std::stoll(request.url_params.get(keys::message::timePoint));
-		const std::string senderName{ std::move(request.url_params.get(keys::message::author))};
+		static const crow::json::wvalue	errorValue{ {
+			{literals::jsonKeys::message::author, literals::error},
+			{literals::jsonKeys::message::content, literals::error},
+			{literals::jsonKeys::message::timePoint, std::to_string(0)}} };
+
+		if (this->m_chats.find(gameID) == this->m_chats.end())
+			return errorValue;
+		if (!request.url_params.get(literals::jsonKeys::message::timePoint))
+			return errorValue;
+
+		auto& chat = this->m_chats[gameID];
+
+		uint64_t from = std::stoll(request.url_params.get(literals::jsonKeys::message::timePoint));
+		const std::string senderName{ std::move(request.url_params.get(literals::jsonKeys::message::author)) };
 
 		std::stack<crow::json::wvalue> messagesStack;
-		for (int i = this->m_chat.size() - 1; i >= 0 && this->m_chat[i].timeMilliseconds >= from; i--)
+		for (int i = chat.size() - 1; i >= 0 && chat[i].timeMilliseconds >= from; i--)
 		{
-			if (from == 0 || this->m_chat[i].author != senderName)
+			if (from == 0 || chat[i].author != senderName)
 				messagesStack.push(crow::json::wvalue{
-					{keys::message::content, this->m_chat[i].content},
-					{keys::message::author, this->m_chat[i].author},
-					{keys::message::timePoint, this->m_chat[i].timeMilliseconds} });
+					{literals::jsonKeys::message::content, chat[i].content},
+					{literals::jsonKeys::message::author, chat[i].author},
+					{literals::jsonKeys::message::timePoint, chat[i].timeMilliseconds} });
 		}
 
 		std::vector<crow::json::wvalue> messagesVector;

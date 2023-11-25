@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 #include <crow.h>
+#include <map>
 
 #include "utilities.h"
-import utilitiesMod;
+// import utilitiesMod;
+#include "utilitiesModTemp.h"
 
 class Server
 {
@@ -34,7 +36,7 @@ private:
 
 private:
 	crow::SimpleApp m_app;
-	std::vector<utils::Message> m_chat;
+	std::map<uint64_t, std::vector<utils::Message>> m_chats;
 	utils::Lobby m_lobbyState;
 
 	uint16_t m_port;

@@ -134,7 +134,7 @@
     <ClCompile Include="ConsoleClient.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\jsonKeys.h" />
+    <ClInclude Include="..\Common\constantLiterals.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
