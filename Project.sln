@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleClient", "ConsoleCli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{BA4BF910-C2E9-4AB0-BC55-DD57C310C2FD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtClient", "QtClient\QtClient\QtClient.vcxproj", "{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{BA4BF910-C2E9-4AB0-BC55-DD57C310C2FD}.Release|x64.Build.0 = Release|x64
 		{BA4BF910-C2E9-4AB0-BC55-DD57C310C2FD}.Release|x86.ActiveCfg = Release|Win32
 		{BA4BF910-C2E9-4AB0-BC55-DD57C310C2FD}.Release|x86.Build.0 = Release|Win32
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Debug|x64.ActiveCfg = Debug|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Debug|x64.Build.0 = Debug|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Debug|x86.ActiveCfg = Debug|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Debug|x86.Build.0 = Debug|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Release|x64.ActiveCfg = Release|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Release|x64.Build.0 = Release|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Release|x86.ActiveCfg = Release|x64
+		{1D1F2AAE-CF2B-3D68-BEA2-54614EEF0BBF}.Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
