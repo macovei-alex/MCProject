@@ -12,7 +12,9 @@ Server::Server() :
 	m_chats{ },
 	m_lobbyState{ },
 	m_port{ 0 },
-	m_IPAddress{ "127.0.0.1" }
+	m_IPAddress{ "127.0.0.1" },
+	m_gamesInProgress{ },
+	m_gamesInProgressWithID{ }
 {
 	m_chats[0] = {};
 }
@@ -186,6 +188,22 @@ void Server::Run()
 		if (m_IPAddress.empty())
 			throw std::exception("IP Address not set");
 		m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
+	}
+	catch (std::exception ex)
+	{
+		std::cout << ex.what() << '\n';
+	}
+}
+
+void Server::Close()
+{
+	try
+	{
+		if (!m_gamesInProgress.empty())
+		{
+			throw std::exception("There are games in progress");
+		}
+		m_app.stop();
 	}
 	catch (std::exception ex)
 	{

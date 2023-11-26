@@ -6,6 +6,7 @@
 #include "utilities.h"
 // import utilitiesMod;
 #include "utilitiesModTemp.h"
+#include "Game.h"
 
 class Server
 {
@@ -26,6 +27,7 @@ public:
 	Server& SetSettingsFromFile(const std::string& filePath = "serverSettings.txt");
 
 	void Run();
+	void Close();
 
 	static Server& GetInstance();
 
@@ -41,5 +43,7 @@ private:
 
 	uint16_t m_port;
 	std::string m_IPAddress;
+	std::vector<Game> m_gamesInProgress;
+	std::map<Game, std::string> m_gamesInProgressWithID;
 	//DBManager& m_db;
 };
