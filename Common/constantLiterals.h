@@ -12,6 +12,7 @@ namespace literals
 			const char content[] = "content";
 			const char timePoint[] = "timePoint";
 		}
+		const char roomID[] = "gameID";
 	}
 
 	namespace routes

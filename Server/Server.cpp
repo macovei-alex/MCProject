@@ -10,13 +10,10 @@ Server* Server::s_instance = nullptr;
 Server::Server() :
 	m_app{ },
 	m_chats{ },
-	m_lobbyState{ },
 	m_port{ 0 },
-	m_IPAddress{ "127.0.0.1" },
-	m_gamesInProgress{ },
-	m_gamesInProgressWithID{ }
+	m_IPAddress{ "127.0.0.1" }
 {
-	m_chats[0] = {};
+	/* empty */
 }
 
 Server& Server::GetInstance()
@@ -44,8 +41,7 @@ Server& Server::TestHandlers()
 Server& Server::ChatHandlers()
 {
 	// Input server controller
-	auto& putMessage = CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::PUT);
-	putMessage([this](const crow::request& request, uint64_t gameID) {
+	CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::PUT)([this](const crow::request& request, uint64_t gameID) {
 
 		if (this->m_chats.find(gameID) == this->m_chats.end())
 			return crow::response(404, "Invalid game ID");
@@ -79,8 +75,7 @@ Server& Server::ChatHandlers()
 
 
 	// Output server controller
-	auto& getMessages = CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::GET);
-	getMessages([this](const crow::request& request, uint64_t gameID) {
+	CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::GET)([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue	errorValue{ {
 			{literals::jsonKeys::message::author, literals::error},
@@ -123,39 +118,44 @@ Server& Server::ChatHandlers()
 
 Server& Server::RoomHandlers()
 {
+	// Create roon
+	CROW_ROUTE(m_app, "/room/new").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
+		uint64_t newGameID = 0;
+		if (!this->m_chats.empty())
+			newGameID = m_chats.rbegin()->first + 1;
+
+		m_chats.insert({ newGameID, {} });
+
+		return crow::json::wvalue{ { {literals::jsonKeys::roomID, newGameID } } };
+		});
+
 	// Player join
-	CROW_ROUTE(m_app, "/playerJoin/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
-		std::string name = request.url_params.get("name");
-		std::string lobbyStateParam = request.url_params.get("lobbyState");
-		if (name.empty() || lobbyStateParam.empty())
-		{
-			return crow::response(404);
-		}
-		this->m_lobbyState = utils::Lobby::player_join;
-		return crow::response(200, "Player joined Lobby");
+	CROW_ROUTE(m_app, "/room/connect/<int>").methods(crow::HTTPMethod::GET)([this](const crow::request& request, uint64_t roomID) {
+
+		if (this->m_chats.find(roomID) == this->m_chats.end())
+			return crow::response(404, "Invalid room ID < " + std::to_string(roomID) + " >");
+		return crow::response(200, "Connection succesful to room < " + std::to_string(roomID) + " >");
 		});
 
 	// Player left
-	CROW_ROUTE(m_app, "/playerLeft/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
+	CROW_ROUTE(m_app, "/room/disconnect/<int>").methods(crow::HTTPMethod::GET)([this](const crow::request& request, uint64_t) {
 		std::string name = request.url_params.get("name");
 		std::string lobbyStateParam = request.url_params.get("lobbyState");
 		if (name.empty() || lobbyStateParam.empty())
 		{
 			return crow::response(404);
 		}
-		this->m_lobbyState = utils::Lobby::player_left;
 		return crow::response(200, "Player left Lobby");
 		});
 
 	// Game begin
-	CROW_ROUTE(m_app, "/gameBegin/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
+	CROW_ROUTE(m_app, "/room/game/begin/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
 		std::string name = request.url_params.get("name");
 		std::string lobbyStateParam = request.url_params.get("lobbyState");
 		if (name.empty() || lobbyStateParam.empty())
 		{
 			return crow::response(404);
 		}
-		this->m_lobbyState = utils::Lobby::game_begin;
 		return crow::response(200, "Game has begun");
 		});
 
@@ -188,22 +188,6 @@ void Server::Run()
 		if (m_IPAddress.empty())
 			throw std::exception("IP Address not set");
 		m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
-	}
-	catch (std::exception ex)
-	{
-		std::cout << ex.what() << '\n';
-	}
-}
-
-void Server::Close()
-{
-	try
-	{
-		if (!m_gamesInProgress.empty())
-		{
-			throw std::exception("There are games in progress");
-		}
-		m_app.stop();
 	}
 	catch (std::exception ex)
 	{

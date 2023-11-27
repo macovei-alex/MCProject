@@ -132,9 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleClient.cpp" />
+    <ClCompile Include="inputHandling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\constantLiterals.h" />
+    <ClInclude Include="inputHandling.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,9 +18,15 @@
     <ClCompile Include="ConsoleClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="inputHandling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\constantLiterals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inputHandling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

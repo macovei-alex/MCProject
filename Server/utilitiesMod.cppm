@@ -16,13 +16,6 @@ namespace utils
 		Message(std::string&& content, std::string&& author, uint64_t milliseconds);
 	};
 
-	export enum Lobby
-	{
-		player_join,
-		player_left,
-		game_begin
-	};
-
 	export std::vector<std::string> SplitToVec(const std::string& str, const std::string& delim);
 	export std::pair<std::string, std::string> SplitToPair(const std::string& str, const std::string& delim);
 	export std::string DecodeMessage(const std::string& message);
