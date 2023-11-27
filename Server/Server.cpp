@@ -41,7 +41,8 @@ Server& Server::TestHandlers()
 Server& Server::ChatHandlers()
 {
 	// Input server controller
-	CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::PUT)([this](const crow::request& request, uint64_t gameID) {
+	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::PUT)
+		([this](const crow::request& request, uint64_t gameID) {
 
 		if (this->m_chats.find(gameID) == this->m_chats.end())
 			return crow::response(404, "Invalid game ID");
@@ -75,7 +76,8 @@ Server& Server::ChatHandlers()
 
 
 	// Output server controller
-	CROW_ROUTE(m_app, literals::routes::gameChatParametrized).methods(crow::HTTPMethod::GET)([this](const crow::request& request, uint64_t gameID) {
+	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::GET)
+		([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue	errorValue{ {
 			{literals::jsonKeys::message::author, literals::error},
@@ -119,7 +121,8 @@ Server& Server::ChatHandlers()
 Server& Server::RoomHandlers()
 {
 	// Create roon
-	CROW_ROUTE(m_app, "/room/new").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
+	CROW_ROUTE(m_app, literals::routes::room::create).methods(crow::HTTPMethod::GET)
+		([this](const crow::request& request) {
 		uint64_t newGameID = 0;
 		if (!this->m_chats.empty())
 			newGameID = m_chats.rbegin()->first + 1;
@@ -130,7 +133,8 @@ Server& Server::RoomHandlers()
 		});
 
 	// Player join
-	CROW_ROUTE(m_app, "/room/connect/<int>").methods(crow::HTTPMethod::GET)([this](const crow::request& request, uint64_t roomID) {
+	CROW_ROUTE(m_app, literals::routes::room::connectParam).methods(crow::HTTPMethod::GET)
+		([this](const crow::request& request, uint64_t roomID) {
 
 		if (this->m_chats.find(roomID) == this->m_chats.end())
 			return crow::response(404, "Invalid room ID < " + std::to_string(roomID) + " >");
@@ -138,7 +142,8 @@ Server& Server::RoomHandlers()
 		});
 
 	// Player left
-	CROW_ROUTE(m_app, "/room/disconnect/<int>").methods(crow::HTTPMethod::GET)([this](const crow::request& request, uint64_t) {
+	CROW_ROUTE(m_app, literals::routes::room::disconnectParam).methods(crow::HTTPMethod::GET)
+		([this](const crow::request& request, uint64_t) {
 		std::string name = request.url_params.get("name");
 		std::string lobbyStateParam = request.url_params.get("lobbyState");
 		if (name.empty() || lobbyStateParam.empty())
@@ -146,17 +151,6 @@ Server& Server::RoomHandlers()
 			return crow::response(404);
 		}
 		return crow::response(200, "Player left Lobby");
-		});
-
-	// Game begin
-	CROW_ROUTE(m_app, "/room/game/begin/").methods(crow::HTTPMethod::GET)([this](const crow::request& request) {
-		std::string name = request.url_params.get("name");
-		std::string lobbyStateParam = request.url_params.get("lobbyState");
-		if (name.empty() || lobbyStateParam.empty())
-		{
-			return crow::response(404);
-		}
-		return crow::response(200, "Game has begun");
 		});
 
 	return *this;

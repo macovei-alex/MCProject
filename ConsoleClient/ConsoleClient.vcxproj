@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clientUtils.cpp" />
     <ClCompile Include="ConsoleClient.cpp" />
     <ClCompile Include="inputHandling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\constantLiterals.h" />
+    <ClInclude Include="clientUtils.h" />
     <ClInclude Include="inputHandling.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

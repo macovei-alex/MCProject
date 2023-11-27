@@ -8,19 +8,12 @@
 #include <crow.h>
 #include <cpr/cpr.h>
 
-#include "..\Common\constantLiterals.h"
 #include "inputHandling.h"
+#include "clientUtils.h"
+#include "..\Common\constantLiterals.h"
 
 bool listeningThreadGoing = true;
 std::string name;
-uint64_t roomID;
-
-inline auto DateTimeFromInteger(uint64_t millis)
-{
-	return std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
-		(std::chrono::duration_cast<std::chrono::seconds>
-			(std::chrono::milliseconds{ millis }));
-}
 
 void listener(uint64_t gameID)
 {
@@ -66,7 +59,7 @@ void listener(uint64_t gameID)
 			for (auto& messageJson : messagesJson)
 			{
 				uint64_t messageTimePointMillis = chr::milliseconds{ messageJson[literals::jsonKeys::message::timePoint].u() }.count();
-				chr::time_point dateTime = DateTimeFromInteger(messageTimePointMillis);
+				auto dateTime = DateTimeFromInteger(messageTimePointMillis);
 
 				std::cout << std::format("[{} at {}]: {}\n",
 					std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
@@ -87,7 +80,7 @@ void listener(uint64_t gameID)
 
 int main()
 {
-	std::stringstream putUrl;
+	uint64_t roomID;
 	std::cout << "Enter your name: ";
 	std::getline(std::cin, name);
 
@@ -97,44 +90,16 @@ int main()
 	switch (option)
 	{
 	case 1:
-		try
-		{
-			auto response = cpr::Get(
-				cpr::Url{ "http://localhost:18080/room/new"},
-				cpr::Parameters{ {literals::jsonKeys::roomID, std::to_string(roomID)} }
-			);
-			if (response.status_code != 200 && response.status_code != 201)
-				std::cout << "[Sender] Communication error: " << response.reason << '\n';
-
-			roomID = crow::json::load(response.text)[literals::jsonKeys::roomID].u();
-			std::cout << "[Sender] New room with roomID < " << roomID << " > created\n";
-		}
-		catch (const std::exception& e)
-		{
+		roomID = CreateRoom();
+		if(roomID == LONG_MAX)
 			listeningThreadGoing = false;
-			std::cout << e.what();
-		}
 		break;
 	case 2:
-		try
-		{
-			roomID = GetInt();
-			std::cin.get();
-			auto response = cpr::Get(
-				cpr::Url{ "http://localhost:18080/room/connect/" + std::to_string(roomID) }
-			);
-			if (response.status_code != 200 && response.status_code != 201)
-				std::cout << "[Sender] Communication error: " << response.reason << '\n';
-
-			if (response.status_code != 200 && response.status_code != 201)
-				throw std::exception(("[Sender] Invalid room ID < " + std::to_string(roomID) + " >").c_str());
-			std::cout << "[Sender] Connected to room < " << roomID << " > created\n";
-		}
-		catch (const std::exception& e)
-		{
+		std::cout << "Enter room ID: ";
+		roomID = GetInt();
+		std::cin.get();
+		if (!ConnectToRoom(roomID))
 			listeningThreadGoing = false;
-			std::cout << e.what();
-		}
 		break;
 	case 3:
 		listeningThreadGoing = false;
@@ -142,7 +107,8 @@ int main()
 	}
 
 	std::thread listeningThread(listener, roomID);
-	putUrl << literals::routes::baseAddress << "/game/chat/" << roomID;
+	std::stringstream putUrl;
+	putUrl << literals::routes::baseAddress << literals::routes::game::chat << '/' << roomID;
 
 	while (listeningThreadGoing)
 	{
