@@ -8,7 +8,6 @@
 #include <crow.h>
 #include <cpr/cpr.h>
 
-#include "inputHandling.h"
 #include "clientUtils.h"
 #include "..\Common\constantLiterals.h"
 
@@ -18,12 +17,10 @@ std::string name;
 void listener(uint64_t gameID)
 {
 	using namespace std::literals::chrono_literals;
-	namespace chr = std::chrono;
 
 	std::stringstream getUrl;
 	getUrl << literals::routes::baseAddress << "/game/chat/" << gameID;
-
-	std::cout << "[Listener] Listening to " << getUrl.str() << '\n';
+	std::cout << std::format("[Listener] Listening to {}\n", getUrl.str());
 
 	uint64_t lastTimeMillis = 0;
 	bool serverErrorDetected = false;
@@ -53,13 +50,12 @@ void listener(uint64_t gameID)
 			if (messagesJson.size() != 0)
 				lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timePoint].u() + 1;
 			else if (lastTimeMillis == 0)
-				lastTimeMillis = chr::duration_cast<chr::milliseconds>
-				(chr::system_clock::now().time_since_epoch()).count();
+				lastTimeMillis = utils::NowAsInteger();
 
 			for (auto& messageJson : messagesJson)
 			{
-				uint64_t messageTimePointMillis = chr::milliseconds{ messageJson[literals::jsonKeys::message::timePoint].u() }.count();
-				auto dateTime = DateTimeFromInteger(messageTimePointMillis);
+				uint64_t messageTimePointMillis = messageJson[literals::jsonKeys::message::timePoint].u();
+				auto dateTime = utils::DateTimeFromInteger(messageTimePointMillis);
 
 				std::cout << std::format("[{} at {}]: {}\n",
 					std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
@@ -84,26 +80,31 @@ int main()
 	std::cout << "Enter your name: ";
 	std::getline(std::cin, name);
 
-	PrintMenu1();
-	int option = GetInt();
-	std::cin.get();
+	utils::PrintMenu1();
+	uint8_t option = utils::GetInt();
 	switch (option)
 	{
 	case 1:
-		roomID = CreateRoom();
-		if(roomID == LONG_MAX)
-			listeningThreadGoing = false;
+		roomID = utils::CreateRoom();
+		if (roomID == LONG_MAX)
+		{
+			std::cin.get();
+			std::cout << "Press enter to continue...";
+			return 1;
+		}
 		break;
 	case 2:
 		std::cout << "Enter room ID: ";
-		roomID = GetInt();
-		std::cin.get();
-		if (!ConnectToRoom(roomID))
-			listeningThreadGoing = false;
+		roomID = utils::GetInt();
+		if (!utils::ConnectToRoom(roomID))
+		{
+			std::cin.get();
+			std::cout << "Press enter to continue...";
+			return 1;
+		}
 		break;
 	case 3:
-		listeningThreadGoing = false;
-		break;
+		return 0;
 	}
 
 	std::thread listeningThread(listener, roomID);

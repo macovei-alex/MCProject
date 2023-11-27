@@ -7,14 +7,44 @@
 
 #include "..\Common\constantLiterals.h"
 
-chr::time_point<chr::system_clock, chr::seconds> DateTimeFromInteger(uint64_t millis)
+uint8_t utils::GetInt()
 {
-	return std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
-		(std::chrono::duration_cast<std::chrono::seconds>
-			(std::chrono::milliseconds{ millis }));
+	uint64_t input;
+	std::cin >> input;
+	std::cin.get();
+	return input;
 }
 
-uint64_t CreateRoom()
+std::string&& utils::GetString()
+{
+	std::string input;
+	std::getline(std::cin, input);
+	return std::move(input);
+}
+
+void utils::PrintMenu1()
+{
+	std::cout << "Options:\n"
+		<< "\t1. Create a new room\n"
+		<< "\t2. Join an existing room\n"
+		<< "\t3. Exit\n"
+		<< "Your option: ";
+}
+
+chr::time_point<chr::system_clock, chr::seconds> utils::DateTimeFromInteger(uint64_t millis)
+{
+	return chr::time_point<chr::system_clock, chr::seconds>
+		(chr::duration_cast<chr::seconds>
+			(chr::milliseconds{ millis }));
+}
+
+uint64_t utils::NowAsInteger()
+{
+	return chr::duration_cast<chr::milliseconds>
+		(chr::system_clock::now().time_since_epoch()).count();
+}
+
+uint64_t utils::CreateRoom()
 {
 	try
 	{
@@ -37,7 +67,7 @@ uint64_t CreateRoom()
 	}
 }
 
-bool ConnectToRoom(uint64_t roomID)
+bool utils::ConnectToRoom(uint64_t roomID)
 {
 	try
 	{
@@ -48,7 +78,7 @@ bool ConnectToRoom(uint64_t roomID)
 
 		if (response.status_code != 200 && response.status_code != 201)
 			throw std::exception(std::format("[Sender] Invalid room ID < {} >\n", roomID).c_str());
-		std::cout << std::format("[Sender] Connected to room < {} > created\n", roomID);
+		std::cout << std::format("[Sender] Connected to room < {} >\n", roomID);
 	}
 	catch (const std::exception& e)
 	{
