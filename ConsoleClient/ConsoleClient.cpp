@@ -78,30 +78,38 @@ int main()
 {
 	std::string username;
 	std::string password;
+	std::string repeatPassword;
 
 	utils::PrintMenu1();
 	uint8_t option = utils::GetInt("Your option: ");
 	switch (option)
 	{
 	case 1:
-		username = utils::GetString("Enter your username: ");
-		password = utils::GetString("Enter your password: ");
-		if (!utils::SignIn(username, password))
-		{
-			std::cout << "Press enter to continue...";
-			std::cin.get();
-			return 1;
-		}
+		bool isSignInCorrect;
+		do {
+			username = utils::GetString("Enter your username: ");
+			password = utils::GetString("Enter your password: ");
+			isSignInCorrect = utils::SignIn(username, password);
+			if (!isSignInCorrect)
+			{
+				isSignInCorrect = false;
+				std::cout << "Please try again\n";
+			}
+		} while (!isSignInCorrect);
 		break;
 	case 2:
-		username = utils::GetString("Enter your username: ");
-		password = utils::GetString("Enter your password: ");
-		if (!utils::SignIn(username, password))
-		{
-			std::cout << "Press enter to continue...";
-			std::cin.get();
-			return 1;
-		}
+		bool isSamePassord;
+		do {
+			isSamePassord = true;
+			username = utils::GetString("Enter your username: ");
+			password = utils::GetString("Enter your password: ");
+			repeatPassword = utils::GetString("Repeat your password: ");
+			if (password != repeatPassword)
+			{
+				std::cout << "Passwords do not match. Please try again\n";
+				isSamePassord = false;
+			}
+		} while (!isSamePassord);
 		break;
 	case 3:
 		return 0;
@@ -113,23 +121,21 @@ int main()
 	switch (option)
 	{
 	case 1:
-		roomID = utils::CreateRoom();
-		if (roomID == LONG_MAX)
-		{
-			std::cout << "Press enter to continue...";
-			std::cin.get();
-			return 1;
-		}
+		do {
+			roomID = utils::CreateRoom();
+			if (roomID == LONG_MAX)
+				std::cout << "Invalid room ID. Please try again\n";
+		} while (roomID == LONG_MAX);
 		break;
 	case 2:
-		std::cout << "Enter room ID: ";
-		roomID = utils::GetInt();
-		if (!utils::ConnectToRoom(roomID))
-		{
-			std::cout << "Press enter to continue...";
-			std::cin.get();
-			return 1;
-		}
+		bool isGoodConnection;
+		do {
+			std::cout << "Enter room ID: ";
+			roomID = utils::GetInt();
+			isGoodConnection = utils::ConnectToRoom(roomID);
+			if (!isGoodConnection)
+				std::cout << std::format("Bad room ID < {} >\n", roomID);
+		} while (!isGoodConnection);
 		break;
 	case 3:
 		return 0;

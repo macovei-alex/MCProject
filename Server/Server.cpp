@@ -46,9 +46,9 @@ Server& Server::ChatHandlers()
 		([this](const crow::request& request, uint64_t gameID) {
 
 		if (this->m_chats.find(gameID) == this->m_chats.end())
-			return crow::response(404, "Invalid game ID");
+			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
 		if (request.body.empty())
-			return crow::response(404, "Empty message");
+			return crow::response(404, "Empty request body");
 
 		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
 		std::map<std::string, std::string> urlParamsMap;
@@ -59,12 +59,21 @@ Server& Server::ChatHandlers()
 			urlParamsMap.emplace(std::move(urlParamPair));
 		}
 
-		uint64_t timeMillis = utils::DateTimeAsInteger(std::chrono::system_clock::now());
-		utils::Message message{
-			std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::content])),
-			std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::author])),
-			timeMillis
-		};
+		utils::Message message;
+		try 
+		{
+			uint64_t timeMillis = utils::DateTimeAsInteger(std::chrono::system_clock::now());
+			 message = utils::Message{
+				std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::content])),
+				std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::author])),
+				timeMillis
+			};
+		}
+		catch (std::exception ex)
+		{
+			std::cerr << ex.what();
+			return crow::response(404, "Invalid parameter descriptors");
+		}
 
 		std::cout << std::format("[{} at {}]: {}\n",
 			message.author,
@@ -171,11 +180,48 @@ Server& Server::AccountHandlers()
 {
 	CROW_ROUTE(m_app, literals::routes::sign::in).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request) {
+
 		std::string username, password;
 		try
 		{
-			username = request.url_params.get(literals::jsonKeys::account::username);
-			password = request.url_params.get(literals::jsonKeys::account::password);
+			username = std::move(request.url_params.get(literals::jsonKeys::account::username));
+			password = std::move(request.url_params.get(literals::jsonKeys::account::password));
+		}
+		catch (const std::exception& ex)
+		{
+			std::cout << ex.what();
+			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
+		}
+		if (username.empty() || password.empty())
+			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
+
+		// try log into database
+
+		return crow::response(200, std::format("Player logged in as < {} >", username));
+		});
+
+
+	CROW_ROUTE(m_app, literals::routes::sign::up).methods(crow::HTTPMethod::POST)
+		([this](const crow::request& request) {
+
+		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
+		std::map<std::string, std::string> urlParamsMap;
+
+		for (const auto& informationExpression : informationVector)
+		{
+			auto urlParamPair{ std::move(utils::SplitToPair(informationExpression, "=")) };
+			urlParamsMap.emplace(std::move(urlParamPair));
+		}
+
+		if(urlParamsMap.find(literals::jsonKeys::account::username) == urlParamsMap.end() 
+		|| urlParamsMap.find(literals::jsonKeys::account::password) == urlParamsMap.end())
+			return crow::response(404, "Invalid parameter descriptors");
+
+		std::string username, password;
+		try
+		{
+			username = urlParamsMap[literals::jsonKeys::account::username];
+			password = urlParamsMap[literals::jsonKeys::account::password];
 		}
 		catch (std::exception ex)
 		{
@@ -185,7 +231,7 @@ Server& Server::AccountHandlers()
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
-		// try log in into database
+		// try create account into database and log in
 
 		return crow::response(200, std::format("Player logged in as < {} >", username));
 		});

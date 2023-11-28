@@ -31,18 +31,22 @@ std::string utils::GetString(const char* message)
 
 void utils::PrintMenu1()
 {
+	std::cout << "\n------------------------------------------\n";
 	std::cout << "Options:\n"
 		<< "\t1. Sign into an existing account\n"
 		<< "\t2. Create a new account\n"
 		<< "\t3. Exit\n";
+	std::cout << "------------------------------------------\n\n";
 }
 
 void utils::PrintMenu2()
 {
+	std::cout << "\n------------------------------------------\n";
 	std::cout << "Options:\n"
 		<< "\t1. Create a new room\n"
 		<< "\t2. Join an existing room\n"
 		<< "\t3. Exit\n";
+	std::cout << "------------------------------------------\n\n";
 }
 
 chr::time_point<chr::system_clock, chr::seconds> utils::DateTimeFromInteger(uint64_t millis)
@@ -117,8 +121,8 @@ bool utils::SignIn(const std::string& username, const std::string& password)
 			});
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
-		std::cout << std::format("[Sender] {}\n", response.reason);
+			throw std::exception(std::format("[Sender] {}\n", response.text).c_str());
+		std::cout << std::format("[Sender] {}\n", response.text);
 		return true;
 	}
 	catch (const std::exception& e)
@@ -137,13 +141,15 @@ bool utils::SignUp(const std::string& username, const std::string& password)
 
 		auto response = cpr::Post(
 			cpr::Url{ url.str() },
-			cpr::Parameters{
+			cpr::Payload{
 				{literals::jsonKeys::account::username, username},
 				{literals::jsonKeys::account::password, password}
 			});
 
 		if (response.status_code != 200 && response.status_code != 201)
 			throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
+
+		std::cout << std::format("[Sender] Account created with username < {} >\n", username);
 		std::cout << std::format("[Sender] Signed up as < {} >\n", username);
 		return true;
 	}

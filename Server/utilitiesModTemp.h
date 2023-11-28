@@ -14,6 +14,7 @@ namespace utils
 
 		Message() = default;
 		Message(std::string&& content, std::string&& author, uint64_t milliseconds);
+		Message(const Message& other) = default;
 	};
 
 	std::vector<std::string> SplitToVec(const std::string& str, const std::string& delim);
