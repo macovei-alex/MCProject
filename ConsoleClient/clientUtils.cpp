@@ -31,22 +31,23 @@ std::string utils::GetString(const char* message)
 
 void utils::PrintMenu1()
 {
-	std::cout << "\n------------------------------------------\n";
+	std::cout << "\n******************************************\n";
 	std::cout << "Options:\n"
 		<< "\t1. Sign into an existing account\n"
 		<< "\t2. Create a new account\n"
 		<< "\t3. Exit\n";
-	std::cout << "------------------------------------------\n\n";
+	std::cout << "******************************************\n\n";
 }
 
 void utils::PrintMenu2()
 {
-	std::cout << "\n------------------------------------------\n";
+	std::cout << "\n******************************************\n";
 	std::cout << "Options:\n"
 		<< "\t1. Create a new room\n"
 		<< "\t2. Join an existing room\n"
-		<< "\t3. Exit\n";
-	std::cout << "------------------------------------------\n\n";
+		<< "\t3. Sign out\n"
+		<< "\t4. Exit\n";
+	std::cout << "******************************************\n\n";
 }
 
 chr::time_point<chr::system_clock, chr::seconds> utils::DateTimeFromInteger(uint64_t millis)

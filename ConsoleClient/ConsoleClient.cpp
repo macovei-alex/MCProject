@@ -76,10 +76,13 @@ void listener(uint64_t gameID, const std::string& username)
 
 int main()
 {
+	const std::string returnCommand = "/b";
+
 	std::string username;
 	std::string password;
 	std::string repeatPassword;
 
+menu1:
 	utils::PrintMenu1();
 	uint8_t option = utils::GetInt("Your option: ");
 	switch (option)
@@ -87,13 +90,17 @@ int main()
 	case 1:
 		bool isSignInCorrect;
 		do {
-			username = utils::GetString("Enter your username: ");
-			password = utils::GetString("Enter your password: ");
+			username = utils::GetString(std::format("Enter your username (or \"{}\" to go back to the menu): ", returnCommand).c_str());
+			if (username == "_b")
+				goto menu1;
+			password = utils::GetString(std::format("Enter your password (or \"{}\" to go back to the menu): ", returnCommand).c_str());
+			if (password == "_b")
+				goto menu1;
 			isSignInCorrect = utils::SignIn(username, password);
 			if (!isSignInCorrect)
 			{
 				isSignInCorrect = false;
-				std::cout << "Please try again\n";
+				std::cout << "Please try again.\n";
 			}
 		} while (!isSignInCorrect);
 		break;
@@ -101,9 +108,15 @@ int main()
 		bool isSamePassord;
 		do {
 			isSamePassord = true;
-			username = utils::GetString("Enter your username: ");
-			password = utils::GetString("Enter your password: ");
-			repeatPassword = utils::GetString("Repeat your password: ");
+			username = utils::GetString(std::format("Enter your username (or \"{}\" to go back to the menu): ", returnCommand).c_str());
+			if (username == returnCommand)
+				goto menu1;
+			password = utils::GetString(std::format("Enter your password (or \"{}\" to go back to the menu): ", returnCommand).c_str());
+			if (password == returnCommand)
+				goto menu1;
+			repeatPassword = utils::GetString(std::format("Repeat the password (or \"{}\" to go back to the menu): ", returnCommand).c_str());
+			if (repeatPassword == returnCommand)
+				goto menu1;
 			if (password != repeatPassword)
 			{
 				std::cout << "Passwords do not match. Please try again\n";
@@ -115,6 +128,9 @@ int main()
 		return 0;
 	}
 
+	char answer = 'y';
+
+menu2:
 	utils::PrintMenu2();
 	option = utils::GetInt("Your option: ");
 	uint64_t roomID;
@@ -124,8 +140,14 @@ int main()
 		do {
 			roomID = utils::CreateRoom();
 			if (roomID == LONG_MAX)
-				std::cout << "Invalid room ID. Please try again\n";
-		} while (roomID == LONG_MAX);
+			{
+				std::cout << "Invalid room ID. Do you want to try again? [y/n]\n"
+					<< "Your answer: ";
+				std::cin >> answer;
+			}
+		} while (roomID == LONG_MAX && answer == 'y');
+		if (answer == 'n')
+			goto menu2;
 		break;
 	case 2:
 		bool isGoodConnection;
@@ -134,10 +156,18 @@ int main()
 			roomID = utils::GetInt();
 			isGoodConnection = utils::ConnectToRoom(roomID);
 			if (!isGoodConnection)
-				std::cout << std::format("Bad room ID < {} >\n", roomID);
-		} while (!isGoodConnection);
+			{
+				std::cout << std::format("Do you want to try again? [y/n]\n", roomID)
+					<< "Your answer: ";
+				std::cin >> answer;
+			}
+		} while (!isGoodConnection && answer == 'y');
+		if(answer == 'n')
+			goto menu2;
 		break;
 	case 3:
+		goto menu1;
+	case 4:
 		return 0;
 	}
 
