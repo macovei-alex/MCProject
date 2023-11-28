@@ -87,18 +87,26 @@ Server& Server::ChatHandlers()
 
 		if (this->m_chats.find(gameID) == this->m_chats.end())
 			return errorValue;
-		if (!request.url_params.get(literals::jsonKeys::message::timePoint))
-			return errorValue;
 
 		auto& chat = this->m_chats[gameID];
 
-		uint64_t from = std::stoll(request.url_params.get(literals::jsonKeys::message::timePoint));
-		const std::string senderName{ std::move(request.url_params.get(literals::jsonKeys::message::author)) };
+		uint64_t start;
+		std::string author;
+		try
+		{
+			start = std::stoll(request.url_params.get(literals::jsonKeys::message::timePoint));
+			author = std::move(request.url_params.get(literals::jsonKeys::message::author));
+		}
+		catch (std::exception ex)
+		{
+			std::cerr << ex.what();
+			return errorValue;
+		}
 
 		std::stack<crow::json::wvalue> messagesStack;
-		for (int i = chat.size() - 1; i >= 0 && chat[i].timeMilliseconds >= from; i--)
+		for (int i = chat.size() - 1; i >= 0 && chat[i].timeMilliseconds >= start; i--)
 		{
-			if (from == 0 || chat[i].author != senderName)
+			if (start == 0 || chat[i].author != author)
 				messagesStack.push(crow::json::wvalue{
 					{literals::jsonKeys::message::content, chat[i].content},
 					{literals::jsonKeys::message::author, chat[i].author},

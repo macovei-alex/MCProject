@@ -68,7 +68,7 @@ uint64_t utils::CreateRoom()
 		auto response = cpr::Get(cpr::Url{ url.str() });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			std::cout << std::format("[Sender] Communication error: {}\n", response.reason);
+			std::cout << std::format("[Sender] {}\n", response.reason);
 
 		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::room::roomID].u();
 		std::cout << std::format("[Sender] New room with roomID < {} > created\n", roomID);
