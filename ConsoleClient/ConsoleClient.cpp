@@ -12,9 +12,8 @@
 #include "..\Common\constantLiterals.h"
 
 bool listeningThreadGoing = true;
-std::string name;
 
-void listener(uint64_t gameID)
+void listener(uint64_t gameID, const std::string& username)
 {
 	using namespace std::literals::chrono_literals;
 
@@ -32,13 +31,14 @@ void listener(uint64_t gameID)
 			auto response = cpr::Get(
 				cpr::Url{ getUrl.str() },
 				cpr::Parameters{
-					{literals::jsonKeys::message::author, name},
-					{literals::jsonKeys::message::timePoint, std::to_string(lastTimeMillis)} });
+					{literals::jsonKeys::message::author, username},
+					{literals::jsonKeys::message::timePoint, std::to_string(lastTimeMillis)}
+				});
 			if (response.status_code != 200 && response.status_code != 201)
 			{
 				if (!serverErrorDetected)
 				{
-					std::cout << "[Listener] Communication error: " << response.reason << '\n';
+					std::cout << std::format("[Listener] {}\n", response.reason);
 					serverErrorDetected = true;
 				}
 				continue;
@@ -76,20 +76,48 @@ void listener(uint64_t gameID)
 
 int main()
 {
-	uint64_t roomID;
-	std::cout << "Enter your name: ";
-	std::getline(std::cin, name);
+	std::string username;
+	std::string password;
 
 	utils::PrintMenu1();
-	uint8_t option = utils::GetInt();
+	uint8_t option = utils::GetInt("Your option: ");
+	switch (option)
+	{
+	case 1:
+		username = utils::GetString("Enter your username: ");
+		password = utils::GetString("Enter your password: ");
+		if (!utils::SignIn(username, password))
+		{
+			std::cout << "Press enter to continue...";
+			std::cin.get();
+			return 1;
+		}
+		break;
+	case 2:
+		username = utils::GetString("Enter your username: ");
+		password = utils::GetString("Enter your password: ");
+		if (!utils::SignIn(username, password))
+		{
+			std::cout << "Press enter to continue...";
+			std::cin.get();
+			return 1;
+		}
+		break;
+	case 3:
+		return 0;
+	}
+
+	utils::PrintMenu2();
+	option = utils::GetInt("Your option: ");
+	uint64_t roomID;
 	switch (option)
 	{
 	case 1:
 		roomID = utils::CreateRoom();
 		if (roomID == LONG_MAX)
 		{
-			std::cin.get();
 			std::cout << "Press enter to continue...";
+			std::cin.get();
 			return 1;
 		}
 		break;
@@ -98,8 +126,8 @@ int main()
 		roomID = utils::GetInt();
 		if (!utils::ConnectToRoom(roomID))
 		{
-			std::cin.get();
 			std::cout << "Press enter to continue...";
+			std::cin.get();
 			return 1;
 		}
 		break;
@@ -107,7 +135,7 @@ int main()
 		return 0;
 	}
 
-	std::thread listeningThread(listener, roomID);
+	std::thread listeningThread(listener, roomID, username);
 	std::stringstream putUrl;
 	putUrl << literals::routes::baseAddress << literals::routes::game::chat << '/' << roomID;
 
@@ -120,11 +148,11 @@ int main()
 			auto response = cpr::Put(
 				cpr::Url{ putUrl.str() },
 				cpr::Payload{
-					{literals::jsonKeys::message::author, name},
+					{literals::jsonKeys::message::author, username},
 					{literals::jsonKeys::message::content, message} }
 			);
 			if (response.status_code != 200 && response.status_code != 201)
-				std::cout << "[Sender] Server connection error detected\n";
+				std::cout << std::format("[Sender] {}\n", response.reason);
 		}
 		catch (const std::exception& e)
 		{

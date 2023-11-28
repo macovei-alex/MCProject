@@ -19,6 +19,7 @@ public:
 	Server& TestHandlers();
 	Server& ChatHandlers();
 	Server& RoomHandlers();
+	Server& AccountHandlers();
 	Server& DrawingHandlers();
 
 	Server& IPAddress(const std::string& IPAddress);

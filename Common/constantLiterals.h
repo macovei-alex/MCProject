@@ -13,7 +13,16 @@ namespace literals
 			const char timePoint[] = "timePoint";
 		}
 
-		const char roomID[] = "roomID";
+		namespace room 
+		{
+			const char roomID[] = "roomID";
+		}
+
+		namespace account
+		{
+			const char username[] = "username";
+			const char password[] = "password";
+		}
 	}
 
 	namespace routes
@@ -34,6 +43,12 @@ namespace literals
 			constexpr char connectParam[] = "/room/connect/<int>";
 			constexpr char disconnect[] = "/room/disconnect";
 			constexpr char disconnectParam[] = "/room/disconnect/<int>";
+		}
+
+		namespace sign
+		{
+			constexpr char in[] = "/sign/in";
+			constexpr char up[] = "/sign/up";
 		}
 	}
 }

@@ -25,7 +25,7 @@ Server& Server::GetInstance()
 
 Server& Server::AllHandlers()
 {
-	this->TestHandlers().ChatHandlers().RoomHandlers().DrawingHandlers();
+	this->TestHandlers().ChatHandlers().RoomHandlers().AccountHandlers().DrawingHandlers();
 	return *this;
 }
 
@@ -40,6 +40,7 @@ Server& Server::TestHandlers()
 
 Server& Server::ChatHandlers()
 {
+
 	// Input server controller
 	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::PUT)
 		([this](const crow::request& request, uint64_t gameID) {
@@ -120,7 +121,8 @@ Server& Server::ChatHandlers()
 
 Server& Server::RoomHandlers()
 {
-	// Create roon
+
+	// Create roon controller
 	CROW_ROUTE(m_app, literals::routes::room::create).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request) {
 		uint64_t newGameID = 0;
@@ -129,20 +131,21 @@ Server& Server::RoomHandlers()
 
 		m_chats.insert({ newGameID, {} });
 
-		return crow::json::wvalue{ { {literals::jsonKeys::roomID, newGameID } } };
+		return crow::json::wvalue{ { {literals::jsonKeys::room::roomID, newGameID } } };
 		});
 
-	// Player join
+
+	// Connect to room controller
 	CROW_ROUTE(m_app, literals::routes::room::connectParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t roomID) {
 
 		if (this->m_chats.find(roomID) == this->m_chats.end())
-			return crow::response(404, "Invalid room ID < " + std::to_string(roomID) + " >");
-		return crow::response(200, "Connection succesful to room < " + std::to_string(roomID) + " >");
+			return crow::response(404, std::format("Invalid room ID < {} >", roomID));
+		return crow::response(200, std::format("Connection to room < {} > successful", roomID));
 		});
 
-	// Player left
-	CROW_ROUTE(m_app, literals::routes::room::disconnectParam).methods(crow::HTTPMethod::GET)
+
+	/*CROW_ROUTE(m_app, literals::routes::room::disconnectParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t) {
 		std::string name = request.url_params.get("name");
 		std::string lobbyStateParam = request.url_params.get("lobbyState");
@@ -151,6 +154,32 @@ Server& Server::RoomHandlers()
 			return crow::response(404);
 		}
 		return crow::response(200, "Player left Lobby");
+		});*/
+
+	return *this;
+}
+
+Server& Server::AccountHandlers()
+{
+	CROW_ROUTE(m_app, literals::routes::sign::in).methods(crow::HTTPMethod::GET)
+		([this](const crow::request& request) {
+		std::string username, password;
+		try
+		{
+			username = request.url_params.get(literals::jsonKeys::account::username);
+			password = request.url_params.get(literals::jsonKeys::account::password);
+		}
+		catch (std::exception ex)
+		{
+			std::cout << ex.what();
+			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
+		}
+		if (username.empty() || password.empty())
+			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
+
+		// try log in into database
+
+		return crow::response(200, std::format("Player logged in as < {} >", username));
 		});
 
 	return *this;
