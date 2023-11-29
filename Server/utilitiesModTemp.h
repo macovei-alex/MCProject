@@ -12,9 +12,12 @@ namespace utils
 		std::string author;
 		uint64_t timeMilliseconds;
 
-		Message() = default;
-		Message(std::string&& content, std::string&& author, uint64_t milliseconds);
-		Message(const Message& other) = default;
+		Message() noexcept = default;
+		Message(std::string&& content, std::string&& author, uint64_t milliseconds) noexcept;
+		Message(const Message& other) noexcept = default;
+		Message(Message&& other) noexcept = default;
+		Message& operator=(const Message& other) noexcept = default;
+		Message& operator=(Message&& other) noexcept = default;
 	};
 
 	std::vector<std::string> SplitToVec(const std::string& str, const std::string& delim);
