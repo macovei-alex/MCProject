@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <map>
 
 namespace utils
 {
@@ -21,7 +22,10 @@ namespace utils
 	};
 
 	std::vector<std::string> SplitToVec(const std::string& str, const std::string& delim);
+	// Daca functia de mai sus intoarce un std::vector&&, atunci se creeaza o eroare la instructiunea [return std::move(result);]
+
 	std::pair<std::string, std::string> SplitToPair(const std::string& str, const std::string& delim);
 	std::string DecodeMessage(const std::string& message);
 	uint64_t DateTimeAsInteger(std::chrono::system_clock::time_point dateTime);
+	std::map<std::string, std::string> ParseRequestBody(const std::string& requestBody);
 }

@@ -110,7 +110,7 @@ void Game::SetRoundNo(uint8_t roundNo)
 	m_roundNumber = roundNo;
 }
 
-uint8_t Game::GetRoundNo()
+uint8_t Game::GetRoundNumber()
 {
 	return m_roundNumber;
 }

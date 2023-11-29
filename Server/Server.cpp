@@ -50,35 +50,24 @@ Server& Server::ChatHandlers()
 		if (request.body.empty())
 			return crow::response(404, "Empty request body");
 
-		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
-		std::map<std::string, std::string> urlParamsMap;
+		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
-		for (const auto& informationExpression : informationVector)
-		{
-			auto urlParamPair{ std::move(utils::SplitToPair(informationExpression, "=")) };
-			urlParamsMap.emplace(std::move(urlParamPair));
-		}
+		auto contentIterator = jsonMap.find(literals::jsonKeys::message::content);
+		auto authorIterator = jsonMap.find(literals::jsonKeys::message::author);
+		if (contentIterator == jsonMap.end() || authorIterator == jsonMap.end())
+			return crow::response(404, "Invalid parameter keys");
 
-		utils::Message message;
-		try
-		{
-			uint64_t timeMillis = utils::DateTimeAsInteger(std::chrono::system_clock::now());
-			message = utils::Message{
-			   std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::content])),
-			   std::move(utils::DecodeMessage(urlParamsMap[literals::jsonKeys::message::author])),
-			   timeMillis
-			};
-		}
-		catch (std::exception ex)
-		{
-			std::cerr << ex.what();
-			return crow::response(404, "Invalid parameter descriptors");
-		}
+		utils::Message message{
+			utils::DecodeMessage(contentIterator->second),
+			utils::DecodeMessage(authorIterator->second),
+			utils::DateTimeAsInteger(std::chrono::system_clock::now())
+		};
 
 		std::cout << std::format("[{} at {}]: {}\n",
 			message.author,
 			message.timeMilliseconds,
 			message.content);
+
 		this->m_chats[gameID].emplace_back(std::move(message));
 
 		return crow::response(200);
@@ -89,22 +78,25 @@ Server& Server::ChatHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue	errorValue{ {
+		static const crow::json::wvalue	errorValue{ std::vector<crow::json::wvalue>{{
 			{literals::jsonKeys::message::author, literals::error},
 			{literals::jsonKeys::message::content, literals::error},
-			{literals::jsonKeys::message::timePoint, std::to_string(0)}} };
+			{literals::jsonKeys::message::timePoint, "0"}}} };
 
 		if (this->m_chats.find(gameID) == this->m_chats.end())
 			return errorValue;
 
 		auto& chat = this->m_chats[gameID];
 
+		if (chat.empty())
+			return crow::json::wvalue{ std::vector<crow::json::wvalue>{} };
+
 		uint64_t start;
 		std::string author;
 
-		try 
+		try
 		{
-			start = std::stoll(request.url_params.get(literals::jsonKeys::message::timePoint));
+			start = std::stoull(request.url_params.get(literals::jsonKeys::message::timePoint));
 			author = std::move(request.url_params.get(literals::jsonKeys::message::author));
 		}
 		catch (std::exception ex)
@@ -117,10 +109,11 @@ Server& Server::ChatHandlers()
 		for (int i = chat.size() - 1; i >= 0 && chat[i].timeMilliseconds >= start; i--)
 		{
 			if (chat[i].author != author || start == 0)
-				messagesStack.push(crow::json::wvalue{
+				messagesStack.emplace(crow::json::wvalue{
 					{literals::jsonKeys::message::content, chat[i].content},
 					{literals::jsonKeys::message::author, chat[i].author},
-					{literals::jsonKeys::message::timePoint, chat[i].timeMilliseconds} });
+					{literals::jsonKeys::message::timePoint, chat[i].timeMilliseconds}
+					});
 		}
 
 		std::vector<crow::json::wvalue> messagesVector;
@@ -130,7 +123,7 @@ Server& Server::ChatHandlers()
 			messagesVector.emplace_back(std::move(messagesStack.top()));
 			messagesStack.pop();
 		}
-
+		std::cout << crow::json::wvalue{ messagesVector }.dump();
 		return crow::json::wvalue{ messagesVector };
 			});
 
@@ -143,13 +136,14 @@ Server& Server::RoomHandlers()
 	// Create roon controller
 	CROW_ROUTE(m_app, literals::routes::room::create).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request) {
-		uint64_t newGameID = 0;
+		uint64_t newRoomID = 0;
 		if (!this->m_chats.empty())
-			newGameID = m_chats.rbegin()->first + 1;
+			newRoomID = m_chats.rbegin()->first + 1;
 
-		m_chats.insert({ newGameID, {} });
+		m_chats.insert({ newRoomID, {} });
 
-		return crow::json::wvalue{ { {literals::jsonKeys::room::roomID, newGameID } } };
+		std::cout << crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } }.dump();
+		return crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } };
 			});
 
 
@@ -159,6 +153,7 @@ Server& Server::RoomHandlers()
 
 		if (this->m_chats.find(roomID) == this->m_chats.end())
 			return crow::response(404, std::format("Invalid room ID < {} >", roomID));
+
 		return crow::response(200, std::format("Connection to room < {} > successful", roomID));
 			});
 
@@ -202,24 +197,18 @@ Server& Server::AccountHandlers()
 	CROW_ROUTE(m_app, literals::routes::sign::up).methods(crow::HTTPMethod::POST)
 		([this](const crow::request& request) {
 
-		const auto informationVector{ std::move(utils::SplitToVec(request.body, "&")) };
-		std::map<std::string, std::string> urlParamsMap;
+		if (request.body.empty())
+			return crow::response(404, "Empty request body");
 
-		for (const auto& informationExpression : informationVector)
-		{
-			auto urlParamPair{ std::move(utils::SplitToPair(informationExpression, "=")) };
-			urlParamsMap.emplace(std::move(urlParamPair));
-		}
+		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
-		auto usernameIterator = urlParamsMap.find(literals::jsonKeys::account::username);
-		auto passwordIterator = urlParamsMap.find(literals::jsonKeys::account::password);
-		if (usernameIterator == urlParamsMap.end() || passwordIterator == urlParamsMap.end())
+		auto usernameIterator = jsonMap.find(literals::jsonKeys::account::username);
+		auto passwordIterator = jsonMap.find(literals::jsonKeys::account::password);
+		if (usernameIterator == jsonMap.end() || passwordIterator == jsonMap.end())
 			return crow::response(404, "Invalid parameter keys");
 
-		std::string username, password;
-
-		username = std::move(usernameIterator->second);
-		password = std::move(passwordIterator->second);
+		std::string username{ std::move(usernameIterator->second) };
+		std::string password{ std::move(passwordIterator->second) };
 
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
@@ -227,6 +216,29 @@ Server& Server::AccountHandlers()
 		// try create account into database and log in
 
 		return crow::response(200, std::format("Player logged in as < {} >", username));
+			});
+
+
+	CROW_ROUTE(m_app, literals::routes::sign::out).methods(crow::HTTPMethod::PUT)
+		([this](const crow::request& request) {
+
+		if (request.body.empty())
+			return crow::response(404, "Empty request body");
+
+		auto jsonMap{ utils::ParseRequestBody(request.body) };
+
+		auto usernameIterator = jsonMap.find(literals::jsonKeys::account::username);
+		if (usernameIterator == jsonMap.end())
+			return crow::response(404, "Invalid parameter keys");
+
+		std::string username{ std::move(usernameIterator->second) };
+
+		if (username.empty())
+			return crow::response(404, std::format("Invalid username < {} >", username));
+
+		// log out player
+
+		return crow::response(200, std::format("Player < {} > logged out", username));
 			});
 
 	return *this;
@@ -251,18 +263,18 @@ Server& Server::Port(uint16_t portNumber)
 
 void Server::Run()
 {
-	try
+	if (m_port == 0)
 	{
-		if (m_port == 0)
-			throw std::exception("Port number not set");
-		if (m_IPAddress.empty())
-			throw std::exception("IP Address not set");
-		m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
+		std::cerr << "Port not set\n";
+		return;
 	}
-	catch (std::exception ex)
+	if (m_IPAddress.empty())
 	{
-		std::cout << ex.what() << '\n';
+		std::cerr << "IP Address not set";
+		return;
 	}
+
+	m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
 }
 
 Server& Server::SetSettingsFromFile(const std::string& filePath)

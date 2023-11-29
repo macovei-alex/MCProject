@@ -18,7 +18,7 @@ void listener(uint64_t gameID, const std::string& username)
 	using namespace std::literals::chrono_literals;
 
 	std::stringstream getUrl;
-	getUrl << literals::routes::baseAddress << "/game/chat/" << gameID;
+	getUrl << literals::routes::baseAddress << literals::routes::game::chat << '/' << gameID;
 	std::cout << std::format("[Listener] Listening to {}\n", getUrl.str());
 
 	uint64_t lastTimeMillis = 0;
@@ -38,7 +38,10 @@ void listener(uint64_t gameID, const std::string& username)
 			{
 				if (!serverErrorDetected)
 				{
-					std::cout << std::format("[Listener] {}\n", response.reason);
+					if (!response.reason.empty())
+						std::cout << std::format("[Listener] {}\n", response.reason);
+					else
+						std::cout << "[Listener] Server didn't provide an explanation\n";
 					serverErrorDetected = true;
 				}
 				continue;
@@ -49,8 +52,8 @@ void listener(uint64_t gameID, const std::string& username)
 			auto messagesJson = crow::json::load(response.text);
 			if (messagesJson.size() != 0)
 				lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timePoint].u() + 1;
-			else if (lastTimeMillis == 0)
-				lastTimeMillis = utils::NowAsInteger();
+			else
+				lastTimeMillis = utils::NowAsInteger() - 1000;
 
 			for (auto& messageJson : messagesJson)
 			{
@@ -84,17 +87,18 @@ int main()
 
 menu1:
 	utils::PrintMenu1();
-	uint8_t option = utils::GetInt("Your option: ");
-	switch (option)
+	utils::Menu1Options option1 = static_cast<utils::Menu1Options>(utils::GetInt("Your option: "));
+	switch (option1)
 	{
-	case 1:
+
+	case utils::Menu1Options::SIGN_IN:
 		bool isSignInCorrect;
 		do {
 			username = utils::GetString(std::format("Enter your username (or \"{}\" to go back to the menu): ", returnCommand).c_str());
-			if (username == "_b")
+			if (username == returnCommand)
 				goto menu1;
 			password = utils::GetString(std::format("Enter your password (or \"{}\" to go back to the menu): ", returnCommand).c_str());
-			if (password == "_b")
+			if (password == returnCommand)
 				goto menu1;
 			isSignInCorrect = utils::SignIn(username, password);
 			if (!isSignInCorrect)
@@ -104,7 +108,8 @@ menu1:
 			}
 		} while (!isSignInCorrect);
 		break;
-	case 2:
+
+	case utils::Menu1Options::SIGN_UP:
 		bool isSamePassord;
 		do {
 			isSamePassord = true;
@@ -122,21 +127,29 @@ menu1:
 				std::cout << "Passwords do not match. Please try again\n";
 				isSamePassord = false;
 			}
+			else
+				isSamePassord = utils::SignUp(username, password);
 		} while (!isSamePassord);
 		break;
-	case 3:
+
+	case utils::Menu1Options::EXIT_1:
 		return 0;
+
+	default:
+		std::cout << "Invalid option. Please try again.\n";
+		goto menu1;
 	}
 
 	char answer = 'y';
 
 menu2:
 	utils::PrintMenu2();
-	option = utils::GetInt("Your option: ");
+	utils::Menu2Options option2 = static_cast<utils::Menu2Options>(utils::GetInt("Your option: "));
 	uint64_t roomID;
-	switch (option)
+	switch (option2)
 	{
-	case 1:
+
+	case utils::Menu2Options::CREATE_ROOM:
 		do {
 			roomID = utils::CreateRoom();
 			if (roomID == LONG_MAX)
@@ -149,7 +162,8 @@ menu2:
 		if (answer == 'n')
 			goto menu2;
 		break;
-	case 2:
+
+	case utils::Menu2Options::JOIN_ROOM:
 		bool isGoodConnection;
 		do {
 			std::cout << "Enter room ID: ";
@@ -162,13 +176,20 @@ menu2:
 				std::cin >> answer;
 			}
 		} while (!isGoodConnection && answer == 'y');
-		if(answer == 'n')
+		if (answer == 'n')
 			goto menu2;
 		break;
-	case 3:
+
+	case utils::Menu2Options::SIGN_OUT:
+		utils::SignOut(username);
 		goto menu1;
-	case 4:
+
+	case utils::Menu2Options::EXIT_2:
 		return 0;
+
+	default:
+		std::cout << "Invalid option. Please try again.\n";
+		goto menu2;
 	}
 
 	std::thread listeningThread(listener, roomID, username);
@@ -188,7 +209,12 @@ menu2:
 					{literals::jsonKeys::message::content, message} }
 			);
 			if (response.status_code != 200 && response.status_code != 201)
-				std::cout << std::format("[Sender] {}\n", response.reason);
+			{
+				if (!response.reason.empty())
+					std::cout << std::format("[Sender] {}\n", response.reason);
+				else
+					std::cout << "[Sender] Server didn't provide an explanation\n";
+			}
 		}
 		catch (const std::exception& e)
 		{

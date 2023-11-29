@@ -13,6 +13,7 @@ public:
 	void Start();
 	void Pause();
 	void RemovePlayer(uint8_t ID);
+	Game() noexcept = default;
 	Game(const std::vector<Player>& players, uint8_t roundNumber, uint8_t playerToDrawID, uint8_t ownerID, const std::vector<std::string>& shownWords, GameSettings gameSettings, Turn turn);
 	Game(const Game& game);
 	~Game();
@@ -22,7 +23,7 @@ public:
 	void SetPlayers(const std::vector<Player>& players);
 	std::vector<Player>& GetPlayers();
 	void SetRoundNo(uint8_t roundNo);
-	uint8_t GetRoundNo();
+	uint8_t GetRoundNumber();
 	void SetPlayerToDrawID(uint8_t playerToDrawID);
 	uint8_t GetPlayerToDrawID();
 	void AddShownWords(const std::vector<std::string>& words);

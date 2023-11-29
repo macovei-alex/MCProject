@@ -13,7 +13,7 @@ uint64_t utils::GetInt(const char* message)
 		std::cout << message;
 	uint64_t input;
 	std::cin >> input;
-	if (std::cin.rdbuf()->in_avail() != 0)
+	while (std::cin.rdbuf()->in_avail() != 0)
 		std::cin.get();
 	return input;
 }
@@ -24,7 +24,7 @@ std::string utils::GetString(const char* message)
 		std::cout << message;
 	std::string input;
 	std::getline(std::cin, input);
-	if (std::cin.rdbuf()->in_avail() != 0)
+	while (std::cin.rdbuf()->in_avail() != 0)
 		std::cin.get();
 	return input;
 }
@@ -33,9 +33,9 @@ void utils::PrintMenu1()
 {
 	std::cout << "\n******************************************\n";
 	std::cout << "Options:\n"
-		<< "\t1. Sign into an existing account\n"
-		<< "\t2. Create a new account\n"
-		<< "\t3. Exit\n";
+		<< '\t' << utils::Menu1Options::SIGN_IN << ". Sign into an existing account\n"
+		<< '\t' << utils::Menu1Options::SIGN_UP << ". Create a new account\n"
+		<< '\t' << utils::Menu1Options::EXIT_1 << ". Exit\n";
 	std::cout << "******************************************\n\n";
 }
 
@@ -43,10 +43,10 @@ void utils::PrintMenu2()
 {
 	std::cout << "\n******************************************\n";
 	std::cout << "Options:\n"
-		<< "\t1. Create a new room\n"
-		<< "\t2. Join an existing room\n"
-		<< "\t3. Sign out\n"
-		<< "\t4. Exit\n";
+		<< '\t' << utils::Menu2Options::CREATE_ROOM << ". Create a new room\n"
+		<< '\t' << utils::Menu2Options::JOIN_ROOM << ". Join an existing room\n"
+		<< '\t' << utils::Menu2Options::SIGN_OUT << ". Sign out\n"
+		<< '\t' << utils::Menu2Options::EXIT_2 << ". Exit\n";
 	std::cout << "******************************************\n\n";
 }
 
@@ -73,9 +73,14 @@ uint64_t utils::CreateRoom()
 		auto response = cpr::Get(cpr::Url{ url.str() });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			std::cout << std::format("[Sender] {}\n", response.reason);
+		{
+			if (!response.reason.empty())
+				std::cout << std::format("[Sender] {}\n", response.reason);
+			else
+				std::cout << "[Sender] Server didn't return an error explanation\n";
+		}
 
-		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::room::roomID].u();
+		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::room::ID].u();
 		std::cout << std::format("[Sender] New room with roomID < {} > created\n", roomID);
 		return roomID;
 	}
@@ -148,10 +153,46 @@ bool utils::SignUp(const std::string& username, const std::string& password)
 			});
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
+		{
+			if (!response.reason.empty())
+				throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
+			else
+				throw std::exception("[Sender] Server didn't return an error explanation\n");
+		}
 
 		std::cout << std::format("[Sender] Account created with username < {} >\n", username);
 		std::cout << std::format("[Sender] Signed up as < {} >\n", username);
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what();
+		return false;
+	}
+}
+
+bool utils::SignOut(const std::string& username)
+{
+	try
+	{
+		std::stringstream url;
+		url << literals::routes::baseAddress << literals::routes::sign::out;
+
+		auto response = cpr::Put(
+			cpr::Url{ url.str() },
+			cpr::Payload{
+				{literals::jsonKeys::account::username, username}
+			});
+
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!response.reason.empty())
+				throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
+			else
+				throw std::exception("[Sender] Server didn't return an error explanation\n");
+		}
+
+		std::cout << "[Sender] Succesfully signed out\n";
 		return true;
 	}
 	catch (const std::exception& e)

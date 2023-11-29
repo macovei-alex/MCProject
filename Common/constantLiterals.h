@@ -15,7 +15,7 @@ namespace literals
 
 		namespace room 
 		{
-			const char roomID[] = "roomID";
+			const char ID[] = "roomID";
 		}
 
 		namespace account
@@ -49,6 +49,7 @@ namespace literals
 		{
 			constexpr char in[] = "/sign/in";
 			constexpr char up[] = "/sign/up";
+			constexpr char out[] = "/sign/out";
 		}
 	}
 }
