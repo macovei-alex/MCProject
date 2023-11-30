@@ -123,7 +123,6 @@ Server& Server::ChatHandlers()
 			messagesVector.emplace_back(std::move(messagesStack.top()));
 			messagesStack.pop();
 		}
-		std::cout << crow::json::wvalue{ messagesVector }.dump();
 		return crow::json::wvalue{ messagesVector };
 			});
 
@@ -142,7 +141,6 @@ Server& Server::RoomHandlers()
 
 		m_chats.insert({ newRoomID, {} });
 
-		std::cout << crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } }.dump();
 		return crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } };
 			});
 

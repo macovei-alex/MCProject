@@ -21,12 +21,18 @@
     <ClCompile Include="clientUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="clientConnectionHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\constantLiterals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="clientUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clientConnectionHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
