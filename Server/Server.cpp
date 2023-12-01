@@ -45,11 +45,13 @@ Server& Server::ChatHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::PUT)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		if (this->m_chats.find(gameID) == this->m_chats.end())
-			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
 		if (request.body.empty())
 			return crow::response(404, "Empty request body");
 
+		auto currentChatIt = this->m_chats.find(gameID);
+		if (currentChatIt == this->m_chats.end())
+			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
+		
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
 		auto contentIterator = jsonMap.find(literals::jsonKeys::message::content);
@@ -63,12 +65,8 @@ Server& Server::ChatHandlers()
 			utils::DateTimeAsInteger(std::chrono::system_clock::now())
 		};
 
-		std::cout << std::format("[{} at {}]: {}\n",
-			message.author,
-			message.timeMilliseconds,
-			message.content);
-
-		this->m_chats[gameID].emplace_back(std::move(message));
+		std::cout << std::format("[{} at {}]: {}\n", message.author, message.timeMilliseconds, message.content);
+		currentChatIt->second.Emplace(std::move(message));
 
 		return crow::response(200);
 			});
@@ -78,22 +76,22 @@ Server& Server::ChatHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue	errorValue{ std::vector<crow::json::wvalue>{{
+		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{
 			{literals::jsonKeys::message::author, literals::error},
 			{literals::jsonKeys::message::content, literals::error},
 			{literals::jsonKeys::message::timePoint, "0"}}} };
 
-		if (this->m_chats.find(gameID) == this->m_chats.end())
+		auto it = this->m_chats.find(gameID);
+		if (it == this->m_chats.end())
 			return errorValue;
 
-		auto& chat = this->m_chats[gameID];
+		const auto& chat = it->second;
 
-		if (chat.empty())
-			return crow::json::wvalue{ std::vector<crow::json::wvalue>{} };
+		if (chat.Empty())
+			return crow::json::wvalue{ crow::json::wvalue::list{} };
 
 		uint64_t start;
 		std::string author;
-
 		try
 		{
 			start = std::stoull(request.url_params.get(literals::jsonKeys::message::timePoint));
@@ -105,25 +103,7 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		std::stack<crow::json::wvalue> messagesStack;
-		for (int i = chat.size() - 1; i >= 0 && chat[i].timeMilliseconds >= start; i--)
-		{
-			if (chat[i].author != author || start == 0)
-				messagesStack.emplace(crow::json::wvalue{
-					{literals::jsonKeys::message::content, chat[i].content},
-					{literals::jsonKeys::message::author, chat[i].author},
-					{literals::jsonKeys::message::timePoint, chat[i].timeMilliseconds}
-					});
-		}
-
-		std::vector<crow::json::wvalue> messagesVector;
-		messagesVector.reserve(messagesStack.size());
-		while (!messagesStack.empty())
-		{
-			messagesVector.emplace_back(std::move(messagesStack.top()));
-			messagesStack.pop();
-		}
-		return crow::json::wvalue{ messagesVector };
+		return crow::json::wvalue{ chat.GetMessagesOrderedJson(start) };
 			});
 
 	return *this;
@@ -139,7 +119,7 @@ Server& Server::RoomHandlers()
 		if (!this->m_chats.empty())
 			newRoomID = m_chats.rbegin()->first + 1;
 
-		m_chats.insert({ newRoomID, {} });
+		m_chats.emplace(newRoomID, Chat());
 
 		return crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } };
 			});
@@ -180,8 +160,8 @@ Server& Server::AccountHandlers()
 		if (!usernameChar || !passwordChar)
 			return crow::response(404, "Invalid parameter keys");
 
-		std::string username{ std::move(request.url_params.get(literals::jsonKeys::account::username)) };
-		std::string password{ std::move(request.url_params.get(literals::jsonKeys::account::password)) };
+		std::string username{ usernameChar };
+		std::string password{ passwordChar };
 
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));

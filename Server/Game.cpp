@@ -1,71 +1,10 @@
 #include "Game.h"
 
-void Game::Start()
-{
-
-}
-
-void Game::Pause()
-{
-
-}
-
-void Game::RemovePlayer(uint8_t ID)
-{
-	for (int i = 0; i < m_players.size(); i++)
-	{
-		/*
-		if (m_players[i].m_ID == ID)
-		{
-			m_players.erase(i);
-		}
-		*/
-	}
-}
-
-Game::Game(const std::vector<Player>& players, uint8_t roundNumber, uint8_t playerToDrawID, uint8_t ownerID, const std::vector<std::string>& shownWords, GameSettings gameSettings, Turn turn) :
-	m_players{ players },
-	m_roundNumber{ roundNumber },
-	m_playerToDrawID{ playerToDrawID },
-	m_ownerID{ ownerID },
-	m_shownWords{ shownWords },
-	m_gameSettings{ gameSettings },
-	m_turn{ turn }
-{}
-
-Game::Game(const Game& game):
-	m_players{ game.m_players },
-	m_roundNumber{ game.m_roundNumber },
-	m_playerToDrawID{ game.m_playerToDrawID },
-	m_ownerID{ game.m_ownerID },
-	m_shownWords{ game.m_shownWords },
-	m_gameSettings{ game.m_gameSettings },
-	m_turn{ game.m_turn }
-{}
-
-Game::~Game() 
-{
-	/*EMPTY*/
-}
-
-Game& Game::operator=(const Game& game)
-{
-	m_players = game.m_players;
-	m_roundNumber = game.m_roundNumber;
-	m_playerToDrawID = game.m_playerToDrawID;
-	m_ownerID = game.m_ownerID;
-	m_shownWords = game.m_shownWords;
-	m_turn = game.m_turn;
-	m_gameSettings = game.m_gameSettings;
-	return *this;
-}
-
 Game::Game(Game&& other) noexcept :
 	m_players{ std::move(other.m_players) },
 	m_roundNumber{ other.m_roundNumber },
 	m_playerToDrawID{ other.m_playerToDrawID },
 	m_ownerID{ other.m_ownerID },
-	m_shownWords{ std::move(other.m_shownWords)},
 	m_gameSettings{ std::move(other.m_gameSettings) },
 	m_turn{ std::move(other.m_turn) }
 {
@@ -84,7 +23,6 @@ Game& Game::operator=(Game&& other) noexcept
 	m_roundNumber = std::move(other.m_roundNumber);
 	m_playerToDrawID = std::move(other.m_playerToDrawID);
 	m_ownerID = std::move(other.m_ownerID);
-	m_shownWords = std::move(other.m_shownWords);
 	m_turn = std::move(other.m_turn);
 	m_gameSettings = std::move(other.m_gameSettings);
 
@@ -95,17 +33,12 @@ Game& Game::operator=(Game&& other) noexcept
 	return *this;
 }
 
-void Game::SetPlayers(const std::vector<Player>& players)
-{
-	m_players = players;
-}
-
-std::vector<Player>& Game::GetPlayers()
+const std::vector<Player>& Game::GetPlayers()
 {
 	return m_players;
 }
 
-void Game::SetRoundNo(uint8_t roundNo)
+void Game::SetRoundNumber(uint8_t roundNo)
 {
 	m_roundNumber = roundNo;
 }
@@ -125,17 +58,32 @@ uint8_t Game::GetPlayerToDrawID()
 	return m_playerToDrawID;
 }
 
-std::vector<std::string> Game::GetShownWords()
-{
-	return m_shownWords;
-}
-
-GameSettings& Game::GetGameSettings()
+const GameSettings& Game::GetGameSettings()
 {
 	return m_gameSettings;
 }
 
-Turn Game::GetTurn()
+Turn& Game::GetTurn()
 {
 	return m_turn;
+}
+
+void Game::Start()
+{
+
+}
+
+void Game::AddPlayer(const Player& player)
+{
+	m_players.push_back(player);
+}
+
+void Game::RemovePlayer(const std::string& name)
+{
+	for (auto& player : m_players)
+		if (player.GetName() == name)
+		{
+			m_players.erase(std::remove(m_players.begin(), m_players.end(), player), m_players.end());
+			return;
+		}
 }
