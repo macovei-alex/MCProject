@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QPixmap pix(":/Resource Files/Images/Background.jpg");
+    QPixmap pix("./Images/Background.jpg");
     int width = ui->label->width();
     int height = ui->label->height();
     ui->label->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
