@@ -2,7 +2,6 @@
 #include "..\Common\constantLiterals.h"
 
 #include <iostream>
-#include <cpr/cpr.h>
 #include <crow.h>
 
 uint64_t handlers::CreateRoom()
@@ -144,6 +143,56 @@ bool handlers::SignOut(const std::string& username)
 	}
 }
 
+void handlers::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis)
+{
+	using namespace std::literals::chrono_literals;
+
+	static bool serverErrorDetected = false;
+	static const uint64_t assumedReceivingDelayMillis = 250;
+	try
+	{
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!serverErrorDetected)
+			{
+				if (!response.reason.empty())
+					outputStream << std::format("[Listener] {}\n", response.reason);
+				else
+					outputStream << "[Listener] Server didn't provide an explanation\n";
+				serverErrorDetected = true;
+			}
+
+			std::this_thread::sleep_for(0.5s);
+			return;
+		}
+		else
+			serverErrorDetected = false;
+
+		auto messagesJson = crow::json::load(response.text);
+		if (messagesJson.size() != 0)
+			lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timePoint].u() + 1;
+		else
+			lastTimeMillis = utils::NowAsInteger() - assumedReceivingDelayMillis;
+
+		for (auto& messageJson : messagesJson)
+		{
+			uint64_t messageTimePointMillis = messageJson[literals::jsonKeys::message::timePoint].u();
+			auto dateTime = utils::DateTimeFromInteger(messageTimePointMillis);
+
+			outputStream << std::format("[{} at {}]: {}\n",
+				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
+				dateTime,
+				std::string{ std::move(messageJson[literals::jsonKeys::message::content].s()) });
+		}
+
+		std::this_thread::sleep_for(0.5s);
+	}
+	catch (std::exception exception)
+	{
+		throw exception;
+	}
+}
+
 void handlers::Sender(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
 	std::stringstream url;
@@ -177,7 +226,7 @@ void handlers::Sender(uint64_t gameID, const std::string& username, bool* keepGo
 	}
 }
 
-void handlers::Receiver(uint64_t gameID, const std::string & username, bool* keepGoing)
+void handlers::Receiver(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
 	using namespace std::literals::chrono_literals;
 
@@ -186,7 +235,6 @@ void handlers::Receiver(uint64_t gameID, const std::string & username, bool* kee
 	std::cout << std::format("[Listener] Listening to {}\n", url.str());
 
 	uint64_t lastTimeMillis = 0;
-	bool serverErrorDetected = false;
 
 	while (*keepGoing)
 	{
@@ -198,38 +246,7 @@ void handlers::Receiver(uint64_t gameID, const std::string & username, bool* kee
 					{literals::jsonKeys::message::author, username},
 					{literals::jsonKeys::message::timePoint, std::to_string(lastTimeMillis)}
 				});
-			if (response.status_code != 200 && response.status_code != 201)
-			{
-				if (!serverErrorDetected)
-				{
-					if (!response.reason.empty())
-						std::cout << std::format("[Listener] {}\n", response.reason);
-					else
-						std::cout << "[Listener] Server didn't provide an explanation\n";
-					serverErrorDetected = true;
-				}
-				continue;
-			}
-			else
-				serverErrorDetected = false;
-
-			auto messagesJson = crow::json::load(response.text);
-			if (messagesJson.size() != 0)
-				lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timePoint].u() + 1;
-
-			for (auto& messageJson : messagesJson)
-			{
-				uint64_t messageTimePointMillis = messageJson[literals::jsonKeys::message::timePoint].u();
-				auto dateTime = utils::DateTimeFromInteger(messageTimePointMillis);
-
-				std::cout << std::format("[{} at {}]: {}\n",
-					std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
-					dateTime,
-					std::string{ std::move(messageJson[literals::jsonKeys::message::content].s()) }
-				);
-			}
-
-			std::this_thread::sleep_for(0.5s);
+			handlers::SingleChatLoadHandler(std::cout, response, lastTimeMillis);
 		}
 		catch (std::exception exception)
 		{

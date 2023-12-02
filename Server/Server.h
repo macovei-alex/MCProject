@@ -35,9 +35,11 @@ public:
 private:
 	Server();
 
+public:
+	static Server& GetInstance();
+
 private:
 	static Server* s_instance;
-	static Server& GetInstance();
 
 private:
 	crow::SimpleApp m_app;

@@ -20,8 +20,8 @@ public:
 public:
 	void Add(const utils::Message& message);
 	void Emplace(utils::Message&& message);
-	std::vector<utils::Message> GetMessagesOrdered(uint64_t start) const;
-	std::vector<crow::json::wvalue> GetMessagesOrderedJson(uint64_t start) const;
+	std::vector<utils::Message> GetMessagesOrdered(uint64_t start, const std::string& skipAuthor) const;
+	std::vector<crow::json::wvalue> GetMessagesOrderedJson(uint64_t start, const std::string& skipAuthor) const;
 	size_t Size() const noexcept;
 	bool Empty() const noexcept;
 	utils::Message& operator[](size_t index);

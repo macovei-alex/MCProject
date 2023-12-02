@@ -93,6 +93,11 @@ Player& Player::operator=(Player&& other) noexcept
 	return *this;
 }
 
+bool Player::operator==(const Player& other) const
+{
+	return m_name == other.m_name;
+}
+
 std::string Player::GetName() const
 {
 	return m_name;

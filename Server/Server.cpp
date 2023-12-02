@@ -51,7 +51,7 @@ Server& Server::ChatHandlers()
 		auto currentChatIt = this->m_chats.find(gameID);
 		if (currentChatIt == this->m_chats.end())
 			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
-		
+
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
 		auto contentIterator = jsonMap.find(literals::jsonKeys::message::content);
@@ -103,7 +103,7 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		return crow::json::wvalue{ chat.GetMessagesOrderedJson(start) };
+		return crow::json::wvalue{ chat.GetMessagesOrderedJson(start, author) };
 			});
 
 	return *this;

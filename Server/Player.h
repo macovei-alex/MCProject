@@ -11,7 +11,8 @@ public:
 	Player& operator= (const Player& player);
 	~Player();
 	Player(Player&& other) noexcept;
-	Player& operator= (Player&& other) noexcept;
+	Player& operator=(Player&& other) noexcept;
+	bool operator==(const Player& other) const;
 	std::string GetName() const;
 	int GetScore() const;
 	int GetCurrentScore() const;
@@ -44,6 +45,6 @@ private:
 	int m_currentScore;
 	bool m_flagGuessedCorrectWord;
 	RoomRole m_roomRole : 1;
-	GameRole m_gameRole: 1;
+	GameRole m_gameRole : 1;
 };
 
