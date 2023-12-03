@@ -54,7 +54,6 @@ public:
 				sql::make_column("date", &GameHistory::date))
 		);
 	}
-
 	void PopulateStorage();
 	//void SignInOrUp(const std::string& playerName, const std::string& password);
 	void SignUp(const std::string& playerName, const std::string& password);

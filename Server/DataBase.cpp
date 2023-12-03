@@ -17,3 +17,34 @@ void Database::PopulateStorage()
 	}
 	storage.insert_range(words.begin(), words.end());
 }
+
+void Database::SignUp(const std::string& playerName, const std::string& password)
+{
+	auto storage = CreateStorage("");
+	PlayerDB player;
+	int lastID = storage.last_insert_rowid();
+	player.playerName = playerName;
+	player.password = password;
+	player.isOnline = true;
+	storage.insert(player);
+}
+
+void Database::SignIn(const std::string& playerName, const std::string& password)
+{
+	auto storage = CreateStorage("");
+	auto result = storage.get_all<PlayerDB>(
+		sql::where(sql::c(&PlayerDB::playerName) == playerName),
+		sql::where(sql::c(&PlayerDB::password) == password)
+	);
+	if (result.size() == 1)
+	{
+		storage.update_all(sql::set(sql::c(&PlayerDB::isOnline) = true),
+						sql::where(sql::c(&PlayerDB::playerName) == playerName),
+						sql::where(sql::c(&PlayerDB::password) == password)
+				);
+	}
+	else
+	{
+		throw std::exception("Invalid username or password!");
+	}
+}
