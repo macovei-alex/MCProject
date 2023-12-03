@@ -1,8 +1,9 @@
 #include "database.h"
 #include <fstream>
 
-void PopulateStorage(Storage& storage)
+void Database::PopulateStorage()
 {
+	auto storage = CreateStorage("");
 	std::ifstream f("words.txt");
 	std::vector<Word> words;
 	int index = 0;
@@ -15,10 +16,4 @@ void PopulateStorage(Storage& storage)
 		words.push_back(Word(index, word, difficulty));
 	}
 	storage.insert_range(words.begin(), words.end());
-};
-
-MakePlayerAccount::MakePlayerAccount(Storage& storage)
-	: m_db(storage)
-{
-	/*EMPTY*/
 }
