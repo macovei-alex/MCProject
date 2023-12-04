@@ -76,10 +76,7 @@ Server& Server::ChatHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{
-			{literals::jsonKeys::message::author, literals::error},
-			{literals::jsonKeys::message::content, literals::error},
-			{literals::jsonKeys::message::timestamp, "0"}}} };
+		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}}};
 
 		auto it = this->m_chats.find(gameID);
 		if (it == this->m_chats.end())
@@ -103,7 +100,7 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		return crow::json::wvalue{ chat.GetMessagesOrderedJson(start, author) };
+		return crow::json::wvalue{ chat.GetMessagesOrderedJsonList(start, author) };
 			});
 
 	return *this;
@@ -227,10 +224,7 @@ Server& Server::DrawingHandlers()
 	CROW_ROUTE(m_app, literals::routes::draw::getUpdatesParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{
-			{literals::jsonKeys::draw::pointX, literals::intMin},
-			{literals::jsonKeys::draw::pointY, literals::intMin},
-			{literals::jsonKeys::draw::color, literals::intMin}}} };
+		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
 
 		uint64_t timestamp;
 
@@ -240,6 +234,7 @@ Server& Server::DrawingHandlers()
 		}
 		catch (std::exception ex)
 		{
+			std::cerr << ex.what();
 			return errorValue;
 		}
 

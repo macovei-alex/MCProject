@@ -4,7 +4,7 @@
 #include <iostream>
 #include <crow.h>
 
-uint64_t handlers::CreateRoom()
+uint64_t services::CreateRoom()
 {
 	try
 	{
@@ -32,7 +32,7 @@ uint64_t handlers::CreateRoom()
 	}
 }
 
-bool handlers::ConnectToRoom(uint64_t roomID)
+bool services::ConnectToRoom(uint64_t roomID)
 {
 	try
 	{
@@ -53,7 +53,7 @@ bool handlers::ConnectToRoom(uint64_t roomID)
 	}
 }
 
-bool handlers::SignIn(const std::string& username, const std::string& password)
+bool services::SignIn(const std::string& username, const std::string& password)
 {
 	try
 	{
@@ -79,7 +79,7 @@ bool handlers::SignIn(const std::string& username, const std::string& password)
 	}
 }
 
-bool handlers::SignUp(const std::string& username, const std::string& password)
+bool services::SignUp(const std::string& username, const std::string& password)
 {
 	try
 	{
@@ -112,7 +112,7 @@ bool handlers::SignUp(const std::string& username, const std::string& password)
 	}
 }
 
-bool handlers::SignOut(const std::string& username)
+bool services::SignOut(const std::string& username)
 {
 	try
 	{
@@ -143,12 +143,9 @@ bool handlers::SignOut(const std::string& username)
 	}
 }
 
-void handlers::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis)
+void services::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis)
 {
-	using namespace std::literals::chrono_literals;
-
 	static bool serverErrorDetected = false;
-	static const uint64_t assumedReceivingDelayMillis = 250;
 	try
 	{
 		if (response.status_code != 200 && response.status_code != 201)
@@ -161,31 +158,29 @@ void handlers::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& 
 					outputStream << "[Listener] Server didn't provide an explanation\n";
 				serverErrorDetected = true;
 			}
-
-			std::this_thread::sleep_for(0.5s);
 			return;
 		}
 		else
 			serverErrorDetected = false;
 
-		auto messagesJson = crow::json::load(response.text);
-		if (messagesJson.size() != 0)
-			lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
+		auto messagesJsonList = crow::json::load(response.text);
+		if (messagesJsonList.size() == 0)
+			lastTimeMillis = max(lastTimeMillis, 1);
+		else if (messagesJsonList.size() == 1 && messagesJsonList[0].has(literals::error))
+			throw std::exception("[Listener] Error: communication error");
 		else
-			lastTimeMillis = utils::NowAsInteger() - assumedReceivingDelayMillis;
+			lastTimeMillis = messagesJsonList[messagesJsonList.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
 
-		for (auto& messageJson : messagesJson)
+		for (auto& messageJson : messagesJsonList)
 		{
-			uint64_t messageTimePointMillis = messageJson[literals::jsonKeys::message::timestamp].u();
-			auto dateTime = utils::DateTimeFromInteger(messageTimePointMillis);
+			uint64_t messageTimestampMillis = messageJson[literals::jsonKeys::message::timestamp].u();
+			auto dateTime = utils::DateTimeFromInteger(messageTimestampMillis);
 
 			outputStream << std::format("[{} at {}]: {}\n",
 				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
 				dateTime,
 				std::string{ std::move(messageJson[literals::jsonKeys::message::content].s()) });
 		}
-
-		std::this_thread::sleep_for(0.5s);
 	}
 	catch (std::exception exception)
 	{
@@ -193,7 +188,54 @@ void handlers::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& 
 	}
 }
 
-void handlers::Sender(uint64_t gameID, const std::string& username, bool* keepGoing)
+void services::SingleDrawLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis)
+{
+	static bool serverErrorDetected = false;
+	try
+	{
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!serverErrorDetected)
+			{
+				if (!response.reason.empty())
+					outputStream << std::format("[Listener] {}\n", response.reason);
+				else
+					outputStream << "[Listener] Server didn't provide an explanation\n";
+				serverErrorDetected = true;
+			}
+			return;
+		}
+		else
+			serverErrorDetected = false;
+
+		auto pointsJsonList = crow::json::load(response.text);
+		if (pointsJsonList.size() == 0)
+			lastTimeMillis = max(lastTimeMillis, 1);
+		else if (pointsJsonList.size() == 1 && pointsJsonList[0].has(literals::error))
+			throw std::exception("[Listener] Error: communication error");
+		else
+			lastTimeMillis = pointsJsonList[pointsJsonList.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
+
+		for (auto& pointJson : pointsJsonList)
+		{
+			uint64_t rgbColor = pointJson[literals::jsonKeys::draw::color].i();
+			uint8_t r = (rgbColor >> 16) & 0xFF;
+			uint8_t g = (rgbColor >> 8) & 0xFF;
+			uint8_t b = rgbColor & 0xFF;
+
+			outputStream << std::format("[Drawer]: New point({}, {}, color({}, {}, {})) received\n",
+				pointJson[literals::jsonKeys::draw::pointX].i(),
+				pointJson[literals::jsonKeys::draw::pointY].i(),
+				r, g, b);
+		}
+	}
+	catch (std::exception exception)
+	{
+		throw exception;
+	}
+}
+
+void services::MessagesSender(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
 	std::stringstream url;
 	url << literals::routes::baseAddress << literals::routes::game::chat << '/' << gameID;
@@ -226,7 +268,7 @@ void handlers::Sender(uint64_t gameID, const std::string& username, bool* keepGo
 	}
 }
 
-void handlers::Receiver(uint64_t gameID, const std::string& username, bool* keepGoing)
+void services::MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
 	using namespace std::literals::chrono_literals;
 
@@ -246,7 +288,8 @@ void handlers::Receiver(uint64_t gameID, const std::string& username, bool* keep
 					{literals::jsonKeys::message::author, username},
 					{literals::jsonKeys::message::timestamp, std::to_string(lastTimeMillis)}
 				});
-			handlers::SingleChatLoadHandler(std::cout, response, lastTimeMillis);
+			services::SingleChatLoadHandler(std::cout, response, lastTimeMillis);
+			std::this_thread::sleep_for(0.5s);
 		}
 		catch (std::exception exception)
 		{

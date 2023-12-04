@@ -47,9 +47,9 @@ crow::json::wvalue Image::UpdatesToJson(const std::vector<Update>& updates)
 	crow::json::wvalue::list updatesJsonList{};
 	updatesJsonList.reserve(updates.size());
 
-	for (auto& update : updates)
+	for (const auto& update : updates)
 	{
-		int32_t rgb{
+		int64_t rgb{
 			(update.point.color.r << 16)
 			| (update.point.color.g << 8)
 			| update.point.color.b };
