@@ -147,6 +147,7 @@
     <ClCompile Include="Authentification.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Authentification.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
