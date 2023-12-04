@@ -79,7 +79,7 @@ Server& Server::ChatHandlers()
 		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{
 			{literals::jsonKeys::message::author, literals::error},
 			{literals::jsonKeys::message::content, literals::error},
-			{literals::jsonKeys::message::timePoint, "0"}}} };
+			{literals::jsonKeys::message::timestamp, "0"}}} };
 
 		auto it = this->m_chats.find(gameID);
 		if (it == this->m_chats.end())
@@ -94,7 +94,7 @@ Server& Server::ChatHandlers()
 		std::string author;
 		try
 		{
-			start = std::stoull(request.url_params.get(literals::jsonKeys::message::timePoint));
+			start = std::stoull(request.url_params.get(literals::jsonKeys::message::timestamp));
 			author = std::move(request.url_params.get(literals::jsonKeys::message::author));
 		}
 		catch (std::exception ex)
@@ -224,6 +224,29 @@ Server& Server::AccountHandlers()
 
 Server& Server::DrawingHandlers()
 {
+	CROW_ROUTE(m_app, literals::routes::draw::getUpdatesParam).methods(crow::HTTPMethod::GET)
+		([this](const crow::request& request, uint64_t gameID) {
+
+		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{
+			{literals::jsonKeys::draw::pointX, literals::intMin},
+			{literals::jsonKeys::draw::pointY, literals::intMin},
+			{literals::jsonKeys::draw::color, literals::intMin}}} };
+
+		uint64_t timestamp;
+
+		try
+		{
+			timestamp = std::stoull(request.url_params.get(literals::jsonKeys::draw::timestamp));
+		}
+		catch (std::exception ex)
+		{
+			return errorValue;
+		}
+
+		return m_images[gameID].GetUpdatesJsonAfter(timestamp);
+			});
+
+
 	return *this;
 }
 

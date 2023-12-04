@@ -3,6 +3,7 @@
 namespace literals
 {
 	const char error[] = "error";
+	const char intMin[] = "-2147483648";
 
 	namespace jsonKeys
 	{
@@ -10,7 +11,7 @@ namespace literals
 		{
 			const char author[] = "author";
 			const char content[] = "content";
-			const char timePoint[] = "timePoint";
+			const char timestamp[] = "timestamp";
 		}
 
 		namespace room 
@@ -22,6 +23,14 @@ namespace literals
 		{
 			const char username[] = "username";
 			const char password[] = "password";
+		}
+
+		namespace draw
+		{
+			const char pointX[] = "x";
+			const char pointY[] = "y";
+			const char color[] = "color";
+			const char timestamp[] = "timestamp";
 		}
 	}
 
@@ -50,6 +59,14 @@ namespace literals
 			constexpr char in[] = "/sign/in";
 			constexpr char up[] = "/sign/up";
 			constexpr char out[] = "/sign/out";
+		}
+
+		namespace draw
+		{
+			constexpr char getUpdates[] = "/draw/get-updates";
+			constexpr char getUpdatesParam[] = "/draw/get-updates/<int>";
+			constexpr char sendUpdates[] = "/draw/send-updates";
+			constexpr char sendUpdatesParam[] = "/draw/send-updates/<int>";
 		}
 	}
 }

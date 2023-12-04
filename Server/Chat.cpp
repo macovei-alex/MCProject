@@ -29,7 +29,7 @@ std::vector<crow::json::wvalue> Chat::GetMessagesOrderedJson(uint64_t start, con
 			messagesJson.emplace_back(crow::json::wvalue{
 				{ literals::jsonKeys::message::author, it->author },
 				{ literals::jsonKeys::message::content, it->content },
-				{ literals::jsonKeys::message::timePoint, it->timeMilliseconds }
+				{ literals::jsonKeys::message::timestamp, it->timeMilliseconds }
 				});
 	return messagesJson;
 }

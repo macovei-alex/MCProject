@@ -8,6 +8,7 @@
 #include "utilitiesModTemp.h"
 #include "Game.h"
 #include "Chat.h"
+#include "Image.h"
 
 class Server
 {
@@ -44,6 +45,7 @@ private:
 private:
 	crow::SimpleApp m_app;
 	std::map<uint64_t, Chat> m_chats;
+	std::map<uint64_t, Image> m_images;
 
 	uint16_t m_port;
 	std::string m_IPAddress;

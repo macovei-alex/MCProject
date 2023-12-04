@@ -33,14 +33,14 @@ void Database::SignIn(const std::string& playerName, const std::string& password
 {
 	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
-		sql::where(sql::c(&PlayerDB::playerName) == playerName),
-		sql::where(sql::c(&PlayerDB::password) == password)
+		sql::where(sql::c(&PlayerDB::playerName) == playerName)
+		// , sql::where(sql::c(&PlayerDB::password) == password) Nu functioneaza asa, da eroare de compilare. Trebuie probabil facut un AND intre conditii
 	);
 	if (result.size() == 1)
 	{
 		storage.update_all(sql::set(sql::c(&PlayerDB::isOnline) = true),
-						sql::where(sql::c(&PlayerDB::playerName) == playerName),
-						sql::where(sql::c(&PlayerDB::password) == password)
+						sql::where(sql::c(&PlayerDB::playerName) == playerName)
+						//, sql::where(sql::c(&PlayerDB::password) == password) Nu functioneaza asa, da eroare de compilare. Trebuie probabil facut un AND intre conditii
 				);
 	}
 	else

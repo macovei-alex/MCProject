@@ -170,13 +170,13 @@ void handlers::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& 
 
 		auto messagesJson = crow::json::load(response.text);
 		if (messagesJson.size() != 0)
-			lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timePoint].u() + 1;
+			lastTimeMillis = messagesJson[messagesJson.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
 		else
 			lastTimeMillis = utils::NowAsInteger() - assumedReceivingDelayMillis;
 
 		for (auto& messageJson : messagesJson)
 		{
-			uint64_t messageTimePointMillis = messageJson[literals::jsonKeys::message::timePoint].u();
+			uint64_t messageTimePointMillis = messageJson[literals::jsonKeys::message::timestamp].u();
 			auto dateTime = utils::DateTimeFromInteger(messageTimePointMillis);
 
 			outputStream << std::format("[{} at {}]: {}\n",
@@ -244,7 +244,7 @@ void handlers::Receiver(uint64_t gameID, const std::string& username, bool* keep
 				cpr::Url{ url.str() },
 				cpr::Parameters{
 					{literals::jsonKeys::message::author, username},
-					{literals::jsonKeys::message::timePoint, std::to_string(lastTimeMillis)}
+					{literals::jsonKeys::message::timestamp, std::to_string(lastTimeMillis)}
 				});
 			handlers::SingleChatLoadHandler(std::cout, response, lastTimeMillis);
 		}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <crow.h>
 
 struct Color
 {
@@ -10,6 +11,7 @@ struct Color
 
 	Color() = default;
 	Color(uint32_t color);
+	Color(int32_t color);
 };
 
 struct Point
@@ -38,6 +40,10 @@ public:
 	void AddUpdate(const Update& update);
 	void AddUpdate(Update&& update);
 	std::vector<Update> GetUpdatesAfter(uint64_t timestamp);
+	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp);
+	
+public:
+	static crow::json::wvalue UpdatesToJson(const std::vector<Update>& updates);
 
 private:
 	std::vector<Update> m_updates;
