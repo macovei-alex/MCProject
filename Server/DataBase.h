@@ -56,6 +56,7 @@ public:
 	}
 	void PopulateStorage();
 	//void SignInOrUp(const std::string& playerName, const std::string& password);
+	bool IsPlayerExist(const std::string& playerName);
 	void SignUp(const std::string& playerName, const std::string& password);
 	void SignIn(const std::string& playerName, const std::string& password);
 	void SignOut(const std::string& playerName);

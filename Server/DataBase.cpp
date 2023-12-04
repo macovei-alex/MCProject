@@ -18,8 +18,21 @@ void Database::PopulateStorage()
 	storage.insert_range(words.begin(), words.end());
 }
 
+bool Database::IsPlayerExist(const std::string& playerName)
+{
+	auto storage = CreateStorage("");
+	auto result = storage.get_all<PlayerDB>(
+		sql::where(sql::c(&PlayerDB::playerName) == playerName)
+	);
+	return result.size() == 1;
+}
+
 void Database::SignUp(const std::string& playerName, const std::string& password)
 {
+	if(IsPlayerExist(playerName))
+	{
+		throw std::exception("Player already exists!");
+	}
 	auto storage = CreateStorage("");
 	PlayerDB player;
 	int lastID = storage.last_insert_rowid();
@@ -34,17 +47,37 @@ void Database::SignIn(const std::string& playerName, const std::string& password
 	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
 		sql::where(sql::c(&PlayerDB::playerName) == playerName)
-		// , sql::where(sql::c(&PlayerDB::password) == password) Nu functioneaza asa, da eroare de compilare. Trebuie probabil facut un AND intre conditii
 	);
-	if (result.size() == 1)
+	bool IsPlayerOnline = result[0].isOnline;
+	if (IsPlayerOnline)
 	{
-		storage.update_all(sql::set(sql::c(&PlayerDB::isOnline) = true),
-						sql::where(sql::c(&PlayerDB::playerName) == playerName)
-						//, sql::where(sql::c(&PlayerDB::password) == password) Nu functioneaza asa, da eroare de compilare. Trebuie probabil facut un AND intre conditii
-				);
+		throw std::exception("Player already online!");
+	}
+	if (result.size() == 0)
+	{
+		throw std::exception("Invalid username");
 	}
 	else
 	{
-		throw std::exception("Invalid username or password!");
+		const std::string& playerPassword = result[0].password;
+		if (playerPassword != password)
+		{
+			throw std::exception("Invalid password");
+		}
+		else
+		{
+			result[0].isOnline = true;
+			storage.update(result[0]);
+		}
 	}
+}
+
+void Database::SignOut(const std::string& playerName)
+{
+	auto storage = CreateStorage("");
+	auto result = storage.get_all<PlayerDB>(
+		sql::where(sql::c(&PlayerDB::playerName) == playerName)
+	);
+	result[0].isOnline = false;
+	storage.update(result[0]);
 }
