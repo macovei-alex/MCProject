@@ -43,8 +43,19 @@ namespace literals
 
 		namespace game 
 		{
-			constexpr char chat[] = "/game/chat";
-			constexpr char chatParam[] = "/game/chat/<int>";
+			namespace chat
+			{
+				constexpr char simple[] = "/game/chat";
+				constexpr char param[] = "/game/chat/<int>";
+			}
+
+			namespace draw
+			{
+				constexpr char getUpdates[] = "/game/draw/get-updates";
+				constexpr char getUpdatesParam[] = "/game/draw/get-updates/<int>";
+				constexpr char sendUpdates[] = "/game/draw/send-updates";
+				constexpr char sendUpdatesParam[] = "/game/draw/send-updates/<int>";
+			}
 		}
 
 		namespace room
@@ -56,19 +67,11 @@ namespace literals
 			constexpr char disconnectParam[] = "/room/disconnect/<int>";
 		}
 
-		namespace sign
+		namespace account
 		{
-			constexpr char in[] = "/sign/in";
-			constexpr char up[] = "/sign/up";
-			constexpr char out[] = "/sign/out";
-		}
-
-		namespace draw
-		{
-			constexpr char getUpdates[] = "/draw/get-updates";
-			constexpr char getUpdatesParam[] = "/draw/get-updates/<int>";
-			constexpr char sendUpdates[] = "/draw/send-updates";
-			constexpr char sendUpdatesParam[] = "/draw/send-updates/<int>";
+			constexpr char signIn[] = "/account/sign-in";
+			constexpr char singUp[] = "/account/sign-up";
+			constexpr char signOut[] = "/account/sign-out";
 		}
 	}
 }
