@@ -2,35 +2,37 @@
 
 namespace literals
 {
-	const char error[] = "error";
-	const char intMin[] = "-2147483648";
+	constexpr char emptyCString[] = "";
+	const std::string emptyString{ "" };
+	constexpr char error[] = "error";
+	constexpr char intMinStr[] = "-2147483648";
 
 	namespace jsonKeys
 	{
 		namespace message
 		{
-			const char author[] = "author";
-			const char content[] = "content";
-			const char timestamp[] = "timestamp";
+			constexpr char author[] = "author";
+			constexpr char content[] = "content";
+			constexpr char timestamp[] = "timestamp";
 		}
 
 		namespace room 
 		{
-			const char ID[] = "roomID";
+			constexpr char ID[] = "roomID";
 		}
 
 		namespace account
 		{
-			const char username[] = "username";
-			const char password[] = "password";
+			constexpr char username[] = "username";
+			constexpr char password[] = "password";
 		}
 
 		namespace draw
 		{
-			const char pointX[] = "x";
-			const char pointY[] = "y";
-			const char color[] = "color";
-			const char timestamp[] = "timestamp";
+			constexpr char pointX[] = "x";
+			constexpr char pointY[] = "y";
+			constexpr char color[] = "color";
+			constexpr char timestamp[] = "timestamp";
 		}
 	}
 

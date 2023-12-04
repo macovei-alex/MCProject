@@ -12,6 +12,7 @@ struct Color
 	Color() = default;
 	Color(uint32_t color);
 	Color(int32_t color);
+	bool operator==(const Color& other) const = default;
 };
 
 struct Point
@@ -19,12 +20,14 @@ struct Point
 	int16_t x;
 	int16_t y;
 	Color color;
+	bool operator==(const Point& other) const = default;
 };
 
 struct Update
 {
 	Point point;
 	uint64_t timestamp;
+	bool operator==(const Update& other) const = default;
 };
 
 class Image

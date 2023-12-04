@@ -76,10 +76,7 @@ Server& Server::ChatHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{
-			{literals::jsonKeys::message::author, literals::error},
-			{literals::jsonKeys::message::content, literals::error},
-			{literals::jsonKeys::message::timestamp, "0"}}} };
+		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
 
 		auto it = this->m_chats.find(gameID);
 		if (it == this->m_chats.end())
@@ -103,7 +100,7 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		return crow::json::wvalue{ chat.GetMessagesOrderedJson(start, author) };
+		return crow::json::wvalue{ chat.GetMessagesOrderedJsonList(start, author) };
 			});
 
 	return *this;
@@ -120,6 +117,10 @@ Server& Server::RoomHandlers()
 			newRoomID = m_chats.rbegin()->first + 1;
 
 		m_chats.emplace(newRoomID, Chat());
+		m_images.emplace(newRoomID, Image());
+		m_images[newRoomID].AddUpdate(Update{ Point{ 0, 0, Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		m_images[newRoomID].AddUpdate(Update{ Point{ 1, 2, Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		m_images[newRoomID].AddUpdate(Update{ Point{ -15, 20, Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 
 		return crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } };
 			});
@@ -227,10 +228,7 @@ Server& Server::DrawingHandlers()
 	CROW_ROUTE(m_app, literals::routes::draw::getUpdatesParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{
-			{literals::jsonKeys::draw::pointX, literals::intMin},
-			{literals::jsonKeys::draw::pointY, literals::intMin},
-			{literals::jsonKeys::draw::color, literals::intMin}}} };
+		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
 
 		uint64_t timestamp;
 
@@ -240,10 +238,12 @@ Server& Server::DrawingHandlers()
 		}
 		catch (std::exception ex)
 		{
+			std::cerr << ex.what();
 			return errorValue;
 		}
 
-		return m_images[gameID].GetUpdatesJsonAfter(timestamp);
+		auto updates = m_images[gameID].GetUpdatesJsonAfter(timestamp);
+		return updates;
 			});
 
 

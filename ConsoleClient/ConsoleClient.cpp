@@ -2,7 +2,7 @@
 #include <string>
 #include <thread>
 
-#include "clientConnectionHandlers.h"
+#include "services.h"
 #include "clientUtils.h"
 #include "..\Common\constantLiterals.h"
 
@@ -29,7 +29,7 @@ menu1:
 			password = utils::GetString(std::format("Enter your password (or \"{}\" to go back to the menu): ", returnCommand).c_str());
 			if (password == returnCommand)
 				goto menu1;
-			isSignInCorrect = handlers::SignIn(username, password);
+			isSignInCorrect = services::SignIn(username, password);
 			if (!isSignInCorrect)
 			{
 				isSignInCorrect = false;
@@ -57,7 +57,7 @@ menu1:
 				isSamePassord = false;
 			}
 			else
-				isSamePassord = handlers::SignUp(username, password);
+				isSamePassord = services::SignUp(username, password);
 		} while (!isSamePassord);
 		break;
 
@@ -80,7 +80,7 @@ menu2:
 
 	case utils::Menu2Options::CREATE_ROOM:
 		do {
-			roomID = handlers::CreateRoom();
+			roomID = services::CreateRoom();
 			if (roomID == LONG_MAX)
 			{
 				std::cout << "Invalid room ID. Do you want to try again? [y/n]\n"
@@ -97,7 +97,7 @@ menu2:
 		do {
 			std::cout << "Enter room ID: ";
 			roomID = utils::GetInt();
-			isGoodConnection = handlers::ConnectToRoom(roomID);
+			isGoodConnection = services::ConnectToRoom(roomID);
 			if (!isGoodConnection)
 			{
 				std::cout << std::format("Do you want to try again? [y/n]\n", roomID)
@@ -110,7 +110,7 @@ menu2:
 		break;
 
 	case utils::Menu2Options::SIGN_OUT:
-		handlers::SignOut(username);
+		services::SignOut(username);
 		goto menu1;
 
 	case utils::Menu2Options::EXIT_2:
@@ -122,11 +122,13 @@ menu2:
 	}
 
 	bool keepGoing = true;
-	std::thread sender(handlers::Sender, roomID, username, &keepGoing);
-	std::thread receiver(handlers::Receiver, roomID, username, &keepGoing);
+	std::thread messagesSender(services::MessagesSender, roomID, username, &keepGoing);
+	std::thread messagesReceiver(services::MessagesReceiver, roomID, username, &keepGoing);
+	std::thread imageUpdatesReceiver(services::ImageUpdatesReceiver, roomID, &keepGoing);
 
-	sender.join();
-	receiver.join();
+	messagesSender.join();
+	messagesReceiver.join();
+	imageUpdatesReceiver.join();
 
 	return 0;
 }

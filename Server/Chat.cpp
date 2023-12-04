@@ -21,7 +21,7 @@ std::vector<utils::Message> Chat::GetMessagesOrdered(uint64_t start, const std::
 	return messages;
 }
 
-std::vector<crow::json::wvalue> Chat::GetMessagesOrderedJson(uint64_t start, const std::string& skipAuthor) const
+std::vector<crow::json::wvalue> Chat::GetMessagesOrderedJsonList(uint64_t start, const std::string& skipAuthor) const
 {
 	std::vector<crow::json::wvalue> messagesJson;
 	for (auto it = m_messages.rbegin(); it != m_messages.rend() && it->timeMilliseconds > start; it++)

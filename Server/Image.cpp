@@ -44,24 +44,44 @@ crow::json::wvalue Image::GetUpdatesJsonAfter(uint64_t timestamp)
 
 crow::json::wvalue Image::UpdatesToJson(const std::vector<Update>& updates)
 {
+	if(updates.size() == 0)
+		return crow::json::wvalue{ crow::json::wvalue::list{} };
+
 	crow::json::wvalue::list updatesJsonList{};
 	updatesJsonList.reserve(updates.size());
 
-	for (auto& update : updates)
+	for (size_t i = 0; i < updates.size() - 1; i++)
 	{
+		const auto& update = updates[i];
 		int32_t rgb{
 			(update.point.color.r << 16)
 			| (update.point.color.g << 8)
 			| update.point.color.b };
 
-		crow::json::wvalue updateJson{
+		crow::json::wvalue updateJson;
+		updateJson = crow::json::wvalue{
 			{literals::jsonKeys::draw::pointX, std::to_string(update.point.x) },
 			{literals::jsonKeys::draw::pointY, std::to_string(update.point.y) },
 			{literals::jsonKeys::draw::color, std::to_string(rgb) }
 		};
-
 		updatesJsonList.push_back(std::move(updateJson));
 	}
+
+	const auto& finalUpdate = updates[updates.size() - 1];
+
+	int32_t rgb{
+		(finalUpdate.point.color.r << 16)
+		| (finalUpdate.point.color.g << 8)
+		| finalUpdate.point.color.b };
+
+	crow::json::wvalue finalUpdateJson{
+		{literals::jsonKeys::draw::pointX, std::to_string(finalUpdate.point.x) },
+		{literals::jsonKeys::draw::pointY, std::to_string(finalUpdate.point.y) },
+		{literals::jsonKeys::draw::color, std::to_string(rgb) },
+		{literals::jsonKeys::draw::timestamp, std::to_string(finalUpdate.timestamp) }
+	};
+
+	updatesJsonList.push_back(std::move(finalUpdateJson));
 
 	return crow::json::wvalue{ updatesJsonList };
 }
