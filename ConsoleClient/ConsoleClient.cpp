@@ -2,7 +2,7 @@
 #include <string>
 #include <thread>
 
-#include "clientConnectionHandlers.h"
+#include "services.h"
 #include "clientUtils.h"
 #include "..\Common\constantLiterals.h"
 
@@ -122,11 +122,13 @@ menu2:
 	}
 
 	bool keepGoing = true;
-	std::thread sender(services::MessagesSender, roomID, username, &keepGoing);
-	std::thread receiver(services::MessagesReceiver, roomID, username, &keepGoing);
+	std::thread messagesSender(services::MessagesSender, roomID, username, &keepGoing);
+	std::thread messagesReceiver(services::MessagesReceiver, roomID, username, &keepGoing);
+	std::thread imageUpdatesReceiver(services::ImageUpdatesReceiver, roomID, &keepGoing);
 
-	sender.join();
-	receiver.join();
+	messagesSender.join();
+	messagesReceiver.join();
+	imageUpdatesReceiver.join();
 
 	return 0;
 }

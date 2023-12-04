@@ -21,7 +21,7 @@
     <ClCompile Include="clientUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="clientConnectionHandlers.cpp">
+    <ClCompile Include="services.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClInclude Include="clientUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="clientConnectionHandlers.h">
+    <ClInclude Include="services.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

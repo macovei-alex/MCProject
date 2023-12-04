@@ -1,4 +1,4 @@
-#include "clientConnectionHandlers.h"
+#include "services.h"
 #include "..\Common\constantLiterals.h"
 
 #include <iostream>
@@ -188,7 +188,7 @@ void services::SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& 
 	}
 }
 
-void services::SingleDrawLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis)
+void services::SingleImageLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis)
 {
 	static bool serverErrorDetected = false;
 	try
@@ -214,11 +214,11 @@ void services::SingleDrawLoadHandler(std::ostream& outputStream, cpr::Response& 
 		else if (pointsJsonList.size() == 1 && pointsJsonList[0].has(literals::error))
 			throw std::exception("[Listener] Error: communication error");
 		else
-			lastTimeMillis = pointsJsonList[pointsJsonList.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
+			lastTimeMillis = pointsJsonList[pointsJsonList.size() - 1][literals::jsonKeys::draw::timestamp].u() + 1;
 
 		for (auto& pointJson : pointsJsonList)
 		{
-			uint64_t rgbColor = pointJson[literals::jsonKeys::draw::color].i();
+			int32_t rgbColor = pointJson[literals::jsonKeys::draw::color].i();
 			uint8_t r = (rgbColor >> 16) & 0xFF;
 			uint8_t g = (rgbColor >> 8) & 0xFF;
 			uint8_t b = rgbColor & 0xFF;
@@ -289,12 +289,42 @@ void services::MessagesReceiver(uint64_t gameID, const std::string& username, bo
 					{literals::jsonKeys::message::timestamp, std::to_string(lastTimeMillis)}
 				});
 			services::SingleChatLoadHandler(std::cout, response, lastTimeMillis);
-			std::this_thread::sleep_for(0.5s);
 		}
 		catch (std::exception exception)
 		{
 			std::cout << "[Listener] Error detected: " << exception.what() << "\nThe app will close after you enter any character\n";
 			*keepGoing = false;
 		}
+		std::this_thread::sleep_for(0.5s);
+	}
+}
+
+void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
+{
+	using namespace std::literals::chrono_literals;
+
+	std::stringstream url;
+	url << literals::routes::baseAddress << literals::routes::draw::getUpdates << '/' << gameID;
+	std::cout << std::format("[Listener] Listening to {}\n", url.str());
+
+	uint64_t lastTimeMillis = 0;
+
+	while (*keepGoing)
+	{
+		try
+		{
+			auto response = cpr::Get(
+				cpr::Url{ url.str() },
+				cpr::Parameters{
+					{literals::jsonKeys::draw::timestamp, std::to_string(lastTimeMillis)}
+				});
+			services::SingleImageLoadHandler(std::cout, response, lastTimeMillis);
+		}
+		catch (std::exception exception)
+		{
+			std::cout << "[Listener] Error detected: " << exception.what() << "\nThe app will close after you enter any character\n";
+			*keepGoing = false;
+		}
+		std::this_thread::sleep_for(0.5s);
 	}
 }
