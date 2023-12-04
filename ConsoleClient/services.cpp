@@ -58,7 +58,7 @@ bool services::SignIn(const std::string& username, const std::string& password)
 	try
 	{
 		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::sign::in;
+		url << literals::routes::baseAddress << literals::routes::account::signIn;
 
 		auto response = cpr::Get(
 			cpr::Url{ url.str() },
@@ -84,7 +84,7 @@ bool services::SignUp(const std::string& username, const std::string& password)
 	try
 	{
 		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::sign::up;
+		url << literals::routes::baseAddress << literals::routes::account::singUp;
 
 		auto response = cpr::Post(
 			cpr::Url{ url.str() },
@@ -117,7 +117,7 @@ bool services::SignOut(const std::string& username)
 	try
 	{
 		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::sign::out;
+		url << literals::routes::baseAddress << literals::routes::account::signOut;
 
 		auto response = cpr::Put(
 			cpr::Url{ url.str() },
@@ -238,7 +238,7 @@ void services::SingleImageLoadHandler(std::ostream& outputStream, cpr::Response&
 void services::MessagesSender(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
 	std::stringstream url;
-	url << literals::routes::baseAddress << literals::routes::game::chat << '/' << gameID;
+	url << literals::routes::baseAddress << literals::routes::game::chat::simple << '/' << gameID;
 
 	while (*keepGoing)
 	{
@@ -273,7 +273,7 @@ void services::MessagesReceiver(uint64_t gameID, const std::string& username, bo
 	using namespace std::literals::chrono_literals;
 
 	std::stringstream url;
-	url << literals::routes::baseAddress << literals::routes::game::chat << '/' << gameID;
+	url << literals::routes::baseAddress << literals::routes::game::chat::param << '/' << gameID;
 	std::cout << std::format("[Listener] Listening to {}\n", url.str());
 
 	uint64_t lastTimeMillis = 0;
@@ -304,7 +304,7 @@ void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
 	using namespace std::literals::chrono_literals;
 
 	std::stringstream url;
-	url << literals::routes::baseAddress << literals::routes::draw::getUpdates << '/' << gameID;
+	url << literals::routes::baseAddress << literals::routes::game::draw::getUpdates << '/' << gameID;
 	std::cout << std::format("[Listener] Listening to {}\n", url.str());
 
 	uint64_t lastTimeMillis = 0;

@@ -42,7 +42,7 @@ Server& Server::ChatHandlers()
 {
 
 	// Input server controller
-	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::PUT)
+	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::PUT)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		if (request.body.empty())
@@ -73,7 +73,7 @@ Server& Server::ChatHandlers()
 
 
 	// Output server controller
-	CROW_ROUTE(m_app, literals::routes::game::chatParam).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
@@ -153,7 +153,7 @@ Server& Server::RoomHandlers()
 
 Server& Server::AccountHandlers()
 {
-	CROW_ROUTE(m_app, literals::routes::sign::in).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::account::signIn).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request) {
 
 		const char* usernameChar = request.url_params.get(literals::jsonKeys::account::username);
@@ -173,7 +173,7 @@ Server& Server::AccountHandlers()
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::sign::up).methods(crow::HTTPMethod::POST)
+	CROW_ROUTE(m_app, literals::routes::account::singUp).methods(crow::HTTPMethod::POST)
 		([this](const crow::request& request) {
 
 		if (request.body.empty())
@@ -198,7 +198,7 @@ Server& Server::AccountHandlers()
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::sign::out).methods(crow::HTTPMethod::PUT)
+	CROW_ROUTE(m_app, literals::routes::account::signOut).methods(crow::HTTPMethod::PUT)
 		([this](const crow::request& request) {
 
 		if (request.body.empty())
@@ -225,7 +225,7 @@ Server& Server::AccountHandlers()
 
 Server& Server::DrawingHandlers()
 {
-	CROW_ROUTE(m_app, literals::routes::draw::getUpdatesParam).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::game::draw::getUpdatesParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
