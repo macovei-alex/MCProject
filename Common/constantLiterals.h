@@ -51,10 +51,8 @@ namespace literals
 
 			namespace draw
 			{
-				constexpr char getUpdates[] = "/game/draw/get-updates";
-				constexpr char getUpdatesParam[] = "/game/draw/get-updates/<int>";
-				constexpr char sendUpdates[] = "/game/draw/send-updates";
-				constexpr char sendUpdatesParam[] = "/game/draw/send-updates/<int>";
+				constexpr char updates[] = "/game/draw/updates";
+				constexpr char updatesParam[] = "/game/draw/updates/<int>";
 			}
 		}
 

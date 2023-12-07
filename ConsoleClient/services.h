@@ -11,10 +11,11 @@ namespace services
 	bool SignIn(const std::string& username, const std::string& password);
 	bool SignUp(const std::string& username, const std::string& password);
 	bool SignOut(const std::string& username);
-	void SingleChatLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis);
-	void SingleImageLoadHandler(std::ostream& outputStream, cpr::Response& response, uint64_t& lastTimeMillis);
+	void SendNewMessage(const std::string& username, const std::string& content, uint64_t gameID);
+	void ReceiveNewMessages(std::ostream& outputStream, const std::string& username, uint64_t gameID);
+	void ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID);
 
-	void MessagesSender(uint64_t gameID, const std::string& username, bool* keepGoing);
+	void MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing);
 	void MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing);
 	void ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing);
 }

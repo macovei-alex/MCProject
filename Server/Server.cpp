@@ -62,8 +62,7 @@ Server& Server::ChatHandlers()
 		utils::Message message{
 			utils::DecodeMessage(contentIterator->second),
 			utils::DecodeMessage(authorIterator->second),
-			utils::DateTimeAsInteger(std::chrono::system_clock::now())
-		};
+			utils::DateTimeAsInteger(std::chrono::system_clock::now()) };
 
 		std::cout << std::format("[{} at {}]: {}\n", message.author, message.timeMilliseconds, message.content);
 		currentChatIt->second.Emplace(std::move(message));
@@ -91,10 +90,19 @@ Server& Server::ChatHandlers()
 		std::string author;
 		try
 		{
-			start = std::stoull(request.url_params.get(literals::jsonKeys::message::timestamp));
-			author = std::move(request.url_params.get(literals::jsonKeys::message::author));
+			if (char* startChar = request.url_params.get(literals::jsonKeys::message::timestamp);
+				startChar != nullptr)
+				start = std::stoull(startChar);
+			else 
+				throw std::exception("Timestamp key not found");
+
+			if(char* authorChar = request.url_params.get(literals::jsonKeys::message::author);
+				authorChar != nullptr)
+				author = std::string{ authorChar };
+			else 
+				throw std::exception("Author key not found");
 		}
-		catch (std::exception ex)
+		catch (const std::exception& ex)
 		{
 			std::cerr << ex.what();
 			return errorValue;
@@ -118,6 +126,7 @@ Server& Server::RoomHandlers()
 
 		m_chats.emplace(newRoomID, Chat());
 		m_images.emplace(newRoomID, Image());
+
 		m_images[newRoomID].AddUpdate(Update{ Point{ 0, 0, Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 		m_images[newRoomID].AddUpdate(Update{ Point{ 1, 2, Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 		m_images[newRoomID].AddUpdate(Update{ Point{ -15, 20, Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
@@ -225,7 +234,7 @@ Server& Server::AccountHandlers()
 
 Server& Server::DrawingHandlers()
 {
-	CROW_ROUTE(m_app, literals::routes::game::draw::getUpdatesParam).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::GET)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
@@ -234,9 +243,13 @@ Server& Server::DrawingHandlers()
 
 		try
 		{
-			timestamp = std::stoull(request.url_params.get(literals::jsonKeys::draw::timestamp));
+			if (char* timestampChar = request.url_params.get(literals::jsonKeys::draw::timestamp);
+				timestampChar != nullptr)
+				timestamp = std::stoull(timestampChar);
+			else
+				throw std::exception("Timestamp key not found");
 		}
-		catch (std::exception ex)
+		catch (const std::exception& ex)
 		{
 			std::cerr << ex.what();
 			return errorValue;
@@ -245,6 +258,14 @@ Server& Server::DrawingHandlers()
 		auto updates = m_images[gameID].GetUpdatesJsonAfter(timestamp);
 		return updates;
 			});
+
+
+	//CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::PUT)
+	//	([this](const crow::request& request, uint64_t gameID) {
+
+	//	auto jsonMap{ utils::ParseRequestBody(request.body) };
+
+	//		});
 
 
 	return *this;

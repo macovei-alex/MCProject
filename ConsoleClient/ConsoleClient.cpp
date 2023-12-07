@@ -122,7 +122,7 @@ menu2:
 	}
 
 	bool keepGoing = true;
-	std::thread messagesSender(services::MessagesSender, roomID, username, &keepGoing);
+	std::thread messagesSender(services::MessageSender, roomID, username, &keepGoing);
 	std::thread messagesReceiver(services::MessagesReceiver, roomID, username, &keepGoing);
 	std::thread imageUpdatesReceiver(services::ImageUpdatesReceiver, roomID, &keepGoing);
 
