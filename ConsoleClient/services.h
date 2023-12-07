@@ -11,7 +11,7 @@ namespace services
 	bool SignIn(const std::string& username, const std::string& password);
 	bool SignUp(const std::string& username, const std::string& password);
 	bool SignOut(const std::string& username);
-	void SendNewMessage(const std::string& username, const std::string& content, uint64_t gameID);
+	void SendNewMessage(std::ostream& outputStream, const std::string& username, const std::string& content, uint64_t gameID);
 	void ReceiveNewMessages(std::ostream& outputStream, const std::string& username, uint64_t gameID);
 	void ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID);
 

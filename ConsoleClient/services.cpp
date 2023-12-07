@@ -16,13 +16,13 @@ uint64_t services::CreateRoom()
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				std::cout << std::format("[Sender] {}\n", response.reason);
+				std::cout << std::format("[Create] {}\n", response.reason);
 			else
-				std::cout << "[Sender] Server didn't return an error explanation\n";
+				std::cout << "[Create] Server didn't return an error explanation\n";
 		}
 
 		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::room::ID].u();
-		std::cout << std::format("[Sender] New room with roomID < {} > created\n", roomID);
+		std::cout << std::format("[Create] New room with roomID < {} > created\n", roomID);
 		return roomID;
 	}
 	catch (const std::exception& e)
@@ -42,8 +42,8 @@ bool services::ConnectToRoom(uint64_t roomID)
 		auto response = cpr::Get(cpr::Url{ url.str() });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("[Sender] Invalid room ID < {} >\n", roomID).c_str());
-		std::cout << std::format("[Sender] Connected to room < {} >\n", roomID);
+			throw std::exception(std::format("[Connect] Invalid room ID < {} >\n", roomID).c_str());
+		std::cout << std::format("[Connect] Connected to room < {} >\n", roomID);
 		return true;
 	}
 	catch (const std::exception& e)
@@ -68,8 +68,8 @@ bool services::SignIn(const std::string& username, const std::string& password)
 			});
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("[Sender] {}\n", response.text).c_str());
-		std::cout << std::format("[Sender] {}\n", response.text);
+			throw std::exception(std::format("[Sign In] {}\n", response.text).c_str());
+		std::cout << std::format("[Sign In] {}\n", response.text);
 		return true;
 	}
 	catch (const std::exception& e)
@@ -96,13 +96,13 @@ bool services::SignUp(const std::string& username, const std::string& password)
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
+				throw std::exception(std::format("[Sign Up] {}\n", response.reason).c_str());
 			else
-				throw std::exception("[Sender] Server didn't return an error explanation\n");
+				throw std::exception("[Sign Up] Server didn't return an error explanation\n");
 		}
 
-		std::cout << std::format("[Sender] Account created with username < {} >\n", username);
-		std::cout << std::format("[Sender] Signed up as < {} >\n", username);
+		std::cout << std::format("[Sign Up] Account created with username < {} >\n", username);
+		std::cout << std::format("[Sign Up] Signed up as < {} >\n", username);
 		return true;
 	}
 	catch (const std::exception& e)
@@ -143,9 +143,32 @@ bool services::SignOut(const std::string& username)
 	}
 }
 
-void services::SendNewMessage(const std::string& username, const std::string& content, uint64_t gameID)
+void services::SendNewMessage(std::ostream& outputStream, const std::string& username, const std::string& content, uint64_t gameID)
 {
-	static const std::string url{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::chat::simple} + "/" + std::to_string(gameID) };
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::chat::simple} + "/"};
+
+	std::string url{ urlBlueprint + std::to_string(gameID) };
+
+	try 
+	{
+		auto response = cpr::Put(
+			cpr::Url{ url },
+			cpr::Payload{
+				{literals::jsonKeys::message::author, username},
+				{literals::jsonKeys::message::content, content} });
+
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!response.reason.empty())
+				std::cout << std::format("[Message sender] {}\n", response.reason);
+			else
+				std::cout << "[Message sender] Server didn't provide an explanation\n";
+		}
+	}
+	catch (const std::exception& ex)
+	{
+		outputStream << ex.what();
+	}
 }
 
 void services::ReceiveNewMessages(std::ostream& outputStream, const std::string& username, uint64_t gameID)
@@ -275,41 +298,28 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 
 void services::MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
-	std::string url = std::string{ literals::routes::baseAddress } + std::string{ literals::routes::game::chat::simple } + "/" + std::to_string(gameID);
-
 	while (*keepGoing)
 	{
-		try
+		/*try
 		{
 			std::string message;
 			std::getline(std::cin, message);
-			auto response = cpr::Put(
-				cpr::Url{ url },
-				cpr::Payload{
-					{literals::jsonKeys::message::author, username},
-					{literals::jsonKeys::message::content, message} }
-			);
-			if (response.status_code != 200 && response.status_code != 201)
-			{
-				if (!response.reason.empty())
-					std::cout << std::format("[Sender] {}\n", response.reason);
-				else
-					std::cout << "[Sender] Server didn't provide an explanation\n";
-			}
+			services::SendNewMessage(std::cout, username, message, gameID);
 		}
 		catch (const std::exception& e)
 		{
 			std::cout << e.what();
-		}
+		}*/
+
+		std::string message;
+		std::getline(std::cin, message);
+		services::SendNewMessage(std::cout, username, message, gameID);
 	}
 }
 
 void services::MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing)
 {
 	using namespace std::literals::chrono_literals;
-
-	uint64_t lastTimestamp = 0;
-	bool serverErrorDetected = false;
 
 	while (*keepGoing)
 	{
@@ -331,9 +341,6 @@ void services::MessagesReceiver(uint64_t gameID, const std::string& username, bo
 void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
 {
 	using namespace std::literals::chrono_literals;
-
-	uint64_t lastTimestamp = 0;
-	bool serverErrorDetected = false;
 
 	while (*keepGoing)
 	{
