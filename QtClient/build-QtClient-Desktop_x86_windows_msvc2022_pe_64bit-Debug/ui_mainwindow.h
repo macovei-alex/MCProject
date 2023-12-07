@@ -46,18 +46,18 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(845, 808);
+        MainWindow->resize(737, 808);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         label = new QLabel(centralwidget);
         label->setObjectName("label");
-        label->setGeometry(QRect(0, 150, 801, 571));
+        label->setGeometry(QRect(-20, 140, 801, 571));
         label_login = new QLabel(centralwidget);
         label_login->setObjectName("label_login");
         label_login->setGeometry(QRect(590, 550, 121, 121));
         SignIn_GroupBox = new QGroupBox(centralwidget);
         SignIn_GroupBox->setObjectName("SignIn_GroupBox");
-        SignIn_GroupBox->setGeometry(QRect(210, 350, 271, 231));
+        SignIn_GroupBox->setGeometry(QRect(240, 220, 271, 231));
         verticalLayout = new QVBoxLayout(SignIn_GroupBox);
         verticalLayout->setObjectName("verticalLayout");
         splitter = new QSplitter(SignIn_GroupBox);
@@ -93,7 +93,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 845, 22));
+        menubar->setGeometry(QRect(0, 0, 737, 22));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");

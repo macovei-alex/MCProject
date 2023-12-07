@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>845</width>
+    <width>737</width>
     <height>808</height>
    </rect>
   </property>
@@ -17,8 +17,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>150</y>
+      <x>-20</x>
+      <y>140</y>
       <width>801</width>
       <height>571</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QGroupBox" name="SignIn_GroupBox">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>350</y>
+      <x>240</x>
+      <y>220</y>
       <width>271</width>
       <height>231</height>
      </rect>
@@ -98,7 +98,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>845</width>
+     <width>737</width>
      <height>22</height>
     </rect>
    </property>

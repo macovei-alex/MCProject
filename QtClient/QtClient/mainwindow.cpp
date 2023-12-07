@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 //#include <QQuickWidget>
-#include "Canvas.qml"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,12 +32,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_LoginButton_clicked()
 {
-    
+   // CanvasPaint obiect;
+   // obiect.setModal(true);
+   // obiect.exec();
+    hide();
+    obiect= new CanvasPaint(this);
+    obiect->show();
 
-}
-void MainWindow::handelQmlSignal()
-{
-	QMessageBox::information(this, "QML", "QML Signal Received");
 }
 
 
