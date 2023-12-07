@@ -26,13 +26,25 @@ public:
 
 	struct GameHistory
 	{
-		int id;
-		std::string playerID;//foreign key
+		int id;//primary key
+		int playerID;//foreign key
 		int score;
 		std::string difficulty;
 		std::string date;
 	};
 
+	//Database(const std::string& filename);
+	void PopulateStorage();
+	//void SignInOrUp(const std::string& playerName, const std::string& password);
+	bool IfPlayerExist(const std::string& playerName);
+	bool SignUp(const std::string& playerName, const std::string& password);
+	bool SignIn(const std::string& playerName, const std::string& password);
+	bool SignOut(const std::string& playerName);
+	void AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
+	void GetGameHistory(const std::string& playerName);
+	void GetRandomWords(int number ,const std::string& difficulty);
+
+private:
 	inline auto CreateStorage(const std::string& filename)
 	{
 		return sql::make_storage(filename,
@@ -54,13 +66,6 @@ public:
 				sql::make_column("date", &GameHistory::date))
 		);
 	}
-	void PopulateStorage();
-	//void SignInOrUp(const std::string& playerName, const std::string& password);
-	bool IsPlayerExist(const std::string& playerName);
-	void SignUp(const std::string& playerName, const std::string& password);
-	void SignIn(const std::string& playerName, const std::string& password);
-	void SignOut(const std::string& playerName);
-	void AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
-	void GetGameHistory(const std::string& playerName);
-	void GetRandomWords(int number ,const std::string& difficulty);
+	//decltype(CreateStorage("")) storage;
+	
 };

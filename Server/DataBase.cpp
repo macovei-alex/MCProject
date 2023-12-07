@@ -1,6 +1,11 @@
 #include "database.h"
 #include <fstream>
 
+Database::Database()
+{
+
+}
+
 void Database::PopulateStorage()
 {
 	auto storage = CreateStorage("");
@@ -18,7 +23,7 @@ void Database::PopulateStorage()
 	storage.insert_range(words.begin(), words.end());
 }
 
-bool Database::IsPlayerExist(const std::string& playerName)
+bool Database::IfPlayerExist(const std::string& playerName)
 {
 	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
@@ -27,52 +32,72 @@ bool Database::IsPlayerExist(const std::string& playerName)
 	return result.size() == 1;
 }
 
-void Database::SignUp(const std::string& playerName, const std::string& password)
+bool Database::SignUp(const std::string& playerName, const std::string& password)
 {
-	if(IsPlayerExist(playerName))
-	{
-		throw std::exception("Player already exists!");
+	try {
+		if (IfPlayerExist(playerName))
+		{
+			throw "Player already exists!";
+		}
+		else
+		{
+			auto storage = CreateStorage("");
+			PlayerDB player;
+			int lastID = storage.last_insert_rowid();
+			player.playerName = playerName;
+			player.password = password;
+			player.isOnline = true;
+			storage.insert(player);
+			return true;
+		}
 	}
-	auto storage = CreateStorage("");
-	PlayerDB player;
-	int lastID = storage.last_insert_rowid();
-	player.playerName = playerName;
-	player.password = password;
-	player.isOnline = true;
-	storage.insert(player);
+	catch (const char* msg)
+	{
+		std::cout<< msg << std::endl;
+		return false;
+	}
+	
 }
 
-void Database::SignIn(const std::string& playerName, const std::string& password)
+bool Database::SignIn(const std::string& playerName, const std::string& password)
 {
 	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
 		sql::where(sql::c(&PlayerDB::playerName) == playerName)
 	);
 	bool IsPlayerOnline = result[0].isOnline;
-	if (IsPlayerOnline)
-	{
-		throw std::exception("Player already online!");
-	}
-	if (result.size() == 0)
-	{
-		throw std::exception("Invalid username");
-	}
-	else
-	{
-		const std::string& playerPassword = result[0].password;
-		if (playerPassword != password)
+	try {
+		if (IsPlayerOnline)
 		{
-			throw std::exception("Invalid password");
+			throw "Player already online!";
+		}
+		if (result.size() == 0)
+		{
+			throw "Invalid username";
 		}
 		else
 		{
-			result[0].isOnline = true;
-			storage.update(result[0]);
+			const std::string& playerPassword = result[0].password;
+			if (playerPassword != password)
+			{
+				throw "Invalid password";
+			}
+			else
+			{
+				result[0].isOnline = true;
+				storage.update(result[0]);
+				return true;
+			}
 		}
+	}
+	catch (const char* msg)
+	{
+		std::cout << msg << std::endl;
+		return false;
 	}
 }
 
-void Database::SignOut(const std::string& playerName)
+bool Database::SignOut(const std::string& playerName)
 {
 	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
@@ -80,4 +105,26 @@ void Database::SignOut(const std::string& playerName)
 	);
 	result[0].isOnline = false;
 	storage.update(result[0]);
+	return true;
+}
+
+void Database::GetGameHistory(const std::string& playerName)
+{
+	auto storage = CreateStorage("");
+	auto player = storage.get_all<PlayerDB>(
+		sql::where(sql::c(&PlayerDB::playerName) == playerName)
+	);
+	int playerID = player[0].id;
+	auto result = storage.get_all<GameHistory>(
+		sql::where(sql::c(&GameHistory::playerID) == playerID)
+	);
+	int nr = 0;
+	int numberOfGames = result.size();
+	auto totalScore = storage.sum<int>(&GameHistory::score, sql::where(sql::c(&GameHistory::playerID) == playerID));
+	for (auto& game : result)
+	{
+		nr++;
+		std::cout << nr << " " << game.score << " " << game.date << " " << game.difficulty << std::endl;
+	}
+	std::cout << "Total score: " << totalScore << std::endl;
 }
