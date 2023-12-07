@@ -36,7 +36,11 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
+	<ItemGroup>
+		<QT_MODULES>quickwidgets</QT_MODULES>
+	</ItemGroup>
+
+	<ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,5 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="resource.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

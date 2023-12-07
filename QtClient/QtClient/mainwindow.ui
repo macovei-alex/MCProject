@@ -76,7 +76,11 @@
          <string>Password</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_2"/>
+       <widget class="QLineEdit" name="lineEdit_2">
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+       </widget>
       </widget>
      </item>
      <item>

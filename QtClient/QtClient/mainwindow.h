@@ -14,6 +14,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+public slots:
+    void handelQmlSignal();
+
+private slots:
+    void on_LoginButton_clicked();
+   
 
 private:
     Ui::MainWindow *ui;
