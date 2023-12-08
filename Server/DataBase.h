@@ -7,6 +7,7 @@
 #include <sqlite_orm/sqlite_orm.h>
 namespace sql = sqlite_orm;
 
+
 class Database
 {
 public:
@@ -44,29 +45,30 @@ public:
 	void AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
 	void GetGameHistory(const std::string& playerName);
 	std::vector<std::string> GetRandomWords(int number ,const std::string& difficulty);
-
-private:
-	inline auto CreateStorage(const std::string& filename)
-	{
-		return sql::make_storage(filename,
-			sql::make_table("word",
-				sql::make_column("id", &Word::id, sql::primary_key().autoincrement()),
-				sql::make_column("word", &Word::text),
-				sql::make_column("difficulty", &Word::difficulty)),
-			sql::make_table("player",
-				sql::make_column("id", &PlayerDB::id, sql::primary_key().autoincrement()),
-				sql::make_column("playerName", &PlayerDB::playerName),
-				sql::make_column("password", &PlayerDB::password),
-				sql::make_column("isOnline", &PlayerDB::isOnline)),
-			sql::make_table("gameHistory",
-				sql::make_column("id", &GameHistory::id, sql::primary_key().autoincrement()),
-				sql::make_column("playerID", &GameHistory::playerID),
-				sql::foreign_key(&GameHistory::playerID).references(&PlayerDB::id),
-				sql::make_column("score", &GameHistory::score),
-				sql::make_column("difficulty", &GameHistory::difficulty),
-				sql::make_column("date", &GameHistory::date))
-		);
-	}
-	//decltype(CreateStorage("")) storage;
+	
 	
 };
+
+static inline auto CreateStorage(const std::string& filename)
+{
+	return sql::make_storage(filename,
+		sql::make_table("word",
+			sql::make_column("id", &Database::Word::id, sql::primary_key().autoincrement()),
+			sql::make_column("word", &Database::Word::text),
+			sql::make_column("difficulty", &Database::Word::difficulty)),
+		sql::make_table("player",
+			sql::make_column("id", &Database::PlayerDB::id, sql::primary_key().autoincrement()),
+			sql::make_column("playerName", &Database::PlayerDB::playerName),
+			sql::make_column("password", &Database::PlayerDB::password),
+			sql::make_column("isOnline", &Database::PlayerDB::isOnline)),
+		sql::make_table("gameHistory",
+			sql::make_column("id", &Database::GameHistory::id, sql::primary_key().autoincrement()),
+			sql::make_column("playerID", &Database::GameHistory::playerID),
+			sql::foreign_key(&Database::GameHistory::playerID).references(&Database::PlayerDB::id),
+			sql::make_column("score", &Database::GameHistory::score),
+			sql::make_column("difficulty", &Database::GameHistory::difficulty),
+			sql::make_column("date", &Database::GameHistory::date))
+	);
+}
+
+auto storage = CreateStorage("database.db");
