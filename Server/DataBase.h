@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <crow.h>
+#include <vector>
 #include <sqlite_orm/sqlite_orm.h>
 namespace sql = sqlite_orm;
 
@@ -42,7 +43,7 @@ public:
 	bool SignOut(const std::string& playerName);
 	void AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
 	void GetGameHistory(const std::string& playerName);
-	void GetRandomWords(int number ,const std::string& difficulty);
+	std::vector<std::string> GetRandomWords(int number ,const std::string& difficulty);
 
 private:
 	inline auto CreateStorage(const std::string& filename)
