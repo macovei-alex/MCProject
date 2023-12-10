@@ -7,6 +7,12 @@ CanvasPaint::CanvasPaint(QWidget *parent) :
     ui(new Ui::CanvasPaint)
 {
     ui->setupUi(this);
+
+    QLabel* GameChatLabel = ui->GameChatLabel;
+    GameChatLabel->setStyleSheet("border: none;");
+
+    QWidget* gameChatWidget = ui->GameChat;
+    gameChatWidget->setStyleSheet("QWidget { border: 1px solid black; }");
 }
 
 CanvasPaint::~CanvasPaint()
