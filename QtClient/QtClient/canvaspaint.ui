@@ -13,6 +13,19 @@
   <property name="windowTitle">
    <string>Canvas</string>
   </property>
+  <widget class="QPushButton" name="LeaveServerButton">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>250</y>
+     <width>80</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Leave Server</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

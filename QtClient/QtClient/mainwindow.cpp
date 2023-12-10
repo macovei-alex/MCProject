@@ -1,5 +1,7 @@
 #include "mainwindow.h"
+#include "canvaspaint.h"
 #include "ui_mainwindow.h"
+
 #include <QMessageBox>
 #include <QPixmap>
 //#include <QQuickWidget>
