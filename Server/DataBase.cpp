@@ -1,14 +1,8 @@
 #include "database.h"
 #include <fstream>
 
-Database::Database()
-{
-
-}
-
 void Database::PopulateStorage()
 {
-	auto storage = CreateStorage("");
 	std::ifstream f("words.txt");
 	std::vector<Word> words;
 	int index = 0;
@@ -25,7 +19,6 @@ void Database::PopulateStorage()
 
 bool Database::IfPlayerExist(const std::string& playerName)
 {
-	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
 		sql::where(sql::c(&PlayerDB::playerName) == playerName)
 	);
@@ -41,7 +34,6 @@ bool Database::SignUp(const std::string& playerName, const std::string& password
 		}
 		else
 		{
-			auto storage = CreateStorage("");
 			PlayerDB player;
 			int lastID = storage.last_insert_rowid();
 			player.playerName = playerName;
@@ -61,7 +53,6 @@ bool Database::SignUp(const std::string& playerName, const std::string& password
 
 bool Database::SignIn(const std::string& playerName, const std::string& password)
 {
-	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
 		sql::where(sql::c(&PlayerDB::playerName) == playerName)
 	);
@@ -99,7 +90,6 @@ bool Database::SignIn(const std::string& playerName, const std::string& password
 
 bool Database::SignOut(const std::string& playerName)
 {
-	auto storage = CreateStorage("");
 	auto result = storage.get_all<PlayerDB>(
 		sql::where(sql::c(&PlayerDB::playerName) == playerName)
 	);
@@ -108,9 +98,22 @@ bool Database::SignOut(const std::string& playerName)
 	return true;
 }
 
+void Database::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
+{
+	auto player = storage.get_all<PlayerDB>(
+		sql::where(sql::c(&PlayerDB::playerName) == playerName)
+	);
+	int playerID = player[0].id;
+	GameHistory game;
+	game.playerID = playerID;
+	game.score = score;
+	game.difficulty = difficulty;
+	game.date = date;
+	storage.insert(game);
+}
+
 void Database::GetGameHistory(const std::string& playerName)
 {
-	auto storage = CreateStorage("");
 	auto player = storage.get_all<PlayerDB>(
 		sql::where(sql::c(&PlayerDB::playerName) == playerName)
 	);
@@ -127,4 +130,19 @@ void Database::GetGameHistory(const std::string& playerName)
 		std::cout << nr << " " << game.score << " " << game.date << " " << game.difficulty << std::endl;
 	}
 	std::cout << "Total score: " << totalScore << std::endl;
+}
+
+std::vector<std::string> Database::GetRandomWords(int number, const std::string& difficulty)
+{
+	std::vector<std::string> randomWords;
+	auto words = storage.get_all<Word>(
+		sql::where(sql::c(&Word::difficulty) == difficulty),
+		sql::order_by(sql::random()),
+		sql::limit(number)
+	);
+	for(int i = 0; i < words.size(); i++)
+	{
+		randomWords.push_back(words[i].text);
+	}
+	return randomWords;
 }

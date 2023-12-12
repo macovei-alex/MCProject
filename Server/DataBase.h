@@ -3,9 +3,10 @@
 #include <vector>
 #include <fstream>
 #include <crow.h>
+#include <vector>
 #include <sqlite_orm/sqlite_orm.h>
-
 namespace sql = sqlite_orm;
+
 
 class Database
 {
@@ -43,13 +44,12 @@ public:
 	bool SignOut(const std::string& playerName);
 	void AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
 	void GetGameHistory(const std::string& playerName);
-	void GetRandomWords(int number, const std::string& difficulty);
-
-private:
-	decltype(CreateStorage("")) Storage;
+	std::vector<std::string> GetRandomWords(int number ,const std::string& difficulty);
+	
+	
 };
 
-inline auto CreateStorage(const std::string& filename)
+static inline auto CreateStorage(const std::string& filename)
 {
 	return sql::make_storage(filename,
 		sql::make_table("word",
@@ -58,7 +58,7 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("difficulty", &Database::Word::difficulty)),
 		sql::make_table("player",
 			sql::make_column("id", &Database::PlayerDB::id, sql::primary_key().autoincrement()),
-			sql::make_column("playerName", &Database::Database::PlayerDB::playerName),
+			sql::make_column("playerName", &Database::PlayerDB::playerName),
 			sql::make_column("password", &Database::PlayerDB::password),
 			sql::make_column("isOnline", &Database::PlayerDB::isOnline)),
 		sql::make_table("gameHistory",
@@ -70,3 +70,5 @@ inline auto CreateStorage(const std::string& filename)
 			sql::make_column("date", &Database::GameHistory::date))
 	);
 }
+
+auto storage = CreateStorage("database.db");
