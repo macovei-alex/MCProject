@@ -33,6 +33,7 @@ namespace literals
 			constexpr char pointY[] = "y";
 			constexpr char color[] = "color";
 			constexpr char timestamp[] = "timestamp";
+			constexpr char points[] = "points";
 		}
 	}
 

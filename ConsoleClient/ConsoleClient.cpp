@@ -121,6 +121,9 @@ menu2:
 		goto menu2;
 	}
 
+	std::vector<Point> points{ Point{ 1, 2, 0x24AB73 }, Point{ -5, -2, 0x118FF0 } };
+	services::SendImageUpdates(std::cerr, roomID, points);
+
 	bool keepGoing = true;
 	std::thread messagesSender(services::MessageSender, roomID, username, &keepGoing);
 	std::thread messagesReceiver(services::MessagesReceiver, roomID, username, &keepGoing);

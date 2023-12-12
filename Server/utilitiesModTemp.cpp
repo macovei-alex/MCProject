@@ -26,6 +26,8 @@ std::vector<std::string> utils::SplitToVec(const std::string& str, const std::st
 std::pair<std::string, std::string> utils::SplitToPair(const std::string& str, const std::string& delim)
 {
 	size_t found = str.find(delim);
+	if(found == std::string::npos)
+		return { str, "" };
 	std::string first{ str.substr(0, found) };
 	std::string second{ str.substr(found + 1, str.size() - found - 1) };
 	return { first, second };
@@ -44,9 +46,7 @@ std::string utils::DecodeMessage(const std::string& message)
 			i += 2;
 		}
 		else
-		{
 			decodedMessage += message[i];
-		}
 	}
 	return decodedMessage;
 }

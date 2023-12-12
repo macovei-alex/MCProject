@@ -104,7 +104,7 @@ Server& Server::ChatHandlers()
 		}
 		catch (const std::exception& ex)
 		{
-			std::cerr << ex.what();
+			std::cerr << ex.what() << '\n';
 			return errorValue;
 		}
 
@@ -251,7 +251,7 @@ Server& Server::DrawingHandlers()
 		}
 		catch (const std::exception& ex)
 		{
-			std::cerr << ex.what();
+			std::cerr << ex.what() << '\n';
 			return errorValue;
 		}
 
@@ -263,8 +263,21 @@ Server& Server::DrawingHandlers()
 	//CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::PUT)
 	//	([this](const crow::request& request, uint64_t gameID) {
 
-	//	auto jsonMap{ utils::ParseRequestBody(request.body) };
+	//	if (request.body.empty())
+	//		return crow::response(404, "Empty request body");
 
+	//	auto requestBody = crow::json::load(request.body);
+	//	for (const auto& jsonPoint : requestBody)
+	//	{
+	//		int16_t x = jsonPoint[literals::jsonKeys::draw::pointX].i();
+	//		int16_t y = jsonPoint[literals::jsonKeys::draw::pointY].i();
+	//		int32_t rgb = jsonPoint[literals::jsonKeys::draw::color].i();
+	//		Color color{ rgb };
+
+	//		m_images[gameID].AddUpdate(Update{ Point{ x, y, color }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+	//	}
+
+	//	return crow::response(200);
 	//		});
 
 

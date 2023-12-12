@@ -4,6 +4,20 @@
 #include <iostream>
 #include <crow.h>
 
+// BEGIN _TEMP /////////////////////////////////////////////
+Color::Color(int32_t rgbHex) :
+	r{ uint8_t((rgbHex >> 16) & 0xFF) },
+	g{ uint8_t((rgbHex >> 8) & 0xFF) },
+	b{ uint8_t(rgbHex & 0xFF) }
+{
+	/* empty */
+}
+int32_t Color::ToInt32() const 
+{ 
+	return r << 16 | g << 8 | b; 
+}
+// END _TEMP //////////////////////////////////////////////
+
 uint64_t services::CreateRoom()
 {
 	try
@@ -16,9 +30,9 @@ uint64_t services::CreateRoom()
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				std::cout << std::format("[Create] {}\n", response.reason);
+				throw std::exception(std::format("[Create] {}", response.reason).c_str());
 			else
-				std::cout << "[Create] Server didn't return an error explanation\n";
+				throw std::exception("[Create] Server didn't return an error explanation");
 		}
 
 		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::room::ID].u();
@@ -27,7 +41,7 @@ uint64_t services::CreateRoom()
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what() << '\n';
+		std::cerr << e.what() << '\n';
 		return LONG_MAX;
 	}
 }
@@ -42,13 +56,13 @@ bool services::ConnectToRoom(uint64_t roomID)
 		auto response = cpr::Get(cpr::Url{ url.str() });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("[Connect] Invalid room ID < {} >\n", roomID).c_str());
+			throw std::exception(std::format("[Connect] Invalid room ID < {} >", roomID).c_str());
 		std::cout << std::format("[Connect] Connected to room < {} >\n", roomID);
 		return true;
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what();
+		std::cerr << e.what() << '\n';
 		return false;
 	}
 }
@@ -68,13 +82,13 @@ bool services::SignIn(const std::string& username, const std::string& password)
 			});
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("[Sign In] {}\n", response.text).c_str());
+			throw std::exception(std::format("[Sign In] {}", response.text).c_str());
 		std::cout << std::format("[Sign In] {}\n", response.text);
 		return true;
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what();
+		std::cerr << e.what() << '\n';
 		return false;
 	}
 }
@@ -96,9 +110,9 @@ bool services::SignUp(const std::string& username, const std::string& password)
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(std::format("[Sign Up] {}\n", response.reason).c_str());
+				throw std::exception(std::format("[Sign Up] {}", response.reason).c_str());
 			else
-				throw std::exception("[Sign Up] Server didn't return an error explanation\n");
+				throw std::exception("[Sign Up] Server didn't return an error explanation");
 		}
 
 		std::cout << std::format("[Sign Up] Account created with username < {} >\n", username);
@@ -107,7 +121,7 @@ bool services::SignUp(const std::string& username, const std::string& password)
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what();
+		std::cerr << e.what() << '\n';
 		return false;
 	}
 }
@@ -128,9 +142,9 @@ bool services::SignOut(const std::string& username)
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(std::format("[Sender] {}\n", response.reason).c_str());
+				throw std::exception(std::format("[Sender] {}", response.reason).c_str());
 			else
-				throw std::exception("[Sender] Server didn't return an error explanation\n");
+				throw std::exception("[Sender] Server didn't return an error explanation");
 		}
 
 		std::cout << "[Sender] Succesfully signed out\n";
@@ -138,18 +152,18 @@ bool services::SignOut(const std::string& username)
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what();
+		std::cerr << e.what() << '\n';
 		return false;
 	}
 }
 
-void services::SendNewMessage(std::ostream& outputStream, const std::string& username, const std::string& content, uint64_t gameID)
+void services::SendNewMessage(std::ostream& errStream, const std::string& username, const std::string& content, uint64_t gameID)
 {
-	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::chat::simple} + "/"};
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::chat::simple} + "/" };
 
 	std::string url{ urlBlueprint + std::to_string(gameID) };
 
-	try 
+	try
 	{
 		auto response = cpr::Put(
 			cpr::Url{ url },
@@ -160,14 +174,14 @@ void services::SendNewMessage(std::ostream& outputStream, const std::string& use
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				std::cout << std::format("[Message sender] {}\n", response.reason);
+				throw std::exception(std::format("[Message sender] {}", response.reason).c_str());
 			else
-				std::cout << "[Message sender] Server didn't provide an explanation\n";
+				throw std::exception("[Message sender] Server didn't provide an explanation");
 		}
 	}
 	catch (const std::exception& ex)
 	{
-		outputStream << ex.what();
+		errStream << ex.what() << '\n';
 	}
 }
 
@@ -177,7 +191,7 @@ void services::ReceiveNewMessages(std::ostream& outputStream, const std::string&
 
 	static uint64_t lastTimestamp = 0;
 	static bool serverErrorDetected = false;
-	
+
 	std::string url{ urlBlueprint + std::to_string(gameID) };
 
 	try
@@ -193,27 +207,21 @@ void services::ReceiveNewMessages(std::ostream& outputStream, const std::string&
 		{
 			if (!serverErrorDetected)
 			{
-				if (!response.reason.empty())
-					outputStream << std::format("[Message receiver] {}\n", response.reason);
-				else
-					outputStream << "[Message receiver] Server didn't provide an explanation\n";
 				serverErrorDetected = true;
+				if (!response.reason.empty())
+					throw std::exception(std::format("[Message receiver] {}", response.reason).c_str());
+				else
+					throw std::exception("[Message receiver] Server didn't provide an explanation");
 			}
 		}
 		else
 			serverErrorDetected = false;
 
-		if (serverErrorDetected)
-			return;
-
 		auto messagesJsonList = crow::json::load(response.text);
 		if (messagesJsonList.size() == 0)
 			lastTimestamp = max(lastTimestamp, 1);
 		else if (messagesJsonList.size() == 1 && messagesJsonList[0].has(literals::error))
-		{
-			outputStream << "[Message receiver]: Json has error";
-			return;
-		}
+			throw std::exception("[Message receiver]: Json has error");
 		else
 			lastTimestamp = messagesJsonList[messagesJsonList.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
 
@@ -230,9 +238,46 @@ void services::ReceiveNewMessages(std::ostream& outputStream, const std::string&
 	}
 	catch (const std::exception& exception)
 	{
-		outputStream << "[Message receiver]: " << exception.what();
+		outputStream << "[Message receiver]: " << exception.what() << '\n';
 	}
 }
+
+//void services::SendImageUpdates(std::ostream& errStream, uint64_t gameID, const std::vector<Point>& points)
+//{
+//	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
+//
+//	std::string url{ urlBlueprint + std::to_string(gameID) };
+//
+//	try
+//	{
+//		crow::json::wvalue::list pointsJsonList;
+//		pointsJsonList.reserve(points.size());
+//
+//		for (auto& point : points)
+//			pointsJsonList.emplace_back(crow::json::wvalue{
+//				{literals::jsonKeys::draw::pointX, point.x},
+//				{literals::jsonKeys::draw::pointY, point.y},
+//				{literals::jsonKeys::draw::color, point.color.ToInt32() } });
+//
+//		auto str = crow::json::wvalue(pointsJsonList).dump();
+//
+//		auto response = cpr::Put(
+//			cpr::Url{ url },
+//			cpr::Payload{ {literals::jsonKeys::draw::points, str} });
+//
+//		if (response.status_code != 200 && response.status_code != 201)
+//		{
+//			if (!response.reason.empty())
+//				throw std::exception(std::format("[Drawing sender] {}", response.reason).c_str());
+//			else
+//				throw std::exception("[Drawing sender] Server didn't provide an explanation");
+//		}
+//	}
+//	catch (const std::exception& exception)
+//	{
+//		errStream << "[Drawing sender]: " << exception.what() << '\n';
+//	}
+//}
 
 void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 {
@@ -254,9 +299,9 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 			if (!serverErrorDetected)
 			{
 				if (!response.reason.empty())
-					outputStream << std::format("[Drawing updater] {}\n", response.reason);
+					throw std::exception(std::format("[Drawing updater] {}", response.reason).c_str());
 				else
-					outputStream << "[Drawing updater] Server didn't provide an explanation\n";
+					throw std::exception("[Drawing updater] Server didn't provide an explanation");
 				serverErrorDetected = true;
 			}
 		}
@@ -270,10 +315,7 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 		if (pointsJsonList.size() == 0)
 			lastTimestamp = max(lastTimestamp, 1);
 		else if (pointsJsonList.size() == 1 && pointsJsonList[0].has(literals::error))
-		{
-			outputStream << ("[Drawing updater] Json has error");
-			return;
-		}
+			throw std::exception("[Drawing updater] Json has error");
 		else
 			lastTimestamp = pointsJsonList[pointsJsonList.size() - 1][literals::jsonKeys::draw::timestamp].u() + 1;
 
@@ -292,7 +334,7 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 	}
 	catch (const std::exception& exception)
 	{
-		outputStream << "[Drawer]: " << exception.what();
+		outputStream << "[Drawer]: " << exception.what() << '\n';
 	}
 }
 
@@ -300,17 +342,6 @@ void services::MessageSender(uint64_t gameID, const std::string& username, bool*
 {
 	while (*keepGoing)
 	{
-		/*try
-		{
-			std::string message;
-			std::getline(std::cin, message);
-			services::SendNewMessage(std::cout, username, message, gameID);
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << e.what();
-		}*/
-
 		std::string message;
 		std::getline(std::cin, message);
 		services::SendNewMessage(std::cout, username, message, gameID);
@@ -323,16 +354,6 @@ void services::MessagesReceiver(uint64_t gameID, const std::string& username, bo
 
 	while (*keepGoing)
 	{
-		/*try
-		{
-			services::ReceiveNewMessages(std::cout, gameID);
-		}
-		catch (const std::exception& exception)
-		{
-			std::cout << "[Listener] Error detected: " << exception.what() << "\nThe app will close after you enter any character\n";
-			*keepGoing = false;
-		}*/
-
 		services::ReceiveNewMessages(std::cout, username, gameID);
 		std::this_thread::sleep_for(0.5s);
 	}
@@ -344,16 +365,6 @@ void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
 
 	while (*keepGoing)
 	{
-		/*try
-		{
-			services::SingleImageLoadHandler(std::cout, gameID);
-		}
-		catch (const std::exception& exception)
-		{
-			std::cout << "[Listener] Error detected: " << exception.what() << "\nThe app will close after you enter any character\n";
-			*keepGoing = false;
-		}*/
-
 		services::ReceiveImageUpdates(std::cout, gameID);
 		std::this_thread::sleep_for(0.5s);
 	}
