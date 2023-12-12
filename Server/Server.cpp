@@ -1,9 +1,9 @@
 #include "Server.h"
 
+#include "../Common/constantLiterals.h"
+
 #include <format>
 #include <stack>
-
-#include "../Common/constantLiterals.h"
 
 Server* Server::s_instance = nullptr;
 
@@ -260,25 +260,25 @@ Server& Server::DrawingHandlers()
 			});
 
 
-	//CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::PUT)
-	//	([this](const crow::request& request, uint64_t gameID) {
+	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::PUT)
+		([this](const crow::request& request, uint64_t gameid) {
 
-	//	if (request.body.empty())
-	//		return crow::response(404, "Empty request body");
+		if (request.body.empty())
+			return crow::response(404, "empty request body");
 
-	//	auto requestBody = crow::json::load(request.body);
-	//	for (const auto& jsonPoint : requestBody)
-	//	{
-	//		int16_t x = jsonPoint[literals::jsonKeys::draw::pointX].i();
-	//		int16_t y = jsonPoint[literals::jsonKeys::draw::pointY].i();
-	//		int32_t rgb = jsonPoint[literals::jsonKeys::draw::color].i();
-	//		Color color{ rgb };
+		auto requestbody = crow::json::load(request.body);
+		for (const auto& jsonpoint : requestbody)
+		{
+			int16_t x = jsonpoint[literals::jsonKeys::draw::pointX].i();
+			int16_t y = jsonpoint[literals::jsonKeys::draw::pointY].i();
+			int32_t rgb = jsonpoint[literals::jsonKeys::draw::color].i();
+			utils::img::Color color{ rgb };
 
-	//		m_images[gameID].AddUpdate(Update{ Point{ x, y, color }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-	//	}
+			m_images[gameid].AddUpdate(utils::img::Update{ utils::img::Point{x, y, color}, utils::DateTimeAsInteger(std::chrono::system_clock::now())});
+		}
 
-	//	return crow::response(200);
-	//		});
+		return crow::response(200);
+			});
 
 
 	return *this;

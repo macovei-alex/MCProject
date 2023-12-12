@@ -1,10 +1,11 @@
+#include "services.h"
+#include "clientUtils.h"
+#include "../Common/constantLiterals.h"
+#include "../Common/commonUtils.h"
+
 #include <iostream>
 #include <string>
 #include <thread>
-
-#include "services.h"
-#include "clientUtils.h"
-#include "..\Common\constantLiterals.h"
 
 int main()
 {
@@ -121,7 +122,7 @@ menu2:
 		goto menu2;
 	}
 
-	std::vector<Point> points{ Point{ 1, 2, 0x24AB73 }, Point{ -5, -2, 0x118FF0 } };
+	std::vector<utils::img::Point> points{ utils::img::Point{ 1, 2, 0x24AB73 }, utils::img::Point{ -5, -2, 0x118FF0 } };
 	services::SendImageUpdates(std::cerr, roomID, points);
 
 	bool keepGoing = true;
