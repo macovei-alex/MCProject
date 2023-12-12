@@ -1,22 +1,9 @@
 #include "services.h"
-#include "..\Common\constantLiterals.h"
+#include "../Common/constantLiterals.h"
+#include "../Common/commonUtils.h"
 
 #include <iostream>
 #include <crow.h>
-
-// BEGIN _TEMP /////////////////////////////////////////////
-Color::Color(int32_t rgbHex) :
-	r{ uint8_t((rgbHex >> 16) & 0xFF) },
-	g{ uint8_t((rgbHex >> 8) & 0xFF) },
-	b{ uint8_t(rgbHex & 0xFF) }
-{
-	/* empty */
-}
-int32_t Color::ToInt32() const 
-{ 
-	return r << 16 | g << 8 | b; 
-}
-// END _TEMP //////////////////////////////////////////////
 
 uint64_t services::CreateRoom()
 {
@@ -242,42 +229,42 @@ void services::ReceiveNewMessages(std::ostream& outputStream, const std::string&
 	}
 }
 
-//void services::SendImageUpdates(std::ostream& errStream, uint64_t gameID, const std::vector<Point>& points)
-//{
-//	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
-//
-//	std::string url{ urlBlueprint + std::to_string(gameID) };
-//
-//	try
-//	{
-//		crow::json::wvalue::list pointsJsonList;
-//		pointsJsonList.reserve(points.size());
-//
-//		for (auto& point : points)
-//			pointsJsonList.emplace_back(crow::json::wvalue{
-//				{literals::jsonKeys::draw::pointX, point.x},
-//				{literals::jsonKeys::draw::pointY, point.y},
-//				{literals::jsonKeys::draw::color, point.color.ToInt32() } });
-//
-//		auto str = crow::json::wvalue(pointsJsonList).dump();
-//
-//		auto response = cpr::Put(
-//			cpr::Url{ url },
-//			cpr::Payload{ {literals::jsonKeys::draw::points, str} });
-//
-//		if (response.status_code != 200 && response.status_code != 201)
-//		{
-//			if (!response.reason.empty())
-//				throw std::exception(std::format("[Drawing sender] {}", response.reason).c_str());
-//			else
-//				throw std::exception("[Drawing sender] Server didn't provide an explanation");
-//		}
-//	}
-//	catch (const std::exception& exception)
-//	{
-//		errStream << "[Drawing sender]: " << exception.what() << '\n';
-//	}
-//}
+void services::SendImageUpdates(std::ostream& errStream, uint64_t gameID, const std::vector<utils::img::Point>& points)
+{
+	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
+
+	std::string url{ urlBlueprint + std::to_string(gameID) };
+
+	try
+	{
+		crow::json::wvalue::list pointsJsonList;
+		pointsJsonList.reserve(points.size());
+
+		for (auto& point : points)
+			pointsJsonList.emplace_back(crow::json::wvalue{
+				{literals::jsonKeys::draw::pointX, point.x},
+				{literals::jsonKeys::draw::pointY, point.y},
+				{literals::jsonKeys::draw::color, point.color.ToInt32() } });
+
+		auto str = crow::json::wvalue(pointsJsonList).dump();
+
+		auto response = cpr::Put(
+			cpr::Url{ url },
+			cpr::Payload{ {literals::jsonKeys::draw::points, str} });
+
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!response.reason.empty())
+				throw std::exception(std::format("[Drawing sender] {}", response.reason).c_str());
+			else
+				throw std::exception("[Drawing sender] Server didn't provide an explanation");
+		}
+	}
+	catch (const std::exception& exception)
+	{
+		errStream << "[Drawing sender]: " << exception.what() << '\n';
+	}
+}
 
 void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 {
@@ -321,15 +308,12 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 
 		for (auto& pointJson : pointsJsonList)
 		{
-			int32_t rgbColor = pointJson[literals::jsonKeys::draw::color].i();
-			uint8_t r = (rgbColor >> 16) & 0xFF;
-			uint8_t g = (rgbColor >> 8) & 0xFF;
-			uint8_t b = rgbColor & 0xFF;
-
-			outputStream << std::format("[Drawing updater]: New point({}, {}, color({}, {}, {})) received\n",
+			utils::img::Point point{ 
 				pointJson[literals::jsonKeys::draw::pointX].i(),
 				pointJson[literals::jsonKeys::draw::pointY].i(),
-				r, g, b);
+				pointJson[literals::jsonKeys::draw::color].i() };
+
+			outputStream << std::format("[Drawing updater]: New point({}, {}, color({}, {}, {})) received\n", point.x, point.y, point.color.r, point.color.g, point.color.b);
 		}
 	}
 	catch (const std::exception& exception)

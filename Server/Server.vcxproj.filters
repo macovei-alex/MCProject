@@ -30,31 +30,31 @@
     <ClCompile Include="GameSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilitiesMod.cppm">
+    <ClCompile Include="serverUtilsMod.cppm">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilitiesMod.cpp">
+    <ClCompile Include="serverUtilsMod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Authentification.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilities.cpp">
+    <ClCompile Include="serverUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilitiesModTemp.cpp">
+    <ClCompile Include="serverUtilsModTemp.cpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Chat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\commonUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,16 +74,13 @@
     <ClInclude Include="Database.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Authentification.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utilities.h">
+    <ClInclude Include="serverUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utilitiesModTemp.h">
+    <ClInclude Include="serverUtilsModTemp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\constantLiterals.h">
@@ -93,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\commonUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

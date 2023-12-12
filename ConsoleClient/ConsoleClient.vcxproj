@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\commonUtils.cpp" />
     <ClCompile Include="services.cpp" />
     <ClCompile Include="clientUtils.cpp" />
     <ClCompile Include="ConsoleClient.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\commonUtils.h" />
     <ClInclude Include="..\Common\constantLiterals.h" />
     <ClInclude Include="services.h" />
     <ClInclude Include="clientUtils.h" />

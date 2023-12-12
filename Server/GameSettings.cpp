@@ -1,5 +1,7 @@
 #include "GameSettings.h"
-#include<algorithm>>
+
+#include <algorithm>
+
 const uint16_t GameSettings::defaultChooseWordOptionCount = 3;
 const uint16_t GameSettings::defaultDrawTime = 120;
 const uint16_t GameSettings::defaultRoundCount = 4;

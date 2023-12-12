@@ -3,9 +3,9 @@
 #include <crow.h>
 #include <map>
 
-#include "utilities.h"
-// import utilitiesMod;
-#include "utilitiesModTemp.h"
+#include "serverUtils.h"
+// import serverUtilsMod;
+#include "serverUtilsModTemp.h"
 #include "Game.h"
 #include "Chat.h"
 #include "Image.h"
@@ -49,5 +49,5 @@ private:
 
 	uint16_t m_port;
 	std::string m_IPAddress;
-	//DBManager& m_db;
+	//Database& m_db;
 };

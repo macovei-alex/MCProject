@@ -144,29 +144,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Authentification.cpp" />
+    <ClCompile Include="..\Common\commonUtils.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
-    <ClCompile Include="utilities.cpp" />
-    <ClCompile Include="utilitiesMod.cpp" />
-    <ClCompile Include="utilitiesMod.cppm" />
-    <ClCompile Include="utilitiesModTemp.cpp" />
+    <ClCompile Include="serverUtils.cpp" />
+    <ClCompile Include="serverUtilsMod.cpp" />
+    <ClCompile Include="serverUtilsMod.cppm" />
+    <ClCompile Include="serverUtilsModTemp.cpp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\commonUtils.h" />
     <ClInclude Include="..\Common\constantLiterals.h" />
-    <ClInclude Include="Authentification.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
-    <ClInclude Include="utilities.h" />
-    <ClInclude Include="utilitiesModTemp.h" />
+    <ClInclude Include="serverUtils.h" />
+    <ClInclude Include="serverUtilsModTemp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />

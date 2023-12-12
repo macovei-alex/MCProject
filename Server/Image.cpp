@@ -1,36 +1,20 @@
 #include "Image.h"
 
-#include "..\Common\constantLiterals.h"
+#include "../Common/constantLiterals.h"
 
-Color::Color(uint32_t rgbHex) :
-	r{ (rgbHex >> 16) & 0xFF },
-	g{ (rgbHex >> 8) & 0xFF },
-	b{ rgbHex & 0xFF }
-{
-	/* empty */
-}
-
-Color::Color(int32_t rgbHex) :
-	r{ uint8_t((rgbHex >> 16) & 0xFF) },
-	g{ uint8_t((rgbHex >> 8) & 0xFF) },
-	b{ uint8_t(rgbHex & 0xFF) }
-{
-	/* empty */
-}
-
-void Image::AddUpdate(const Update& update)
+void Image::AddUpdate(const utils::img::Update& update)
 {
 	this->m_updates.push_back(update);
 }
 
-void Image::AddUpdate(Update&& update)
+void Image::AddUpdate(utils::img::Update&& update)
 {
 	this->m_updates.push_back(std::move(update));
 }
 
-std::vector<Update> Image::GetUpdatesAfter(uint64_t timestamp)
+std::vector<utils::img::Update> Image::GetUpdatesAfter(uint64_t timestamp)
 {
-	std::vector<Update> updates;
+	std::vector<utils::img::Update> updates;
 	for (auto it{ m_updates.rbegin() }; it != m_updates.rend() && it->timestamp >= timestamp; it++)
 		updates.push_back(*it);
 
@@ -42,7 +26,7 @@ crow::json::wvalue Image::GetUpdatesJsonAfter(uint64_t timestamp)
 	return UpdatesToJson(GetUpdatesAfter(timestamp));
 }
 
-crow::json::wvalue Image::UpdatesToJson(const std::vector<Update>& updates)
+crow::json::wvalue Image::UpdatesToJson(const std::vector<utils::img::Update>& updates)
 {
 	if (updates.size() == 0)
 		return crow::json::wvalue{ crow::json::wvalue::list{} };

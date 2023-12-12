@@ -3,7 +3,7 @@
 #include <format>
 #include <stack>
 
-#include "..\Common\constantLiterals.h"
+#include "../Common/constantLiterals.h"
 
 Server* Server::s_instance = nullptr;
 
@@ -127,9 +127,9 @@ Server& Server::RoomHandlers()
 		m_chats.emplace(newRoomID, Chat());
 		m_images.emplace(newRoomID, Image());
 
-		m_images[newRoomID].AddUpdate(Update{ Point{ 0, 0, Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-		m_images[newRoomID].AddUpdate(Update{ Point{ 1, 2, Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-		m_images[newRoomID].AddUpdate(Update{ Point{ -15, 20, Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		m_images[newRoomID].AddUpdate(utils::img::Update{ utils::img::Point{ 0, 0, utils::img::Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		m_images[newRoomID].AddUpdate(utils::img::Update{ utils::img::Point{ 1, 2, utils::img::Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		m_images[newRoomID].AddUpdate(utils::img::Update{ utils::img::Point{ 5, 0, utils::img::Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 
 		return crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } };
 			});

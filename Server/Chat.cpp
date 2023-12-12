@@ -1,6 +1,6 @@
 #include "Chat.h"
 
-#include "..\Common\constantLiterals.h"
+#include "../Common/constantLiterals.h"
 
 void Chat::Add(const utils::Message& message)
 {

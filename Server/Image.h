@@ -3,32 +3,7 @@
 #include <vector>
 #include <crow.h>
 
-struct Color
-{
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-
-	Color() = default;
-	Color(uint32_t color);
-	Color(int32_t color);
-	bool operator==(const Color& other) const = default;
-};
-
-struct Point
-{
-	int16_t x;
-	int16_t y;
-	Color color;
-	bool operator==(const Point& other) const = default;
-};
-
-struct Update
-{
-	Point point;
-	uint64_t timestamp;
-	bool operator==(const Update& other) const = default;
-};
+#include "..\Common\commonUtils.h"
 
 class Image
 {
@@ -40,15 +15,15 @@ public:
 	Image& operator=(Image&& other) = default;
 
 public:
-	void AddUpdate(const Update& update);
-	void AddUpdate(Update&& update);
-	std::vector<Update> GetUpdatesAfter(uint64_t timestamp);
+	void AddUpdate(const utils::img::Update& update);
+	void AddUpdate(utils::img::Update&& update);
+	std::vector<utils::img::Update> GetUpdatesAfter(uint64_t timestamp);
 	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp);
 	
 public:
-	static crow::json::wvalue UpdatesToJson(const std::vector<Update>& updates);
+	static crow::json::wvalue UpdatesToJson(const std::vector<utils::img::Update>& updates);
 
 private:
-	std::vector<Update> m_updates;
+	std::vector<utils::img::Update> m_updates;
 };
 
