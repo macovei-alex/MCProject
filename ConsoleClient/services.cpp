@@ -1,4 +1,5 @@
 #include "services.h"
+
 #include "../Common/constantLiterals.h"
 #include "../Common/commonUtils.h"
 
@@ -241,10 +242,10 @@ void services::SendImageUpdates(std::ostream& errStream, uint64_t gameID, const 
 		pointsJsonList.reserve(points.size());
 
 		for (auto& point : points)
-			pointsJsonList.emplace_back(crow::json::wvalue{
+			pointsJsonList.emplace_back(crow::json::wvalue{ {
 				{literals::jsonKeys::draw::pointX, point.x},
 				{literals::jsonKeys::draw::pointY, point.y},
-				{literals::jsonKeys::draw::color, point.color.ToInt32() } });
+				{literals::jsonKeys::draw::color, point.color.ToInt32() }} });
 
 		auto str = crow::json::wvalue(pointsJsonList).dump();
 
@@ -308,7 +309,7 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 
 		for (auto& pointJson : pointsJsonList)
 		{
-			utils::img::Point point{ 
+			utils::img::Point point{
 				pointJson[literals::jsonKeys::draw::pointX].i(),
 				pointJson[literals::jsonKeys::draw::pointY].i(),
 				pointJson[literals::jsonKeys::draw::color].i() };
