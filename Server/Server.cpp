@@ -312,20 +312,24 @@ Server& Server::GameSettingsHandlers()
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
-		auto drawTimeIterator = jsonMap.find(literals::jsonKeys::settings::drawTime);
-		if (drawTimeIterator != jsonMap.end())
-			game.GetGameSettings().SetDrawTime(std::stoi(drawTimeIterator->second));
+		try
+		{
+			uint64_t drawTime = std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second);
+			game.GetGameSettings().SetDrawTime(drawTime);
 
-		auto roundCountIterator = jsonMap.find(literals::jsonKeys::settings::roundCount);
-		if (roundCountIterator != jsonMap.end())
-			game.GetGameSettings().SetRoundCount(std::stoi(roundCountIterator->second));
+			int64_t roundCount = std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second);
+			game.GetGameSettings().SetRoundCount(roundCount);
 
-		auto chooseWordOptionCountIterator = jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount);
-		if (chooseWordOptionCountIterator != jsonMap.end())
-			game.GetGameSettings().SetChooseWordOptionCount(std::stoi(chooseWordOptionCountIterator->second));
+			int64_t chooseWordOptionCount = std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second);
+			game.GetGameSettings().SetDrawTime(chooseWordOptionCount);
+		}
+		catch (const std::exception& exception)
+		{
+			std::cerr << exception.what() << '\n';
+			return crow::response(404, "Invalid parameter values");
+		}
 
 		return crow::response(200);
-
 			});
 
 	return *this;
@@ -392,7 +396,7 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 		{
 		case allHandlers:
 			this->AllHandlers();
-			break;
+			return *this;
 		case chatHandlers:
 			this->ChatHandlers();
 			break;

@@ -5,8 +5,8 @@
 class GameSettings
 {
 public:
-	GameSettings();
-	GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount);
+	GameSettings() noexcept;
+	GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount) noexcept;
 	GameSettings(const GameSettings& other) noexcept = default;
 	GameSettings& operator=(const GameSettings& other) noexcept = default;
 	GameSettings(GameSettings&& other) noexcept = default;

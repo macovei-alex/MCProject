@@ -19,8 +19,8 @@ public:
 	};
 
 public:
-	Player();
-	Player(const std::string& m_name);
+	Player() noexcept;
+	Player(const std::string& m_name) noexcept;
 	Player(const Player& other) noexcept = default;
 	Player& operator=(const Player& other) noexcept = default;
 	~Player() noexcept = default;
@@ -40,10 +40,10 @@ public:
 
 public:
 	void AddScore();
-	int CalculateScore(int seconds, uint32_t maxSeconds, int playerCount = 0);
+	int CalculateScore(int seconds, uint32_t maxSeconds, int playerCount = 1);
 	int CalculateScoreDrawingPlayer(int seconds, uint32_t maxSeconds, int playerCount);
 	int CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds);
-	bool operator==(const Player& other) const;
+	bool operator==(const Player& other) const noexcept;
 
 private:
 	std::string m_name;

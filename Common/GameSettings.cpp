@@ -6,7 +6,7 @@ const uint16_t GameSettings::defaultChooseWordOptionCount = 3;
 const uint16_t GameSettings::defaultDrawTime = 120;
 const uint16_t GameSettings::defaultRoundCount = 4;
  
-GameSettings::GameSettings() :
+GameSettings::GameSettings() noexcept :
 	m_roundCount{ defaultRoundCount },
 	m_drawTime{ defaultDrawTime },
 	m_chooseWordOptionCount{ defaultChooseWordOptionCount }
@@ -14,7 +14,7 @@ GameSettings::GameSettings() :
 	/* empty */
 }
 
-GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount) :
+GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount) noexcept :
 m_roundCount{ roundCount },
 	m_drawTime{ drawTime },
 	m_chooseWordOptionCount{ chooseWordOtionCount }
@@ -22,32 +22,32 @@ m_roundCount{ roundCount },
 	/* empty */
 }
 
-uint16_t GameSettings::GetRoundCount() const
+uint16_t GameSettings::GetRoundCount() const noexcept
 {
 	return m_roundCount;
 }
 
-uint16_t GameSettings::GetDrawTime() const
+uint16_t GameSettings::GetDrawTime() const noexcept
 {
 	return m_drawTime;
 }
 
-uint16_t GameSettings::GetChooseWordOptionCount() const
+uint16_t GameSettings::GetChooseWordOptionCount() const noexcept
 {
 	return m_chooseWordOptionCount;
 }
 
-void GameSettings::SetRoundCount(uint16_t roundCount)
+void GameSettings::SetRoundCount(uint16_t roundCount) noexcept
 {
 	m_roundCount = roundCount;
 }
 
-void GameSettings::SetDrawTime(uint16_t drawTime)
+void GameSettings::SetDrawTime(uint16_t drawTime) noexcept
 {
 	m_drawTime = drawTime;
 }
 
-void GameSettings::SetChooseWordOptionCount(uint16_t chooseWordOptionCount)
+void GameSettings::SetChooseWordOptionCount(uint16_t chooseWordOptionCount) noexcept
 {
 	m_chooseWordOptionCount = chooseWordOptionCount;
 }

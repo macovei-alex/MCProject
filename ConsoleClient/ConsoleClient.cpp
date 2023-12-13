@@ -123,7 +123,7 @@ menu2:
 	}
 
 	std::vector<utils::img::Point> points{ utils::img::Point{ 1, 2, 0x24AB73 }, utils::img::Point{ -5, -2, 0x118FF0 } };
-	services::SendImageUpdates(std::cerr, roomID, points);
+	services::SendImageUpdates(roomID, points);
 
 	bool keepGoing = true;
 	std::thread messagesSender(services::MessageSender, roomID, username, &keepGoing);

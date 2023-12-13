@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player() :
+Player::Player() noexcept :
 	m_name{},
 	m_score{ 0 },
 	m_flagGuessedCorrectWord{ false },
@@ -11,7 +11,7 @@ Player::Player() :
 	/*EMPTY*/
 }
 
-Player::Player(const std::string& name) :
+Player::Player(const std::string& name) noexcept :
 	m_name{ name },
 	m_score{ 0 },
 	m_flagGuessedCorrectWord{ false },
@@ -22,47 +22,47 @@ Player::Player(const std::string& name) :
 	/*EMPTY*/
 }
 
-std::string Player::GetName() const
+std::string Player::GetName() const noexcept
 {
 	return m_name;
 }
 
-int Player::GetScore() const
+int Player::GetScore() const noexcept
 {
 	return m_score;
 }
 
-int Player::GetCurrentScore() const
+int Player::GetCurrentScore() const noexcept
 {
 	return m_currentScore;
 }
 
-void Player::ResetCurrentScore()
+void Player::ResetCurrentScore() noexcept
 {
 	m_currentScore = 0;
 }
 
-void Player::ResetScore()
+void Player::ResetScore() noexcept
 {
 	m_score = 0;
 }
 
-Player::GameRole Player::GetGameRole() const
+Player::GameRole Player::GetGameRole() const noexcept
 {
 	return m_gameRole;
 }
 
-void Player::SetGameRole(GameRole gameRole)
+void Player::SetGameRole(GameRole gameRole) noexcept
 {
 	m_gameRole = gameRole;
 }
 
-Player::RoomRole Player::GetRoomRole() const
+Player::RoomRole Player::GetRoomRole() const noexcept
 {
 	return m_roomRole;
 }
 
-void Player::SetRoomRole(RoomRole roomRole)
+void Player::SetRoomRole(RoomRole roomRole) noexcept
 {
 	m_roomRole = roomRole;
 }
@@ -110,7 +110,7 @@ int Player::CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds)
 	return m_currentScore;
 }
 
-bool Player::operator==(const Player& other) const
+bool Player::operator==(const Player& other) const noexcept
 {
 	return m_name == other.m_name;
 }
