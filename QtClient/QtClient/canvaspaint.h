@@ -1,6 +1,9 @@
-#ifndef CANVASPAINT_H
+﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
 #include <QDialog>
+#include <QPainter>
+#include <QMouseEvent>
+#include<qpixmap.h>
 
 class MainWindow;
 
@@ -15,14 +18,21 @@ class CanvasPaint : public QDialog
 public:
     CanvasPaint(QWidget *parent = nullptr);
     ~CanvasPaint();
-
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
+    QPixmap canvasPixmap;
+protected:
+    void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
 private slots:
     void on_Button_clicked();
     void on_LeaveServerButton_clicked();
-
 private:
+    bool isDrawing;
     Ui::CanvasPaint *ui;
+    QPoint lastPoint;
     MainWindow *obiect;
+ 
 };
 
 #endif // CANVASPAINT_H
