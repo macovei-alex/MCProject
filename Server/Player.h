@@ -1,43 +1,49 @@
 #pragma once
+
 #include <cstdint>
 #include <string>
 
 class Player
 {
 public:
-	Player();
-	Player(const std::string& m_name);
-	Player(const Player& player);
-	Player& operator= (const Player& player);
-	~Player();
-	Player(Player&& other) noexcept;
-	Player& operator=(Player&& other) noexcept;
-	bool operator==(const Player& other) const;
-	std::string GetName() const;
-	int GetScore() const;
-	int GetCurrentScore() const;
-	void ResetCurrentScore();
-	void ResetScore();
-	void AddScore();
-	int CalculateScoreDrawingPlayer(int seconds, int playerCount, uint32_t maxSeconds);
-	int CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds);
-
 	enum class GameRole : uint8_t
 	{
-		person_drawing,
-		person_guessing
+		drawing,
+		guessing
 	};
 
 	enum class RoomRole : uint8_t
 	{
 		owner,
-		participants
+		participant
 	};
 
-	GameRole GetGameRole() const;
-	void SetGameRole(GameRole gameRole);
-	RoomRole GetRoomRole() const;
-	void SetRoomRole(RoomRole roomRole);
+public:
+	Player();
+	Player(const std::string& m_name);
+	Player(const Player& other) noexcept = default;
+	Player& operator=(const Player& other) noexcept = default;
+	~Player() noexcept = default;
+	Player(Player&& other) noexcept = default;
+	Player& operator=(Player&& other) noexcept = default;
+
+public:
+	std::string GetName() const noexcept;
+	int GetScore() const noexcept;
+	void ResetScore() noexcept;
+	int GetCurrentScore() const noexcept;
+	void ResetCurrentScore() noexcept;
+	GameRole GetGameRole() const noexcept;
+	void SetGameRole(GameRole gameRole) noexcept;
+	RoomRole GetRoomRole() const noexcept;
+	void SetRoomRole(RoomRole roomRole) noexcept;
+
+public:
+	void AddScore();
+	int CalculateScore(int seconds, uint32_t maxSeconds, int playerCount = 0);
+	int CalculateScoreDrawingPlayer(int seconds, uint32_t maxSeconds, int playerCount);
+	int CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds);
+	bool operator==(const Player& other) const;
 
 private:
 	std::string m_name;

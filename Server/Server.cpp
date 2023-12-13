@@ -9,7 +9,7 @@ Server* Server::s_instance = nullptr;
 
 Server::Server() :
 	m_app{ },
-	m_chats{ },
+	m_games{ },
 	m_port{ 0 },
 	m_IPAddress{ "127.0.0.1" }
 {
@@ -40,17 +40,17 @@ Server& Server::TestHandlers()
 
 Server& Server::ChatHandlers()
 {
-
-	// Input server controller
-	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::PUT)
+	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::Put)
 		([this](const crow::request& request, uint64_t gameID) {
+
+		auto gameIt = this->m_games.find(gameID);
+		if (gameIt == this->m_games.end())
+			return crow::response(404, std::format("Invalid room ID < {} >", gameID));
 
 		if (request.body.empty())
 			return crow::response(404, "Empty request body");
 
-		auto currentChatIt = this->m_chats.find(gameID);
-		if (currentChatIt == this->m_chats.end())
-			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
+		auto& chat = gameIt->second.GetChat();
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
@@ -65,23 +65,22 @@ Server& Server::ChatHandlers()
 			utils::DateTimeAsInteger(std::chrono::system_clock::now()) };
 
 		std::cout << std::format("[{} at {}]: {}\n", message.author, message.timeMilliseconds, message.content);
-		currentChatIt->second.Emplace(std::move(message));
+		chat.Emplace(std::move(message));
 
 		return crow::response(200);
 			});
 
 
-	// Output server controller
-	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
 
-		auto it = this->m_chats.find(gameID);
-		if (it == this->m_chats.end())
+		auto gameIt = this->m_games.find(gameID);
+		if (gameIt == this->m_games.end())
 			return errorValue;
 
-		const auto& chat = it->second;
+		const auto& chat = gameIt->second.GetChat();
 
 		if (chat.Empty())
 			return crow::json::wvalue{ crow::json::wvalue::list{} };
@@ -93,13 +92,13 @@ Server& Server::ChatHandlers()
 			if (char* startChar = request.url_params.get(literals::jsonKeys::message::timestamp);
 				startChar != nullptr)
 				start = std::stoull(startChar);
-			else 
+			else
 				throw std::exception("Timestamp key not found");
 
-			if(char* authorChar = request.url_params.get(literals::jsonKeys::message::author);
+			if (char* authorChar = request.url_params.get(literals::jsonKeys::message::author);
 				authorChar != nullptr)
 				author = std::string{ authorChar };
-			else 
+			else
 				throw std::exception("Author key not found");
 		}
 		catch (const std::exception& ex)
@@ -116,37 +115,36 @@ Server& Server::ChatHandlers()
 
 Server& Server::RoomHandlers()
 {
-
-	// Create roon controller
-	CROW_ROUTE(m_app, literals::routes::room::create).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::game::create).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request) {
-		uint64_t newRoomID = 0;
-		if (!this->m_chats.empty())
-			newRoomID = m_chats.rbegin()->first + 1;
+		uint64_t newGameID = 0;
+		if (!this->m_games.empty())
+			newGameID = m_games.rbegin()->first + 1;
 
-		m_chats.emplace(newRoomID, Chat());
-		m_images.emplace(newRoomID, Image());
+		m_games.emplace(newGameID, Game());
 
-		m_images[newRoomID].AddUpdate(utils::img::Update{ utils::img::Point{ 0, 0, utils::img::Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-		m_images[newRoomID].AddUpdate(utils::img::Update{ utils::img::Point{ 1, 2, utils::img::Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-		m_images[newRoomID].AddUpdate(utils::img::Update{ utils::img::Point{ 5, 0, utils::img::Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		auto& game = m_games[newGameID];
 
-		return crow::json::wvalue{ {literals::jsonKeys::room::ID, newRoomID } };
+		game.GetImage().AddUpdate(utils::img::Update{ utils::img::Point{ 0, 0, utils::img::Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(utils::img::Update{ utils::img::Point{ 1, 2, utils::img::Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(utils::img::Update{ utils::img::Point{ 5, 0, utils::img::Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+
+		return crow::json::wvalue{ {literals::jsonKeys::game::ID, newGameID } };
 			});
 
 
-	// Connect to room controller
-	CROW_ROUTE(m_app, literals::routes::room::connectParam).methods(crow::HTTPMethod::GET)
-		([this](const crow::request& request, uint64_t roomID) {
+	CROW_ROUTE(m_app, literals::routes::game::connectParam).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t gameID) {
 
-		if (this->m_chats.find(roomID) == this->m_chats.end())
-			return crow::response(404, std::format("Invalid room ID < {} >", roomID));
+		auto gameIt = this->m_games.find(gameID);
+		if (gameIt == m_games.end())
+			return crow::response(404, std::format("Invalid room ID < {} >", gameID));
 
-		return crow::response(200, std::format("Connection to room < {} > successful", roomID));
+		return crow::response(200, std::format("Connection to room < {} > successful", gameID));
 			});
 
 
-	/*CROW_ROUTE(m_app, literals::routes::room::disconnectParam).methods(crow::HTTPMethod::GET)
+	/*CROW_ROUTE(m_app, literals::routes::game::disconnectParam).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request, uint64_t) {
 		std::string name = request.url_params.get("name");
 		std::string lobbyStateParam = request.url_params.get("lobbyState");
@@ -162,7 +160,7 @@ Server& Server::RoomHandlers()
 
 Server& Server::AccountHandlers()
 {
-	CROW_ROUTE(m_app, literals::routes::account::signIn).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::account::signIn).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request) {
 
 		const char* usernameChar = request.url_params.get(literals::jsonKeys::account::username);
@@ -182,7 +180,7 @@ Server& Server::AccountHandlers()
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::account::singUp).methods(crow::HTTPMethod::POST)
+	CROW_ROUTE(m_app, literals::routes::account::singUp).methods(crow::HTTPMethod::Post)
 		([this](const crow::request& request) {
 
 		if (request.body.empty())
@@ -207,7 +205,7 @@ Server& Server::AccountHandlers()
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::account::signOut).methods(crow::HTTPMethod::PUT)
+	CROW_ROUTE(m_app, literals::routes::account::signOut).methods(crow::HTTPMethod::Put)
 		([this](const crow::request& request) {
 
 		if (request.body.empty())
@@ -234,7 +232,7 @@ Server& Server::AccountHandlers()
 
 Server& Server::DrawingHandlers()
 {
-	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::GET)
+	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		static const crow::json::wvalue errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
@@ -255,31 +253,80 @@ Server& Server::DrawingHandlers()
 			return errorValue;
 		}
 
-		auto updates = m_images[gameID].GetUpdatesJsonAfter(timestamp);
+		auto updates = m_games[gameID].GetImage().GetUpdatesJsonAfter(timestamp);
 		return updates;
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::PUT)
-		([this](const crow::request& request, uint64_t gameid) {
+	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::Put)
+		([this](const crow::request& request, uint64_t gameID) {
 
 		if (request.body.empty())
 			return crow::response(404, "empty request body");
 
-		auto requestbody = crow::json::load(request.body);
-		for (const auto& jsonpoint : requestbody)
+		auto requestBody = crow::json::load(request.body);
+		for (const auto& jsonpoint : requestBody)
 		{
-			int16_t x = jsonpoint[literals::jsonKeys::draw::pointX].i();
-			int16_t y = jsonpoint[literals::jsonKeys::draw::pointY].i();
-			int32_t rgb = jsonpoint[literals::jsonKeys::draw::color].i();
-			utils::img::Color color{ rgb };
+			utils::img::Point point{
+				jsonpoint[literals::jsonKeys::draw::pointX].i(),
+				jsonpoint[literals::jsonKeys::draw::pointY].i(),
+				utils::img::Color{ jsonpoint[literals::jsonKeys::draw::color].i() } };
 
-			m_images[gameid].AddUpdate(utils::img::Update{ utils::img::Point{x, y, color}, utils::DateTimeAsInteger(std::chrono::system_clock::now())});
+			m_games[gameID].GetImage().AddUpdate(utils::img::Update{ utils::img::Point{point.x, point.y, point.color}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 		}
 
 		return crow::response(200);
 			});
 
+
+	return *this;
+}
+
+Server& Server::GameSettingsHandlers()
+{
+	CROW_ROUTE(m_app, literals::routes::game::settings::param).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t gameID) {
+
+		static const crow::json::wvalue errorValue{ {literals::error, literals::emptyCString} };
+
+		if (m_games.find(gameID) == m_games.end())
+			return errorValue;
+
+		return crow::json::wvalue{
+			{literals::jsonKeys::settings::drawTime, m_games[gameID].GetGameSettings().GetDrawTime()},
+			{literals::jsonKeys::settings::roundCount, m_games[gameID].GetGameSettings().GetRoundCount()},
+			{literals::jsonKeys::settings::chooseWordOptionCount, m_games[gameID].GetGameSettings().GetChooseWordOptionCount()} };
+			});
+
+
+	CROW_ROUTE(m_app, literals::routes::game::settings::param).methods(crow::HTTPMethod::Put)
+		([this](const crow::request& request, uint64_t gameID) {
+
+		if (request.body.empty())
+			return crow::response(404, "Empty request body");
+
+		if (m_games.find(gameID) == m_games.end())
+			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
+
+		auto& game = m_games[gameID];
+
+		auto jsonMap{ utils::ParseRequestBody(request.body) };
+
+		auto drawTimeIterator = jsonMap.find(literals::jsonKeys::settings::drawTime);
+		if (drawTimeIterator != jsonMap.end())
+			game.GetGameSettings().SetDrawTime(std::stoi(drawTimeIterator->second));
+
+		auto roundCountIterator = jsonMap.find(literals::jsonKeys::settings::roundCount);
+		if (roundCountIterator != jsonMap.end())
+			game.GetGameSettings().SetRoundCount(std::stoi(roundCountIterator->second));
+
+		auto chooseWordOptionCountIterator = jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount);
+		if (chooseWordOptionCountIterator != jsonMap.end())
+			game.GetGameSettings().SetChooseWordOptionCount(std::stoi(chooseWordOptionCountIterator->second));
+
+		return crow::response(200);
+
+			});
 
 	return *this;
 }

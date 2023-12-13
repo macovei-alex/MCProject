@@ -11,7 +11,7 @@ uint64_t services::CreateRoom()
 	try
 	{
 		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::room::create;
+		url << literals::routes::baseAddress << literals::routes::game::create;
 
 		auto response = cpr::Get(cpr::Url{ url.str() });
 
@@ -23,7 +23,7 @@ uint64_t services::CreateRoom()
 				throw std::exception("[Create] Server didn't return an error explanation");
 		}
 
-		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::room::ID].u();
+		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::game::ID].u();
 		std::cout << std::format("[Create] New room with roomID < {} > created\n", roomID);
 		return roomID;
 	}
@@ -39,7 +39,7 @@ bool services::ConnectToRoom(uint64_t roomID)
 	try
 	{
 		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::room::connect << '/' << roomID;
+		url << literals::routes::baseAddress << literals::routes::game::connect << '/' << roomID;
 
 		auto response = cpr::Get(cpr::Url{ url.str() });
 
@@ -320,6 +320,63 @@ void services::ReceiveImageUpdates(std::ostream& outputStream, uint64_t gameID)
 	catch (const std::exception& exception)
 	{
 		outputStream << "[Drawer]: " << exception.what() << '\n';
+	}
+}
+
+void services::SendGameSettings(std::ostream& errStream, uint64_t gameID, const GameSettings& gameSettings)
+{
+	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::settings::simple} + "/" };
+
+	try
+	{
+		std::string url{ urlBlueprint + std::to_string(gameID) };
+
+		std::vector<std::pair<std::string, std::string>> payload;
+		payload.reserve(3);
+
+		if (gameSettings.GetDrawTime() != 0)
+			payload.emplace_back(literals::jsonKeys::settings::drawTime, std::to_string(gameSettings.GetDrawTime()));
+
+		if (gameSettings.GetRoundCount() != 0)
+			payload.emplace_back(literals::jsonKeys::settings::roundCount, std::to_string(gameSettings.GetRoundCount()));
+
+		if (gameSettings.GetChooseWordOptionCount() != 0)
+			payload.emplace_back(literals::jsonKeys::settings::chooseWordOptionCount, std::to_string(gameSettings.GetChooseWordOptionCount()));
+
+		auto response = cpr::Put(
+			cpr::Url{ url },
+			cpr::Payload{ payload.begin(), payload.end() });
+
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!response.reason.empty())
+				throw std::exception(std::format("[Settings sender] {}", response.reason).c_str());
+			else
+				throw std::exception("[Settings sender] Server didn't provide an explanation");
+		}
+	}
+	catch (const std::exception& exception)
+	{
+		errStream << "[Settings sender]: " << exception.what() << '\n';
+	}
+}
+
+std::tuple<uint16_t, uint16_t, uint16_t> services::ReceiveGameSettings(std::ostream& outputStream, uint64_t gameID)
+{
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::settings::simple} + "/" };
+
+	try
+	{
+		std::string url{ urlBlueprint + std::to_string(gameID) };
+
+		auto response = cpr::Get(cpr::Url{ url });
+
+		if (response.status_code != 200 && response.status_code != 201)
+			throw std::exception(std::format("[Settings receiver] Invalid game ID < {} >", gameID).c_str());
+	}
+	catch (const std::exception& execption)
+	{
+		throw std::exception(std::format("[Settings receiver] {}", execption.what()).c_str());
 	}
 }
 

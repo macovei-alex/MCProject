@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Player.h"
-#include "GameSettings.h"
+#include "../Common/GameSettings.h"
 
 #include <cstdint>
 #include <string>
@@ -12,6 +12,7 @@
 class Turn
 {
 public:
+	Turn() noexcept = default;
 	Turn(uint8_t turnNumber);
 	Turn(const Turn& turn);
 	Turn& operator=(const Turn& turn);

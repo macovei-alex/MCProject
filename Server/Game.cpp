@@ -6,7 +6,9 @@ Game::Game(Game&& other) noexcept :
 	m_playerToDrawID{ other.m_playerToDrawID },
 	m_ownerID{ other.m_ownerID },
 	m_gameSettings{ std::move(other.m_gameSettings) },
-	m_turn{ std::move(other.m_turn) }
+	m_turn{ std::move(other.m_turn) },
+	m_image{ std::move(other.m_image) },
+	m_chat{ std::move(other.m_chat) }
 {
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
@@ -25,6 +27,8 @@ Game& Game::operator=(Game&& other) noexcept
 	m_ownerID = std::move(other.m_ownerID);
 	m_turn = std::move(other.m_turn);
 	m_gameSettings = std::move(other.m_gameSettings);
+	m_image = std::move(other.m_image);
+	m_chat = std::move(other.m_chat);
 
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
@@ -38,19 +42,14 @@ const std::vector<Player>& Game::GetPlayers()
 	return m_players;
 }
 
-void Game::SetRoundNumber(uint8_t roundNo)
-{
-	m_roundNumber = roundNo;
-}
-
 uint8_t Game::GetRoundNumber()
 {
 	return m_roundNumber;
 }
 
-void Game::SetPlayerToDrawID(uint8_t playerToDrawID)
+void Game::SetRoundNumber(uint8_t roundNo)
 {
-	m_playerToDrawID = playerToDrawID;
+	m_roundNumber = roundNo;
 }
 
 uint8_t Game::GetPlayerToDrawID()
@@ -58,7 +57,12 @@ uint8_t Game::GetPlayerToDrawID()
 	return m_playerToDrawID;
 }
 
-const GameSettings& Game::GetGameSettings()
+void Game::SetPlayerToDrawID(uint8_t playerToDrawID)
+{
+	m_playerToDrawID = playerToDrawID;
+}
+
+GameSettings& Game::GetGameSettings()
 {
 	return m_gameSettings;
 }
@@ -66,6 +70,16 @@ const GameSettings& Game::GetGameSettings()
 Turn& Game::GetTurn()
 {
 	return m_turn;
+}
+
+Image& Game::GetImage()
+{
+	return m_image;
+}
+
+Chat& Game::GetChat()
+{
+	return m_chat;
 }
 
 void Game::Start()

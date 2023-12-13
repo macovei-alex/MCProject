@@ -1,14 +1,13 @@
 #pragma once
-#include <vector>
-#include <crow.h>
-#include <map>
 
 #include "serverUtils.h"
 // import serverUtilsMod;
 #include "serverUtilsModTemp.h"
 #include "Game.h"
-#include "Chat.h"
-#include "Image.h"
+
+#include <vector>
+#include <crow.h>
+#include <map>
 
 class Server
 {
@@ -25,6 +24,7 @@ public:
 	Server& RoomHandlers();
 	Server& AccountHandlers();
 	Server& DrawingHandlers();
+	Server& GameSettingsHandlers();
 
 public:
 	Server& IPAddress(const std::string& IPAddress);
@@ -44,8 +44,7 @@ private:
 
 private:
 	crow::SimpleApp m_app;
-	std::map<uint64_t, Chat> m_chats;
-	std::map<uint64_t, Image> m_images;
+	std::map<uint64_t, Game> m_games;
 
 	uint16_t m_port;
 	std::string m_IPAddress;

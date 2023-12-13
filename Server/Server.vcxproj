@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\commonUtils.cpp" />
+    <ClCompile Include="..\Common\GameSettings.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Image.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="..\Common\commonUtils.h" />
     <ClInclude Include="..\Common\constantLiterals.h" />
+    <ClInclude Include="..\Common\GameSettings.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Image.h" />
@@ -174,10 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h" />
-    <ClCompile Include="GameSettings.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GameSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="serverSettings.txt" />
