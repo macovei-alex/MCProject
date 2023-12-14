@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Player.h"
-#include "../Common/GameSettings.h"
-
 #include <cstdint>
 #include <string>
 #include <vector>
 #include <ctime>
 #include <fstream>
+
+#include "Player.h"
+#include "../Common/GameSettings.h"
 
 class Turn
 {

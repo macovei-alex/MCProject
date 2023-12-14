@@ -163,6 +163,7 @@
     <ClInclude Include="..\Common\GameSettings.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="DatabasePrerequisites.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
@@ -180,6 +181,9 @@
   <ItemGroup>
     <Text Include="serverSettings.txt" />
     <Text Include="words.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="database.sqlite" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

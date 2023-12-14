@@ -72,14 +72,14 @@ void Player::AddScore()
 	m_score += m_currentScore;
 }
 
-int Player::CalculateScore(int seconds, uint32_t maxSeconds, int playerCount)
+int Player::CalculateScore(uint16_t seconds, uint32_t maxSeconds, int playerCount)
 {
 	if (m_gameRole == Player::GameRole::drawing)
 		return CalculateScoreDrawingPlayer(seconds, maxSeconds, playerCount);
 	return CalculateScoreGuessingPlayer(seconds, maxSeconds);
 }
 
-int Player::CalculateScoreDrawingPlayer(int seconds, uint32_t maxSeconds, int playerCount)
+int Player::CalculateScoreDrawingPlayer(uint16_t seconds, uint32_t maxSeconds, int playerCount)
 {
 	if (playerCount == 0)
 	{
@@ -92,7 +92,7 @@ int Player::CalculateScoreDrawingPlayer(int seconds, uint32_t maxSeconds, int pl
 	return m_currentScore;
 }
 
-int Player::CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds)
+int Player::CalculateScoreGuessingPlayer(uint16_t seconds, uint32_t maxSeconds)
 {
 	if (seconds < maxSeconds / 2)
 	{

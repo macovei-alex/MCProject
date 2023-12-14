@@ -1,9 +1,9 @@
 #pragma once
 
-#include "..\Common\commonUtils.h"
-
 #include <vector>
 #include <crow.h>
+
+#include "../Common/commonUtils.h"
 
 class Image
 {

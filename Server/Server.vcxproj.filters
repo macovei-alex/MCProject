@@ -95,6 +95,9 @@
     <ClInclude Include="..\Common\GameSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DatabasePrerequisites.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="words.txt">
@@ -103,5 +106,10 @@
     <Text Include="serverSettings.txt">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="database.sqlite">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

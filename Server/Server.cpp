@@ -11,7 +11,8 @@ Server::Server() :
 	m_app{ },
 	m_games{ },
 	m_port{ 0 },
-	m_IPAddress{ "127.0.0.1" }
+	m_IPAddress{ "127.0.0.1" },
+	m_database{ "database.sqlite" }
 {
 	/* empty */
 }
@@ -270,7 +271,7 @@ Server& Server::DrawingHandlers()
 			utils::img::Point point{
 				jsonpoint[literals::jsonKeys::draw::pointX].i(),
 				jsonpoint[literals::jsonKeys::draw::pointY].i(),
-				utils::img::Color{ jsonpoint[literals::jsonKeys::draw::color].i() } };
+				jsonpoint[literals::jsonKeys::draw::color].i() };
 
 			m_games[gameID].GetImage().AddUpdate(utils::img::Update{ utils::img::Point{point.x, point.y, point.color}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 		}

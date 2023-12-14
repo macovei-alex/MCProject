@@ -1,14 +1,14 @@
 #pragma once
 
+#include <vector>
+#include <cstdint>
+#include <string>
+
 #include "Player.h"
 #include "Turn.h"
 #include "../Common/GameSettings.h"
 #include "Image.h"
 #include "Chat.h"
-
-#include <vector>
-#include <cstdint>
-#include <string>
 
 class Game
 {

@@ -40,9 +40,9 @@ public:
 
 public:
 	void AddScore();
-	int CalculateScore(int seconds, uint32_t maxSeconds, int playerCount = 1);
-	int CalculateScoreDrawingPlayer(int seconds, uint32_t maxSeconds, int playerCount);
-	int CalculateScoreGuessingPlayer(int seconds, uint32_t maxSeconds);
+	int CalculateScore(uint16_t seconds, uint32_t maxSeconds, int playerCount = 1);
+	int CalculateScoreDrawingPlayer(uint16_t seconds, uint32_t maxSeconds, int playerCount);
+	int CalculateScoreGuessingPlayer(uint16_t seconds, uint32_t maxSeconds);
 	bool operator==(const Player& other) const noexcept;
 
 private:

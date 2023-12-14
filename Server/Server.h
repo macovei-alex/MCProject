@@ -1,13 +1,14 @@
 #pragma once
 
-#include "serverUtils.h"
-// import serverUtilsMod;
-#include "serverUtilsModTemp.h"
-#include "Game.h"
-
 #include <vector>
 #include <crow.h>
 #include <map>
+
+#include "serverUtils.h"
+#include "serverUtilsModTemp.h"
+// import serverUtilsMod;
+#include "Game.h"
+#include "Database.h"
 
 class Server
 {
@@ -48,5 +49,5 @@ private:
 
 	uint16_t m_port;
 	std::string m_IPAddress;
-	//Database& m_db;
+	Database m_database;
 };
