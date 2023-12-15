@@ -1,17 +1,18 @@
 #pragma once
 
-#include "Player.h"
-#include "GameSettings.h"
-
 #include <cstdint>
 #include <string>
 #include <vector>
 #include <ctime>
 #include <fstream>
 
+#include "Player.h"
+#include "../Common/GameSettings.h"
+
 class Turn
 {
 public:
+	Turn() noexcept = default;
 	Turn(uint8_t turnNumber);
 	Turn(const Turn& turn);
 	Turn& operator=(const Turn& turn);

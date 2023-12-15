@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\commonUtils.cpp" />
+    <ClCompile Include="..\Common\GameSettings.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Image.cpp" />
@@ -159,8 +160,10 @@
   <ItemGroup>
     <ClInclude Include="..\Common\commonUtils.h" />
     <ClInclude Include="..\Common\constantLiterals.h" />
+    <ClInclude Include="..\Common\GameSettings.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="DatabasePrerequisites.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
@@ -174,14 +177,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h" />
-    <ClCompile Include="GameSettings.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GameSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="serverSettings.txt" />
     <Text Include="words.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="database.sqlite" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

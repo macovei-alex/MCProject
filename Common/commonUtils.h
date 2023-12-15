@@ -13,8 +13,6 @@ namespace utils
 			uint8_t b;
 
 			Color() = default;
-			Color(int32_t color);
-			Color(uint32_t color);
 			Color(int64_t color);
 			Color(const Color& color) = default;
 			Color& operator=(const Color& other) = default;
@@ -29,9 +27,8 @@ namespace utils
 			Color color;
 
 			Point() = default;
-			Point(int16_t x, int16_t y, Color color);
-			Point(int16_t x, int16_t y, int32_t color);
 			Point(int64_t x, int64_t y, int64_t color);
+			Point(int64_t x, int64_t y, Color color);
 			Point(const Point& other) = default;
 			Point& operator=(const Point& other) = default;
 			bool operator==(const Point& other) const = default;

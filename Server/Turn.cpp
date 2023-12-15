@@ -3,10 +3,11 @@
 Turn::Turn(uint8_t turnNumber) :
 	m_turnNumber{ turnNumber },
 	m_word{},
-	m_showLetterIDs{}
+	m_showLetterIDs{},
+	m_chooseWordStartTime{ clock() },
+	m_playStartTime{ std::numeric_limits<int>::max() }
 {
-	m_chooseWordStartTime = clock();
-	m_playStartTime = std::numeric_limits<double>::max();
+	/* empty */
 }
 
 Turn::Turn(const Turn& other) :
@@ -16,7 +17,7 @@ Turn::Turn(const Turn& other) :
 	m_playStartTime{ other.m_playStartTime },
 	m_chooseWordStartTime{ other.m_chooseWordStartTime }
 {
-	// m_fin.seekg(turn.m_fin.tellg());
+	/* empty */
 }
 
 Turn& Turn::operator=(const Turn& other)

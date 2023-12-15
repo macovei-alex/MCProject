@@ -9,16 +9,15 @@ namespace literals
 
 	namespace jsonKeys
 	{
+		namespace game
+		{
+			constexpr char ID[] = "gameID";
+		}
 		namespace message
 		{
 			constexpr char author[] = "author";
 			constexpr char content[] = "content";
 			constexpr char timestamp[] = "timestamp";
-		}
-
-		namespace room 
-		{
-			constexpr char ID[] = "roomID";
 		}
 
 		namespace account
@@ -35,6 +34,13 @@ namespace literals
 			constexpr char timestamp[] = "timestamp";
 			constexpr char points[] = "points";
 		}
+
+		namespace settings
+		{
+			constexpr char drawTime[] = "drawTime";
+			constexpr char roundCount[] = "roundCount";
+			constexpr char chooseWordOptionCount[] = "chooseWordOptionCount";
+		}
 	}
 
 	namespace routes
@@ -42,7 +48,7 @@ namespace literals
 		constexpr char baseAddress[] = "http://localhost:18080";
 		constexpr char test[] = "/test";
 
-		namespace game 
+		namespace game
 		{
 			namespace chat
 			{
@@ -55,15 +61,18 @@ namespace literals
 				constexpr char updates[] = "/game/draw/updates";
 				constexpr char updatesParam[] = "/game/draw/updates/<int>";
 			}
-		}
 
-		namespace room
-		{
-			constexpr char create[] = "/room/create";
-			constexpr char connect[] = "/room/connect";
-			constexpr char connectParam[] = "/room/connect/<int>";
-			constexpr char disconnect[] = "/room/disconnect";
-			constexpr char disconnectParam[] = "/room/disconnect/<int>";
+			namespace settings
+			{
+				constexpr char simple[] = "/game/settings";
+				constexpr char param[] = "/game/settings/<int>";
+			}
+
+			constexpr char create[] = "/game/create";
+			constexpr char connect[] = "/game/connect";
+			constexpr char connectParam[] = "/game/connect/<int>";
+			constexpr char disconnect[] = "/game/disconnect";
+			constexpr char disconnectParam[] = "/game/disconnect/<int>";
 		}
 
 		namespace account

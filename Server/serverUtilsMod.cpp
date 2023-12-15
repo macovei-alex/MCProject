@@ -1,6 +1,6 @@
-//module utilitiesMod;
+//module serverUtilsMod;
 //
-//utils::Message::Message(std::string&& content, std::string&& author, uint64_t milliseconds) :
+//utils::Message::Message(std::string&& content, std::string&& author, uint64_t milliseconds) noexcept :
 //	content{ std::move(content) },
 //	author{ std::move(author) },
 //	timeMilliseconds{ milliseconds }
@@ -26,27 +26,48 @@
 //std::pair<std::string, std::string> utils::SplitToPair(const std::string& str, const std::string& delim)
 //{
 //	size_t found = str.find(delim);
-//	std::string first = str.substr(0, found);
-//	std::string second = str.substr(found + 1, str.size() - found - 1);
+//	if (found == std::string::npos)
+//		return { str, "" };
+//	std::string first{ str.substr(0, found) };
+//	std::string second{ str.substr(found + 1, str.size() - found - 1) };
 //	return { first, second };
 //}
 //
 //std::string utils::DecodeMessage(const std::string& message)
 //{
-//	std::string decodedMessage = "";
-//	for (int i = 0; i < message.length(); i++)
+//	std::string decodedMessage;
+//	for (size_t i = 0; i < message.length(); i++)
 //	{
 //		if (message[i] == '%')
 //		{
 //			std::string hex = message.substr(i + 1, 2);
-//			int decimal = std::stoi(hex, nullptr, 16);
+//			uint8_t decimal = std::stoi(hex, nullptr, 16);
 //			decodedMessage += static_cast<char>(decimal);
 //			i += 2;
 //		}
 //		else
-//		{
 //			decodedMessage += message[i];
-//		}
 //	}
 //	return decodedMessage;
+//}
+//
+//uint64_t utils::DateTimeAsInteger(std::chrono::system_clock::time_point dateTime)
+//{
+//	return std::chrono::duration_cast
+//		<std::chrono::milliseconds>
+//		(dateTime.time_since_epoch()).count();
+//}
+//
+//std::map<std::string, std::string> utils::ParseRequestBody(const std::string& requestBody)
+//{
+//	std::map<std::string, std::string> jsonMap;
+//	std::vector<std::string> params{ SplitToVec(requestBody, "&") };
+//
+//	for (auto& informationExpression : params)
+//	{
+//		auto urlParamPair{ SplitToPair(informationExpression, "=") };
+//		jsonMap.emplace(std::move(urlParamPair));
+//	}
+//
+//	return jsonMap;
 //}

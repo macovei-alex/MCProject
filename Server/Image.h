@@ -3,7 +3,7 @@
 #include <vector>
 #include <crow.h>
 
-#include "..\Common\commonUtils.h"
+#include "../Common/commonUtils.h"
 
 class Image
 {
