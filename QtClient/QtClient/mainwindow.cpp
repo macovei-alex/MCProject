@@ -40,6 +40,8 @@ void MainWindow::on_LoginButton_clicked()
     hide();
     obiect= new CanvasPaint(this);
     obiect->show();
+    
+
 
 }
 

@@ -21,16 +21,20 @@ public:
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
+    void clearCanvas();
     QPixmap canvasPixmap;
 protected:
     void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
 private slots:
     void on_Button_clicked();
     void on_LeaveServerButton_clicked();
+    void on_ResetCanvas_clicked();
+
 private:
     bool isDrawing;
     Ui::CanvasPaint *ui;
-    QPoint lastPoint;
+     QPoint lastPoint;
     MainWindow *obiect;
  
 };

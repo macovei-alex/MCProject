@@ -85,11 +85,37 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
     }
 }
 
+void CanvasPaint::resizeEvent(QResizeEvent* event)
+{
+// Creează o nouă imagine cu dimensiunile actualizate
+	QPixmap newPixmap(event->size());
+	newPixmap.fill(Qt::white);
+	QPainter painter(&newPixmap);
+	painter.drawPixmap(QPoint(0, 0), canvasPixmap);
+	canvasPixmap = newPixmap;
+
+	// Actualizează afișarea
+	update();
+}
+
+void CanvasPaint::clearCanvas()
+{
+    // sterge ce s-a desenat
+    canvasPixmap.fill(Qt::white);
+    update();
+}
+
 
 void CanvasPaint::on_LeaveServerButton_clicked()
 {
     hide();
     obiect = new MainWindow(this);
     obiect->show();
+}
+
+
+void CanvasPaint::on_ResetCanvas_clicked()
+{
+    clearCanvas();
 }
 
