@@ -175,7 +175,9 @@ Server& Server::AccountHandlers()
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
-		// try log into database
+		db::ReturnValue returnValue = m_database.SignIn(username, password);
+		if (!returnValue.success)
+			return crow::response(404, returnValue.reason);
 
 		return crow::response(200, std::format("Player logged in as < {} >", username));
 			});
@@ -200,7 +202,9 @@ Server& Server::AccountHandlers()
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
-		// try create account into database and log in
+		db::ReturnValue returnValue = m_database.SignUp(username, password);
+		if (!returnValue.success)
+			return crow::response(404, returnValue.reason);
 
 		return crow::response(200, std::format("Player logged in as < {} >", username));
 			});
@@ -223,7 +227,9 @@ Server& Server::AccountHandlers()
 		if (username.empty())
 			return crow::response(404, std::format("Invalid username < {} >", username));
 
-		// log out player
+		db::ReturnValue returnValue = m_database.SignOut(username);
+		if (!returnValue.success)
+			return crow::response(404, returnValue.reason);
 
 		return crow::response(200, std::format("Player < {} > logged out", username));
 			});

@@ -1,11 +1,18 @@
 #pragma once
 
+#include <string>
 #include <sqlite_orm/sqlite_orm.h>
 
 namespace sql = sqlite_orm;
 
 namespace db
 {
+	struct ReturnValue
+	{
+		bool success;
+		std::string reason;
+	};
+
 	struct Word
 	{
 		int id;

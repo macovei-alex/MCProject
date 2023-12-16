@@ -15,19 +15,19 @@ bool MockDatabase::IfPlayerExist(const std::string& playerName)
 	return false;
 }
 
-bool MockDatabase::SignUp(const std::string& playerName, const std::string& password)
+db::ReturnValue MockDatabase::SignUp(const std::string& playerName, const std::string& password)
 {
-	return true;
+	return { true, "" };
 }
 
-bool MockDatabase::SignIn(const std::string& playerName, const std::string& password)
+db::ReturnValue MockDatabase::SignIn(const std::string& playerName, const std::string& password)
 {
-	return true;
+	return { true, "" };
 }
 
-bool MockDatabase::SignOut(const std::string& playerName)
+db::ReturnValue MockDatabase::SignOut(const std::string& playerName)
 {
-	return true;
+	return { true, "" };
 }
 
 void MockDatabase::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
