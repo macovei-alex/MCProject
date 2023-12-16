@@ -9,6 +9,7 @@
 // import serverUtilsMod;
 #include "Game.h"
 #include "Database.h"
+#include "MockDatabase.h"
 
 class Server
 {
@@ -49,5 +50,5 @@ private:
 
 	uint16_t m_port;
 	std::string m_IPAddress;
-	Database m_database;
+	MockDatabase m_database;
 };

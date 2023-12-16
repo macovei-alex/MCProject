@@ -129,9 +129,7 @@ bool services::SignOut(const std::string& username, std::ostream& outStream, std
 
 		auto response = cpr::Put(
 			cpr::Url{ url.str() },
-			cpr::Payload{
-				{literals::jsonKeys::account::username, username}
-			});
+			cpr::Payload{{literals::jsonKeys::account::username, username}});
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
@@ -244,6 +242,7 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<utils::img::P
 
 	try
 	{
+		crow::json::wvalue test;
 		crow::json::wvalue::list pointsJsonList;
 		pointsJsonList.reserve(points.size());
 
@@ -252,8 +251,9 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<utils::img::P
 				{literals::jsonKeys::draw::pointX, point.x},
 				{literals::jsonKeys::draw::pointY, point.y},
 				{literals::jsonKeys::draw::color, point.color.ToInt32() }} });
-
-		auto str = crow::json::wvalue(pointsJsonList).dump();
+		
+		auto flattened = crow::json::wvalue(pointsJsonList);
+		std::string str = flattened.dump();
 
 		auto response = cpr::Put(
 			cpr::Url{ url },

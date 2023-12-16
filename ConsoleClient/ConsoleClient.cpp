@@ -122,7 +122,9 @@ menu2:
 		goto menu2;
 	}
 
-	std::vector<utils::img::Point> points{ utils::img::Point{ 1, 2, 0x24AB73 }, utils::img::Point{ -5, -2, 0x118FF0 } };
+	std::vector<utils::img::Point> points{ 
+		utils::img::Point{ 1, 2, 0x24AB73 }, 
+		utils::img::Point{ -5, -2, 0x118FF0 } };
 	services::SendImageUpdates(roomID, points);
 
 	bool keepGoing = true;

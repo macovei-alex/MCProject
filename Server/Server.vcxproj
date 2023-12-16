@@ -150,6 +150,7 @@
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MockDatabase.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="serverUtils.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Database.h" />
     <ClInclude Include="DatabasePrerequisites.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="MockDatabase.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
