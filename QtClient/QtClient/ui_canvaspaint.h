@@ -31,6 +31,7 @@ public:
     {
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
+        CanvasPaint->resize(1194, 930);
         GameChat = new QWidget(CanvasPaint);
         GameChat->setObjectName("GameChat");
         GameChat->setGeometry(QRect(490, 0, 231, 371));

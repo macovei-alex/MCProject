@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
     ui->centralwidget->layout()->addWidget(qmlWidget);
     QObject:: connect(qmlWidget->rootObject(), SIGNAL(qmlSignal()), this, SLOT(handelQmlSignal()));*/
+    
 
 }
 

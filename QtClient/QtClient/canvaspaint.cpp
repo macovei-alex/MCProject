@@ -23,6 +23,10 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 
     canvasPixmap = QPixmap(screenRect.size()); // Ajustează dimensiunile după necesități
     canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă sau culoarea dorită
+  /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
+    connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
+
+
 }
 
 CanvasPaint::~CanvasPaint()
@@ -63,21 +67,23 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
     // Verifică dacă suntem în proces de desenare
-    if (isDrawing)
-    {
-        // Obține poziția curentă a cursorului
-        QPoint currentPoint = event->pos();
+    if (event->x() < width() * 3 / 4) {
+        if (isDrawing)
+        {
+            // Obține poziția curentă a cursorului
+            QPoint currentPoint = event->pos();
 
-        // Desenează o linie între poziția anterioară și cea curentă
-        QPainter painter(&canvasPixmap);
-        painter.setPen(Qt::black);
-        painter.drawLine(lastPoint, currentPoint);
+            // Desenează o linie între poziția anterioară și cea curentă
+            QPainter painter(&canvasPixmap);
+            painter.setPen(Qt::black);
+            painter.drawLine(lastPoint, currentPoint);
 
-        // Actualizează poziția anterioară
-        lastPoint = currentPoint;
+            // Actualizează poziția anterioară
+            lastPoint = currentPoint;
 
-        // Actualizează afișarea
-        update();
+            // Actualizează afișarea
+            update();
+        }
     }
 }
 
@@ -121,8 +127,15 @@ void CanvasPaint::on_LeaveServerButton_clicked()
 }
 
 
+
 void CanvasPaint::on_ResetCanvas_clicked()
 {
     clearCanvas();
 }
+
+//void CanvasPaint::minimizeButtonClicked()
+//{
+//    qDebug() << "Minimize button clicked";
+//	showMinimized();
+//}
 

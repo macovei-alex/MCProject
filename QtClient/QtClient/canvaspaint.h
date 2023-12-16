@@ -30,6 +30,7 @@ private slots:
     void on_Button_clicked();
     void on_LeaveServerButton_clicked();
     void on_ResetCanvas_clicked();
+   // void minimizeButtonClicked();
 
 private:
     bool isDrawing;
