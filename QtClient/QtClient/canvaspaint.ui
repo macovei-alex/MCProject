@@ -2,30 +2,22 @@
 <ui version="4.0">
  <class>CanvasPaint</class>
  <widget class="QDialog" name="CanvasPaint">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>600</width>
-    <height>371</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Canvas</string>
   </property>
   <widget class="QWidget" name="GameChat" native="true">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>490</x>
      <y>0</y>
-     <width>161</width>
+     <width>231</width>
      <height>371</height>
     </rect>
    </property>
    <widget class="QLabel" name="GameChatLabel">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>80</x>
       <y>10</y>
       <width>81</width>
       <height>20</height>
@@ -39,48 +31,37 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>60</y>
-      <width>161</width>
+      <y>40</y>
+      <width>231</width>
       <height>291</height>
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QPushButton" name="LeaveServerButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>70</x>
       <y>340</y>
-      <width>168</width>
-      <height>26</height>
+      <width>91</width>
+      <height>24</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout"/>
+    <property name="text">
+     <string>Leave Server</string>
+    </property>
    </widget>
   </widget>
   <widget class="QPushButton" name="ResetCanvas">
    <property name="geometry">
     <rect>
-     <x>359</x>
-     <y>339</y>
+     <x>200</x>
+     <y>340</y>
      <width>80</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
     <string>ResetCanvas</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="LeaveServerButton">
-   <property name="geometry">
-    <rect>
-     <x>450</x>
-     <y>340</y>
-     <width>166</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Leave Server</string>
    </property>
   </widget>
  </widget>

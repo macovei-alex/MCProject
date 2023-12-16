@@ -1,6 +1,8 @@
 ﻿#include "canvaspaint.h"
 #include "mainwindow.h"
 #include "ui_canvaspaint.h"
+#include <QGuiApplication>
+#include <QScreen>
 
 CanvasPaint::CanvasPaint(QWidget* parent) :
     QDialog(parent),
@@ -14,7 +16,12 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 
     QWidget* gameChatWidget = ui->GameChat;
     gameChatWidget->setStyleSheet("QWidget { border: 1px solid black; }");
-    canvasPixmap = QPixmap(800, 600); // Ajustează dimensiunile după necesități
+
+    QScreen* primaryScreen = QGuiApplication::primaryScreen();
+    QRect screenRect = primaryScreen->geometry();
+    setGeometry(0, 0, screenRect.width(), screenRect.height());
+
+    canvasPixmap = QPixmap(screenRect.size()); // Ajustează dimensiunile după necesități
     canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă sau culoarea dorită
 }
 

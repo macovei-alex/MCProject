@@ -12,7 +12,6 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDialog>
-#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
@@ -25,37 +24,28 @@ public:
     QWidget *GameChat;
     QLabel *GameChatLabel;
     QWidget *ChatMessages;
-    QWidget *layoutWidget;
-    QHBoxLayout *horizontalLayout;
-    QPushButton *ResetCanvas;
     QPushButton *LeaveServerButton;
+    QPushButton *ResetCanvas;
 
     void setupUi(QDialog *CanvasPaint)
     {
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
-        CanvasPaint->resize(600, 371);
         GameChat = new QWidget(CanvasPaint);
         GameChat->setObjectName("GameChat");
-        GameChat->setGeometry(QRect(440, 0, 161, 371));
+        GameChat->setGeometry(QRect(490, 0, 231, 371));
         GameChatLabel = new QLabel(GameChat);
         GameChatLabel->setObjectName("GameChatLabel");
-        GameChatLabel->setGeometry(QRect(50, 10, 81, 20));
+        GameChatLabel->setGeometry(QRect(80, 10, 81, 20));
         ChatMessages = new QWidget(GameChat);
         ChatMessages->setObjectName("ChatMessages");
-        ChatMessages->setGeometry(QRect(0, 60, 161, 291));
-        layoutWidget = new QWidget(GameChat);
-        layoutWidget->setObjectName("layoutWidget");
-        layoutWidget->setGeometry(QRect(10, 340, 168, 26));
-        horizontalLayout = new QHBoxLayout(layoutWidget);
-        horizontalLayout->setObjectName("horizontalLayout");
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        ChatMessages->setGeometry(QRect(0, 40, 231, 291));
+        LeaveServerButton = new QPushButton(GameChat);
+        LeaveServerButton->setObjectName("LeaveServerButton");
+        LeaveServerButton->setGeometry(QRect(70, 340, 91, 24));
         ResetCanvas = new QPushButton(CanvasPaint);
         ResetCanvas->setObjectName("ResetCanvas");
-        ResetCanvas->setGeometry(QRect(359, 339, 80, 24));
-        LeaveServerButton = new QPushButton(CanvasPaint);
-        LeaveServerButton->setObjectName("LeaveServerButton");
-        LeaveServerButton->setGeometry(QRect(450, 340, 166, 24));
+        ResetCanvas->setGeometry(QRect(200, 340, 80, 24));
 
         retranslateUi(CanvasPaint);
 
@@ -66,8 +56,8 @@ public:
     {
         CanvasPaint->setWindowTitle(QCoreApplication::translate("CanvasPaint", "Canvas", nullptr));
         GameChatLabel->setText(QCoreApplication::translate("CanvasPaint", "Game Chat", nullptr));
-        ResetCanvas->setText(QCoreApplication::translate("CanvasPaint", "ResetCanvas", nullptr));
         LeaveServerButton->setText(QCoreApplication::translate("CanvasPaint", "Leave Server", nullptr));
+        ResetCanvas->setText(QCoreApplication::translate("CanvasPaint", "ResetCanvas", nullptr));
     } // retranslateUi
 
 };
