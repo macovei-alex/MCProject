@@ -26,6 +26,8 @@ public:
     QWidget *GameChat;
     QLabel *GameChatLabel;
     QWidget *ChatMessages;
+    QPushButton *DrawButton;
+    QPushButton *EraseButton;
 
     void setupUi(QDialog *CanvasPaint)
     {
@@ -47,6 +49,12 @@ public:
         ChatMessages = new QWidget(GameChat);
         ChatMessages->setObjectName("ChatMessages");
         ChatMessages->setGeometry(QRect(-20, -130, 381, 781));
+        DrawButton = new QPushButton(CanvasPaint);
+        DrawButton->setObjectName("DrawButton");
+        DrawButton->setGeometry(QRect(1200, 690, 80, 24));
+        EraseButton = new QPushButton(CanvasPaint);
+        EraseButton->setObjectName("EraseButton");
+        EraseButton->setGeometry(QRect(1290, 690, 80, 24));
 
         retranslateUi(CanvasPaint);
 
@@ -59,6 +67,8 @@ public:
         ResetCanvas->setText(QCoreApplication::translate("CanvasPaint", "ResetCanvas", nullptr));
         LeaveServerButton->setText(QCoreApplication::translate("CanvasPaint", "Leave Server", nullptr));
         GameChatLabel->setText(QCoreApplication::translate("CanvasPaint", "Game Chat", nullptr));
+        DrawButton->setText(QCoreApplication::translate("CanvasPaint", "Draw", nullptr));
+        EraseButton->setText(QCoreApplication::translate("CanvasPaint", "Erase", nullptr));
     } // retranslateUi
 
 };

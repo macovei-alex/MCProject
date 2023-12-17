@@ -72,6 +72,32 @@
     </property>
    </widget>
   </widget>
+  <widget class="QPushButton" name="DrawButton">
+   <property name="geometry">
+    <rect>
+     <x>1200</x>
+     <y>690</y>
+     <width>80</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Draw</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="EraseButton">
+   <property name="geometry">
+    <rect>
+     <x>1290</x>
+     <y>690</y>
+     <width>80</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Erase</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

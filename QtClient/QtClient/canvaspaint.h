@@ -32,8 +32,13 @@ private slots:
     void on_ResetCanvas_clicked();
    // void minimizeButtonClicked();
 
+    void on_DrawButton_clicked();
+
+    void on_EraseButton_clicked();
+
 private:
     bool isDrawing;
+    bool isErasing;
     Ui::CanvasPaint *ui;
      QPoint lastPoint;
     MainWindow *obiect;

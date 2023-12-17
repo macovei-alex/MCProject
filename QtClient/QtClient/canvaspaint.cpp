@@ -7,7 +7,8 @@
 CanvasPaint::CanvasPaint(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::CanvasPaint),
-    isDrawing(false)
+    isDrawing(false),
+    isErasing(false)
 {
     ui->setupUi(this);
 
@@ -33,6 +34,7 @@ CanvasPaint::~CanvasPaint()
 {
     delete ui;
 }
+
 void CanvasPaint::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
@@ -57,9 +59,20 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
     // Verifică dacă evenimentul este un clic al mouse-ului
     if (event->button() == Qt::LeftButton)
     {
-        // Începe desenarea și reține poziția curentă a cursorului
-        isDrawing = true;
-        lastPoint = event->pos();
+            if (event->x() < width() * 3 / 4)
+            {
+                if (isDrawing)
+                {
+                    isDrawing = true; // Setează starea de desenare sau ștergere
+                    isErasing = false;
+                }
+                else
+                {
+                    isDrawing = false; // Setează starea de desenare sau ștergere
+                    isErasing = true;
+                }
+                lastPoint = event->pos();
+            }
     }
 }
 
@@ -68,14 +81,23 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
     // Verifică dacă suntem în proces de desenare
     if (event->x() < width() * 3 / 4) {
-        if (isDrawing)
+        if (isDrawing || isErasing)
         {
             // Obține poziția curentă a cursorului
             QPoint currentPoint = event->pos();
 
             // Desenează o linie între poziția anterioară și cea curentă
             QPainter painter(&canvasPixmap);
-            painter.setPen(Qt::black);
+            if (isDrawing)
+            {
+                painter.setPen(Qt::black);
+            }
+            else
+            {
+                painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
+
+
             painter.drawLine(lastPoint, currentPoint);
 
             // Actualizează poziția anterioară
@@ -93,8 +115,14 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
     // Verifică dacă butonul stâng al mouse-ului este eliberat
     if (event->button() == Qt::LeftButton)
     {
-        // Oprește desenarea
-        isDrawing = false;
+        if(isDrawing)
+        {
+            isErasing = false;
+        }
+        if(isErasing)
+        {
+            isDrawing = false;
+        }
     }
 }
 
@@ -131,6 +159,7 @@ void CanvasPaint::on_LeaveServerButton_clicked()
 void CanvasPaint::on_ResetCanvas_clicked()
 {
     clearCanvas();
+    isDrawing= true;
 }
 
 //void CanvasPaint::minimizeButtonClicked()
@@ -138,4 +167,15 @@ void CanvasPaint::on_ResetCanvas_clicked()
 //    qDebug() << "Minimize button clicked";
 //	showMinimized();
 //}
+void CanvasPaint::on_DrawButton_clicked()
+{
+    isDrawing = true;
+    isErasing = false;
+}
 
+
+void CanvasPaint::on_EraseButton_clicked()
+{
+    isDrawing = false;
+    isErasing = true;
+}
