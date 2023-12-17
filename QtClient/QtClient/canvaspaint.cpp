@@ -8,7 +8,8 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::CanvasPaint),
     isDrawing(false),
-    isErasing(false)
+    isErasing(false),
+    isUndoing(false)
 {
     ui->setupUi(this);
 
@@ -63,13 +64,21 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
             {
                 if (isDrawing)
                 {
-                    isDrawing = true; // Setează starea de desenare sau ștergere
+                    isDrawing = true;
                     isErasing = false;
+                    isUndoing = false;
+                }
+                else if(isErasing)
+                {
+                    isDrawing = false;
+                    isErasing = true;
+                    isUndoing = false;
                 }
                 else
                 {
-                    isDrawing = false; // Setează starea de desenare sau ștergere
-                    isErasing = true;
+                    isDrawing = false;
+                    isErasing = false;
+                    isUndoing = true;
                 }
                 lastPoint = event->pos();
             }
@@ -91,17 +100,19 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
             if (isDrawing)
             {
                 painter.setPen(Qt::black);
+                currentLine.isDrawing = true;
+                currentLine.points.append(currentPoint);
             }
             else
             {
                 painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                currentLine.isDrawing = true;
+                currentLine.points.append(currentPoint);
             }
 
-
-            painter.drawLine(lastPoint, currentPoint);
-
-            // Actualizează poziția anterioară
-            lastPoint = currentPoint;
+            for (int i = 1; i < currentLine.points.size(); ++i) {
+                painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
+            }
 
             // Actualizează afișarea
             update();
@@ -118,10 +129,19 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
         if(isDrawing)
         {
             isErasing = false;
+            isUndoing = false;
+            drawnLines.append(currentLine);
+            currentLine.points.clear();
         }
-        if(isErasing)
+        else if(isErasing)
         {
             isDrawing = false;
+            isUndoing = false;
+        }
+        else if(isUndoing)
+        {
+            isDrawing = false;
+            isErasing = false;
         }
     }
 }
@@ -146,15 +166,12 @@ void CanvasPaint::clearCanvas()
     update();
 }
 
-
 void CanvasPaint::on_LeaveServerButton_clicked()
 {
     hide();
     obiect = new MainWindow(this);
     obiect->show();
 }
-
-
 
 void CanvasPaint::on_ResetCanvas_clicked()
 {
@@ -167,15 +184,42 @@ void CanvasPaint::on_ResetCanvas_clicked()
 //    qDebug() << "Minimize button clicked";
 //	showMinimized();
 //}
+
 void CanvasPaint::on_DrawButton_clicked()
 {
     isDrawing = true;
     isErasing = false;
+    isUndoing = false;
 }
-
 
 void CanvasPaint::on_EraseButton_clicked()
 {
     isDrawing = false;
     isErasing = true;
+    isUndoing = false;
+}
+
+void CanvasPaint::on_UndoButton_clicked()
+{
+    isDrawing = false;
+    isErasing = false;
+    if (!drawnLines.isEmpty())
+    {
+        drawnLines.pop_back();
+        clearCanvas();
+
+        QPainter painter(&canvasPixmap);
+        for(const auto& line : drawnLines)
+        {
+            for (int i = 1; i < line.points.size(); ++i) {
+                if (line.isDrawing)
+                {
+                    painter.setPen(Qt::black);
+                }
+                painter.drawLine(line.points[i - 1], line.points[i]);
+            }
+        }
+
+        update();
+    }
 }

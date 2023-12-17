@@ -98,6 +98,19 @@
     <string>Erase</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="UndoButton">
+   <property name="geometry">
+    <rect>
+     <x>1380</x>
+     <y>690</y>
+     <width>80</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

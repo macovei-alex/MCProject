@@ -36,12 +36,21 @@ private slots:
 
     void on_EraseButton_clicked();
 
+    void on_UndoButton_clicked();
+
 private:
+    struct DrawnLine {
+        bool isDrawing; // true pentru desenare, false pentru ștergere
+        QList<QPoint> points;
+    };
     bool isDrawing;
     bool isErasing;
+    bool isUndoing;
     Ui::CanvasPaint *ui;
      QPoint lastPoint;
     MainWindow *obiect;
+    QList<DrawnLine> drawnLines;
+    DrawnLine currentLine;
  
 };
 

@@ -28,6 +28,7 @@ public:
     QWidget *ChatMessages;
     QPushButton *DrawButton;
     QPushButton *EraseButton;
+    QPushButton *UndoButton;
 
     void setupUi(QDialog *CanvasPaint)
     {
@@ -55,6 +56,9 @@ public:
         EraseButton = new QPushButton(CanvasPaint);
         EraseButton->setObjectName("EraseButton");
         EraseButton->setGeometry(QRect(1290, 690, 80, 24));
+        UndoButton = new QPushButton(CanvasPaint);
+        UndoButton->setObjectName("UndoButton");
+        UndoButton->setGeometry(QRect(1380, 690, 80, 24));
 
         retranslateUi(CanvasPaint);
 
@@ -69,6 +73,7 @@ public:
         GameChatLabel->setText(QCoreApplication::translate("CanvasPaint", "Game Chat", nullptr));
         DrawButton->setText(QCoreApplication::translate("CanvasPaint", "Draw", nullptr));
         EraseButton->setText(QCoreApplication::translate("CanvasPaint", "Erase", nullptr));
+        UndoButton->setText(QCoreApplication::translate("CanvasPaint", "Undo", nullptr));
     } // retranslateUi
 
 };
