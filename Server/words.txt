@@ -1,10 +1,9 @@
-﻿Apple Easy
+﻿Strawberry Medium
 Banana Easy
 Orange Easy
 Elephant Medium
 Butterfly Easy
 Computer Medium
-Butterfly Easy
 Rainbow Easy
 Mountain Medium
 Elephant Medium
@@ -31,11 +30,9 @@ Kangaroo Medium
 Keyboard Medium
 Penguin Medium
 Chocolate Easy
-Elephant Medium
 Pineapple Easy
 Astronaut Medium
 Dolphin Medium
-Telescope Medium
 Cactus Medium
 Butterfly Easy
 Blueberry Easy
@@ -59,7 +56,7 @@ Penguin Medium
 Starfish Medium
 Cupcake Easy
 Caterpillar Medium
-airballoon Medium
+Airballoon Medium
 Puzzle Medium
 Ocean Medium
 Robot Medium
@@ -76,13 +73,12 @@ Mermaid Medium
 Sweater Medium
 Rainforest Medium
 Giraffe Medium
-Jigsaw puzzle Medium
 Jupiter Medium
 Lemon Easy
 Camera Medium
 Owl Medium
 Mountain Medium
-Light bulb Medium
+Light Medium
 Cupcake Easy
 Giraffe Medium
 Lighthouse Medium

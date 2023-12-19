@@ -5,40 +5,38 @@
 Database::Database(const std::string& filename) :
 	m_storage{ db::CreateStorage(filename) }
 {
-	try
-	{
-		m_storage.sync_schema();
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-
+	m_storage.sync_schema();
 	if (m_storage.count<db::Word>() == 0)
 		PopulateStorage();
 
-	std::cout << m_storage.count<db::Word>() << std::endl;
-	std::cin.get();
+	std::cout << m_storage.count<db::Word>() << '\n';
+
+	auto words = m_storage.get_all<db::Word>();
+	for (auto& word : words)
+		std::cout << word.id << ". " << word.text << " " << word.difficulty << '\n';
 }
 
 void Database::PopulateStorage()
 {
-	m_storage.sync_schema();
-	if (m_storage.count<db::Word>() == 0)
+	std::ifstream f("words.txt");
+	std::vector<db::Word> words;
+	int index = 0;
+	while (!f.eof())
 	{
-		std::ifstream f("words.txt");
-		std::vector<db::Word> words;
-		int index = 0;
-		while (!f.eof())
-		{
-			index++;
-			std::string word;
-			std::string difficulty;
-			f >> word >> difficulty;
-			words.push_back(db::Word(index, word, difficulty));
-		}
-		m_storage.insert_range(words.begin(), words.end());
+		index++;
+		std::string word;
+		std::string difficulty;
+		f >> word >> difficulty;
+		words.push_back(db::Word(index, word, difficulty));
 	}
+	m_storage.insert_range(words.begin(), words.end());
+
+	// The first word is being memorized wrongly, for some unknown reason. 
+	// When we first initialize the database, we have to make sure the first word starts with a letter.
+
+	db::Word firstWord{ m_storage.get<db::Word>(1) };
+	for (uint8_t c{ (uint8_t)firstWord.text[0] }; !std::isalpha(c); c = firstWord.text.erase(0, 1)[0]);
+	m_storage.update(firstWord);
 }
 
 bool Database::IfPlayerExist(const std::string& playerName)
