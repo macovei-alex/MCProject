@@ -15,6 +15,11 @@ Server::Server() :
 	m_database{ "database.sqlite" }
 {
 	/* empty */
+	if (!m_database.Initialize())
+	{
+		std::cerr << "Database initialization failed\n";
+		std::cin.get();
+	}
 }
 
 Server& Server::GetInstance()
