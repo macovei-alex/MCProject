@@ -9,32 +9,28 @@ Database::Database(const std::string& filename) :
 	if (m_storage.count<db::Word>() == 0)
 		PopulateStorage();
 
-	std::cout << m_storage.count<db::Word>() << '\n';
-
-	auto words = m_storage.get_all<db::Word>();
-	for (auto& word : words)
-		std::cout << word.id << ". " << word.text << " " << word.difficulty << '\n';
+	/*std::vector<db::Word> words{ std::move(m_storage.get_all<db::Word>()) };
+	for (const auto& word : words)
+		std::cout << std::format("{}. {} {}\n", word.id, word.text, word.difficulty);*/
 }
 
 void Database::PopulateStorage()
 {
-	std::ifstream f("words.txt");
 	std::vector<db::Word> words;
-	int index = 0;
-	while (!f.eof())
+	for (std::ifstream wordsIn{ "words.txt" }; !wordsIn.eof(); /* empty */)
 	{
-		index++;
-		std::string word;
+		std::string text;
 		std::string difficulty;
-		f >> word >> difficulty;
-		words.push_back(db::Word(index, word, difficulty));
+		wordsIn >> text >> difficulty;
+		words.push_back(db::Word{ std::move(text), std::move(difficulty) });
 	}
+
 	m_storage.insert_range(words.begin(), words.end());
 
 	// The first word is being memorized wrongly, for some unknown reason. 
 	// When we first initialize the database, we have to make sure the first word starts with a letter.
 
-	db::Word firstWord{ m_storage.get<db::Word>(1) };
+	db::Word firstWord{ std::move(m_storage.get<db::Word>(1)) };
 	for (uint8_t c{ (uint8_t)firstWord.text[0] }; !std::isalpha(c); c = firstWord.text.erase(0, 1)[0]);
 	m_storage.update(firstWord);
 }

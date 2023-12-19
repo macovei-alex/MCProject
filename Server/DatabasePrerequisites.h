@@ -18,6 +18,12 @@ namespace db
 		int id;
 		std::string text;
 		std::string difficulty;
+	
+		Word() = default;
+		Word(std::string&& text, std::string&& difficulty)
+			: id{ 0 }, text{ std::move(text) }, difficulty{ std::move(difficulty) } 
+		{ /* empty */ }
+		Word(Word&&) = default;
 	};
 	
 	struct Player
