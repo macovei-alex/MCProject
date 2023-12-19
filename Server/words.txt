@@ -4,7 +4,6 @@ Orange Easy
 Elephant Medium
 Butterfly Easy
 Computer Medium
-Guitar Medium
 Butterfly Easy
 Rainbow Easy
 Mountain Medium
@@ -96,7 +95,7 @@ Kangaroo Medium
 Unicorn Medium
 Dolphin Medium
 Cactus Medium
-Acoustic-guitar Medium
+Guitar Easy
 Puzzle Medium
 Raindrop Medium
 Zoo Medium

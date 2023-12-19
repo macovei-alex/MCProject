@@ -5,9 +5,20 @@
 Database::Database(const std::string& filename) :
 	m_storage{ db::CreateStorage(filename) }
 {
-	m_storage.sync_schema();
+	try
+	{
+		m_storage.sync_schema();
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+
 	if (m_storage.count<db::Word>() == 0)
 		PopulateStorage();
+
+	std::cout << m_storage.count<db::Word>() << std::endl;
+	std::cin.get();
 }
 
 void Database::PopulateStorage()

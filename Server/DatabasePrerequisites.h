@@ -52,7 +52,6 @@ namespace db
 			sql::make_table("gameHistory",
 				sql::make_column("id", &GameHistory::id, sql::primary_key().autoincrement()),
 				sql::make_column("playerID", &GameHistory::playerID),
-				sql::foreign_key(&GameHistory::playerID).references(&Player::id),
 				sql::make_column("score", &GameHistory::score),
 				sql::make_column("difficulty", &GameHistory::difficulty),
 				sql::make_column("date", &GameHistory::date))
