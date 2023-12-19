@@ -50,5 +50,5 @@ private:
 
 	uint16_t m_port;
 	std::string m_IPAddress;
-	MockDatabase m_database;
+	Database m_database;
 };
