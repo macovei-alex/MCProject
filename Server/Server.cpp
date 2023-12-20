@@ -5,8 +5,6 @@
 #include <format>
 #include <stack>
 
-Server* Server::s_instance = nullptr;
-
 Server::Server() :
 	m_app{ },
 	m_games{ },
@@ -15,13 +13,6 @@ Server::Server() :
 	m_database{ "database.sqlite" }
 {
 	/* empty */
-}
-
-Server& Server::GetInstance()
-{
-	if (!s_instance)
-		s_instance = new Server();
-	return *s_instance;
 }
 
 Server& Server::AllHandlers()
@@ -175,9 +166,9 @@ Server& Server::AccountHandlers()
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
-		/*db::ReturnValue returnValue = m_database.SignIn(username, password);
+		/*db::ReturnValue returnValue { std::move(m_database.SignIn(username, password)) };
 		if (!returnValue.success)
-			return crow::response(404, returnValue.reason);*/
+			return crow::response(404, "eroare db");
 
 		return crow::response(200, std::format("Player logged in as < {} >", username));
 			});

@@ -4,6 +4,7 @@
 
 int main()
 {
-	Server::GetInstance().SetSettingsFromFile("serverSettings.txt").Run();
+	Server server;
+	server.SetSettingsFromFile("serverSettings.txt").Run();
 	return 0;
 }

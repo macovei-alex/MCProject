@@ -14,6 +14,7 @@
 class Server
 {
 public:
+	Server();
 	Server(const Server&) = delete;
 	Server& operator=(const Server&) = delete;
 	~Server() = default;
@@ -34,15 +35,6 @@ public:
 
 public:
 	void Run();
-
-private:
-	Server();
-
-public:
-	static Server& GetInstance();
-
-private:
-	static Server* s_instance;
 
 private:
 	crow::SimpleApp m_app;
