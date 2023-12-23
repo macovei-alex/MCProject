@@ -34,7 +34,7 @@ public:
     {
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
-        CanvasPaint->resize(1568, 930);
+        CanvasPaint->resize(1854, 967);
         ResetCanvas = new QPushButton(CanvasPaint);
         ResetCanvas->setObjectName("ResetCanvas");
         ResetCanvas->setGeometry(QRect(1200, 720, 80, 24));

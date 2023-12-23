@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -39,6 +40,7 @@ public:
     QLabel *label_3;
     QLineEdit *lineEdit_2;
     QPushButton *LoginButton;
+    QComboBox *comboBox;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -90,10 +92,16 @@ public:
 
         verticalLayout->addWidget(LoginButton);
 
+        comboBox = new QComboBox(centralwidget);
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->setObjectName("comboBox");
+        comboBox->setGeometry(QRect(240, 460, 151, 24));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 737, 22));
+        menubar->setGeometry(QRect(0, 0, 737, 21));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -113,6 +121,10 @@ public:
         label_2->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));
         LoginButton->setText(QCoreApplication::translate("MainWindow", "Login", nullptr));
+        comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "Easy", nullptr));
+        comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "Medium", nullptr));
+        comboBox->setItemText(2, QCoreApplication::translate("MainWindow", "Hard", nullptr));
+
     } // retranslateUi
 
 };

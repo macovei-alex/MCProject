@@ -22,14 +22,22 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
     QScreen* primaryScreen = QGuiApplication::primaryScreen();
     QRect screenRect = primaryScreen->geometry();
     setGeometry(0, 0, screenRect.width(), screenRect.height());
-
+    setStyleSheet("QDialog { border: 2px solid black; }");
     canvasPixmap = QPixmap(screenRect.size()); // Ajustează dimensiunile după necesități
     canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă sau culoarea dorită
-  /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
+    setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+  //  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
+    //connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);
+    /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
     connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
 
 
 }
+//void CanvasPaint::minimizeButtonClicked()
+//{
+//    qDebug() << "Minimize button clicked";
+//    showMinimized();
+//}
 
 CanvasPaint::~CanvasPaint()
 {
@@ -41,7 +49,11 @@ void CanvasPaint::paintEvent(QPaintEvent* event)
     Q_UNUSED(event);
 
     QPainter painter(this);
-    painter.drawPixmap(0, 0, canvasPixmap);
+    QPen pen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap,Qt::BevelJoin);
+    painter.setPen(pen);
+    QRect canvasRect=rect();
+    painter.drawRect(canvasRect);
+    painter.drawPixmap(2, 2, canvasPixmap);
 }
 
 void CanvasPaint::on_Button_clicked()
@@ -152,7 +164,7 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 	QPixmap newPixmap(event->size());
 	newPixmap.fill(Qt::white);
 	QPainter painter(&newPixmap);
-	painter.drawPixmap(QPoint(0, 0), canvasPixmap);
+    painter.drawPixmap(QRect(0, 0, event->size().width(), event->size().height()), canvasPixmap);
 	canvasPixmap = newPixmap;
 
 	// Actualizează afișarea
@@ -206,19 +218,29 @@ void CanvasPaint::on_UndoButton_clicked()
     if (!drawnLines.isEmpty())
     {
         drawnLines.pop_back();
-        clearCanvas();
+       // clearCanvas();
+        QPixmap newPixmap(size());
+        newPixmap.fill(Qt::white);
 
-        QPainter painter(&canvasPixmap);
+
+        QPainter painter(&newPixmap);
         for(const auto& line : drawnLines)
         {
             for (int i = 1; i < line.points.size(); ++i) {
                 if (line.isDrawing)
-                {
+                
                     painter.setPen(Qt::black);
+               
+                else 
+                
+                {
+                    painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                 }
                 painter.drawLine(line.points[i - 1], line.points[i]);
             }
+
         }
+        canvasPixmap = newPixmap;
 
         update();
     }
