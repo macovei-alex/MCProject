@@ -31,7 +31,7 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
     /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
     connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
 
-
+    connect(ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
 }
 //void CanvasPaint::minimizeButtonClicked()
 //{
@@ -245,3 +245,9 @@ void CanvasPaint::on_UndoButton_clicked()
         update();
     }
 }
+
+void CanvasPaint::on_messageButton_clicked()
+{
+    ui->messageBox->clear();
+}
+

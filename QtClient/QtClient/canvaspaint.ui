@@ -70,6 +70,31 @@
       <height>781</height>
      </rect>
     </property>
+    <widget class="QPushButton" name="messageButton">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>730</y>
+       <width>80</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Send</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="messageBox">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>730</y>
+       <width>171</width>
+       <height>24</height>
+      </rect>
+     </property>
+    </widget>
+    <zorder>messageBox</zorder>
+    <zorder>messageButton</zorder>
    </widget>
   </widget>
   <widget class="QPushButton" name="DrawButton">

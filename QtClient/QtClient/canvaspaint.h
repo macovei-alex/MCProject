@@ -38,6 +38,8 @@ private slots:
 
     void on_UndoButton_clicked();
 
+    void on_messageButton_clicked();
+
 private:
     struct DrawnLine {
         bool isDrawing; // true pentru desenare, false pentru ștergere
