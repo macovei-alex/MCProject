@@ -9,7 +9,8 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
     ui(new Ui::CanvasPaint),
     isDrawing(false),
     isErasing(false),
-    isUndoing(false)
+    isUndoing(false),
+    drawingOrErasing(true)
 {
     ui->setupUi(this);
 
@@ -207,6 +208,7 @@ void CanvasPaint::on_DrawButton_clicked()
     isDrawing = true;
     isErasing = false;
     isUndoing = false;
+    drawingOrErasing = true;
 }
 
 void CanvasPaint::on_EraseButton_clicked()
@@ -214,6 +216,7 @@ void CanvasPaint::on_EraseButton_clicked()
     isDrawing = false;
     isErasing = true;
     isUndoing = false;
+    drawingOrErasing = false;
 }
 
 void CanvasPaint::on_UndoButton_clicked()
@@ -248,6 +251,19 @@ void CanvasPaint::on_UndoButton_clicked()
         canvasPixmap = newPixmap;
 
         update();
+    }
+
+    if(drawingOrErasing)
+    {
+        isDrawing = true;
+        isErasing = false;
+        isUndoing = false;
+    }
+    else
+    {
+        isDrawing = false;
+        isErasing = true;
+        isUndoing = false;
     }
 }
 
