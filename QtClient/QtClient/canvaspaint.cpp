@@ -44,6 +44,11 @@ CanvasPaint::~CanvasPaint()
     delete ui;
 }
 
+void CanvasPaint::setDrawingFlag(bool value)
+{
+    isDrawing = value;
+}
+
 void CanvasPaint::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);

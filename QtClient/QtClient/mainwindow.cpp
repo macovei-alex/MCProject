@@ -40,10 +40,8 @@ void MainWindow::on_LoginButton_clicked()
    // obiect.exec();
     hide();
     obiect= new CanvasPaint(this);
+    obiect->setDrawingFlag(true);
     obiect->show();
-    
-
-
 }
 
 

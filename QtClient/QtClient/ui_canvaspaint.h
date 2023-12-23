@@ -59,6 +59,8 @@ public:
         messageBox = new QLineEdit(ChatMessages);
         messageBox->setObjectName("messageBox");
         messageBox->setGeometry(QRect(40, 730, 171, 24));
+        messageBox->raise();
+        messageButton->raise();
         DrawButton = new QPushButton(CanvasPaint);
         DrawButton->setObjectName("DrawButton");
         DrawButton->setGeometry(QRect(1200, 690, 80, 24));

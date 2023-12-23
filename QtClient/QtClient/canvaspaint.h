@@ -18,6 +18,7 @@ class CanvasPaint : public QDialog
 public:
     CanvasPaint(QWidget *parent = nullptr);
     ~CanvasPaint();
+    void setDrawingFlag(bool value);
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
