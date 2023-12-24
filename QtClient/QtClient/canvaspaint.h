@@ -27,6 +27,7 @@ public:
     QPixmap canvasPixmap;
 protected:
     void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
+    void closeEvent(QCloseEvent *event) override;
 private slots:
     void on_Button_clicked();
     void on_LeaveServerButton_clicked();

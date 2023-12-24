@@ -272,3 +272,8 @@ void CanvasPaint::on_messageButton_clicked()
     ui->messageBox->clear();
 }
 
+void CanvasPaint::closeEvent(QCloseEvent *event)
+{
+    QCoreApplication::quit();
+    event->accept();
+}

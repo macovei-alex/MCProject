@@ -44,4 +44,8 @@ void MainWindow::on_LoginButton_clicked()
     obiect->show();
 }
 
-
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QCoreApplication::quit();
+    event->accept();
+}
