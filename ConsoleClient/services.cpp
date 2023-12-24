@@ -250,10 +250,11 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<utils::img::P
 			pointsJsonList.emplace_back(crow::json::wvalue{ {
 				{literals::jsonKeys::draw::pointX, point.x},
 				{literals::jsonKeys::draw::pointY, point.y},
-				{literals::jsonKeys::draw::color, point.color.ToInt32() }} });
+				{literals::jsonKeys::draw::color, point.color.ToInt32()}} });
 		
 		auto flattened = crow::json::wvalue(pointsJsonList);
 		std::string str = flattened.dump();
+		std::cout << str;
 
 		auto response = cpr::Put(
 			cpr::Url{ url },

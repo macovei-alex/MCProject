@@ -156,7 +156,7 @@
     <ClCompile Include="serverUtils.cpp" />
     <ClCompile Include="serverUtilsMod.cpp" />
     <ClCompile Include="serverUtilsMod.cppm" />
-    <ClCompile Include="serverUtilsModTemp.cpp.cpp" />
+    <ClCompile Include="serverUtilsModTemp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\commonUtils.h" />

@@ -42,7 +42,7 @@
     <ClCompile Include="serverUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="serverUtilsModTemp.cpp.cpp">
+    <ClCompile Include="serverUtilsModTemp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Chat.cpp">
