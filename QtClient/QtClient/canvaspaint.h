@@ -46,6 +46,8 @@ private:
     bool isDrawing;
     bool isErasing;
     bool isUndoing;
+    bool erasingInProgress = false;
+
     Ui::CanvasPaint *ui;
      QPoint lastPoint;
     MainWindow *obiect;

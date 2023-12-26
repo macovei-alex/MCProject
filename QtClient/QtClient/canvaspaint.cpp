@@ -7,7 +7,7 @@
 CanvasPaint::CanvasPaint(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::CanvasPaint),
-    isDrawing(false),
+    isDrawing(true),
     isErasing(false),
     isUndoing(false)
 {
@@ -100,37 +100,51 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 // Adaugă o nouă metodă pentru gestionarea mișcării mouse-ului
 void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
-    // Verifică dacă suntem în proces de desenare
-    if (event->x() < width() * 3 / 4) {
-        if (isDrawing || isErasing)
+    if (event->x() < width() * 3 / 4)
+    {
+        QPoint currentPoint = event->pos();
+
+        if (isDrawing)
         {
-            // Obține poziția curentă a cursorului
-            QPoint currentPoint = event->pos();
-
-            // Desenează o linie între poziția anterioară și cea curentă
             QPainter painter(&canvasPixmap);
-            if (isDrawing)
-            {
-                painter.setPen(Qt::black);
-                currentLine.isDrawing = true;
-                currentLine.points.append(currentPoint);
-            }
-            else
-            {
-                painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                currentLine.isDrawing = true;
-                currentLine.points.append(currentPoint);
-            }
+            painter.setPen(Qt::black);
+            currentLine.isDrawing = true;
+            currentLine.points.append(currentPoint);
 
-            for (int i = 1; i < currentLine.points.size(); ++i) {
+            for (int i = 1; i < currentLine.points.size(); ++i)
+            {
                 painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
             }
 
-            // Actualizează afișarea
+            update();
+        }
+        else if (isErasing)
+        {
+            QPainter painter(&canvasPixmap);
+            painter.setCompositionMode(QPainter::CompositionMode_Source);
+            painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+            currentLine.isDrawing = true;
+            currentLine.points.append(currentPoint);
+
+            for (int i = 1; i < currentLine.points.size(); ++i)
+            {
+                painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
+            }
+
             update();
         }
     }
 }
+
+
+
+
+
+
+
+
+
 
 // Adaugă o nouă metodă pentru gestionarea eliberării butonului mouse-ului
 void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
