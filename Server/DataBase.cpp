@@ -43,12 +43,13 @@ bool Database::IfPlayerExist(const std::string& playerName)
 	return result.size() == 1;
 }
 
-bool Database::SignUp(const std::string& playerName, const std::string& password)
+db::ReturnValue Database::SignUp(const std::string& playerName, const std::string& password)
 {
+	std::string_view errorMessage;
 	try {
 		if (IfPlayerExist(playerName))
 		{
-			throw "Player already exists!";
+			throw std::exception("Player already exists!");
 		}
 		else
 		{
@@ -58,62 +59,69 @@ bool Database::SignUp(const std::string& playerName, const std::string& password
 			player.password = password;
 			player.isOnline = true;
 			m_storage.insert(player);
-			return true;
+			errorMessage = "Account succesfully created!";
+			return {true, errorMessage};
 		}
 	}
-	catch (const char* msg)
+	catch (std::exception& msg)
 	{
-		std::cout << msg << std::endl;
-		return false;
+		errorMessage = msg.what();
+		/*Logger logger(std::cout);
+		logger.Log(errorMessage, Logger::Level::Error);*/
+		return {false, errorMessage};
 	}
 
 }
 
-bool Database::SignIn(const std::string& playerName, const std::string& password)
+db::ReturnValue Database::SignIn(const std::string& playerName, const std::string& password)
 {
 	auto result = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
 	);
 	bool IsPlayerOnline = result[0].isOnline;
+	std::string_view errorMessage;
 	try {
-		if (IsPlayerOnline)
-		{
-			throw "Player already online!";
-		}
 		if (result.size() == 0)
 		{
-			throw "Invalid username";
+			throw std::exception("Player does not exist!");
+		}
+		if (IsPlayerOnline)
+		{
+			throw std::exception("Player is already online!");
 		}
 		else
 		{
 			const std::string& playerPassword = result[0].password;
 			if (playerPassword != password)
 			{
-				throw "Invalid password";
+				throw std::exception("Wrong password!");
 			}
 			else
 			{
 				result[0].isOnline = true;
 				m_storage.update(result[0]);
-				return true;
+				errorMessage = "Succesfully logged in!";
+				return {true, errorMessage};
 			}
 		}
 	}
-	catch (const char* msg)
+	catch (std::exception& msg)
 	{
-		std::cout << msg << std::endl;
-		return false;
+		errorMessage = msg.what();
+		return {false, errorMessage};
 	}
 }
 
-bool Database::SignOut(const std::string& playerName)
+db::ReturnValue Database::SignOut(const std::string& playerName)
 {
+	std::string_view errorMessage;
 	auto result = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
 	);
 	result[0].isOnline = false;
 	m_storage.update(result[0]);
-	return true;
+	errorMessage = "Succesfully logged out!";
+	return {true, errorMessage};
 }
 
 void Database::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
