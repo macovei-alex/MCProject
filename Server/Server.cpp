@@ -166,7 +166,7 @@ Server& Server::AccountHandlers()
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
-		/*db::ReturnValue returnValue { std::move(m_database.SignIn(username, password)) };
+		db::ReturnValue returnValue{ std::move(m_database.SignIn(username, password)) };
 		if (!returnValue.success)
 			return crow::response(404, "eroare db");
 
@@ -193,9 +193,9 @@ Server& Server::AccountHandlers()
 		if (username.empty() || password.empty())
 			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
-		/*db::ReturnValue returnValue = m_database.SignUp(username, password);
+		db::ReturnValue returnValue = m_database.SignUp(username, password);
 		if (!returnValue.success)
-			return crow::response(404, returnValue.reason);*/
+			return crow::response(404, returnValue.reason);
 
 		return crow::response(200, std::format("Player logged in as < {} >", username));
 			});
@@ -218,9 +218,9 @@ Server& Server::AccountHandlers()
 		if (username.empty())
 			return crow::response(404, std::format("Invalid username < {} >", username));
 
-		/*db::ReturnValue returnValue = m_database.SignOut(username);
+		db::ReturnValue returnValue = m_database.SignOut(username);
 		if (!returnValue.success)
-			return crow::response(404, returnValue.reason);*/
+			return crow::response(404, returnValue.reason);
 
 		return crow::response(200, std::format("Player < {} > logged out", username));
 			});
@@ -259,18 +259,46 @@ Server& Server::DrawingHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::draw::updatesParam).methods(crow::HTTPMethod::Put)
 		([this](const crow::request& request, uint64_t gameID) {
 
+		const static std::string pointXStrKey{ literals::jsonKeys::draw::pointX };
+		const static std::string pointYStrKey{ literals::jsonKeys::draw::pointY };
+		const static std::string colorStrKey{ literals::jsonKeys::draw::color };
+
 		if (request.body.empty())
 			return crow::response(404, "empty request body");
 
-		auto requestBody = crow::json::load(request.body);
-		for (const auto& jsonpoint : requestBody)
-		{
-			utils::img::Point point{
-				jsonpoint[literals::jsonKeys::draw::pointX].i(),
-				jsonpoint[literals::jsonKeys::draw::pointY].i(),
-				jsonpoint[literals::jsonKeys::draw::color].i() };
+		auto gameIt = m_games.find(gameID);
+		if (gameIt == m_games.end())
+			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
 
-			m_games[gameID].GetImage().AddUpdate(utils::img::Update{ utils::img::Point{point.x, point.y, point.color}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		auto jsonMap{ utils::ParseRequestBody(utils::DecodeMessage(request.body)) };
+		auto jsonVector{ utils::ListOfMapsFromJsonListStr(jsonMap[literals::jsonKeys::draw::points]) };
+
+		/*for (const auto& jsonPoint : jsonVector)
+		{
+			for (const auto& [key, value] : jsonPoint)
+				if (std::holds_alternative<int64_t>(value))
+					std::cout << key << " : " << std::get<int64_t>(value) << '\n';
+				else
+					std::cout << key << " : " << std::get<std::string>(value) << '\n';
+			std::cout << "\n\n";
+		}*/
+
+		for (const auto& pointMap : jsonVector)
+		{
+			try
+			{
+				utils::img::Point point{
+					std::get<int64_t>(pointMap.at(pointXStrKey)),
+					std::get<int64_t>(pointMap.at(pointYStrKey)),
+					std::get<int64_t>(pointMap.at(colorStrKey))
+				};
+
+				gameIt->second.GetImage().AddUpdate(utils::img::Update{ point, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+			}
+			catch (const std::exception& exception)
+			{
+				std::cerr << exception.what() << '\n';
+			}
 		}
 
 		return crow::response(200);

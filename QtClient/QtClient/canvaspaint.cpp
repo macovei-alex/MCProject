@@ -9,7 +9,8 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
     ui(new Ui::CanvasPaint),
     isDrawing(true),
     isErasing(false),
-    isUndoing(false)
+    isUndoing(false),
+    drawingOrErasing(true)
 {
     ui->setupUi(this);
 
@@ -31,7 +32,7 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
     /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
     connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
 
-
+    connect(ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
 }
 //void CanvasPaint::minimizeButtonClicked()
 //{
@@ -42,6 +43,11 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 CanvasPaint::~CanvasPaint()
 {
     delete ui;
+}
+
+void CanvasPaint::setDrawingFlag(bool value)
+{
+    isDrawing = value;
 }
 
 void CanvasPaint::paintEvent(QPaintEvent* event)
@@ -216,6 +222,7 @@ void CanvasPaint::on_DrawButton_clicked()
     isDrawing = true;
     isErasing = false;
     isUndoing = false;
+    drawingOrErasing = true;
 }
 
 void CanvasPaint::on_EraseButton_clicked()
@@ -223,6 +230,7 @@ void CanvasPaint::on_EraseButton_clicked()
     isDrawing = false;
     isErasing = true;
     isUndoing = false;
+    drawingOrErasing = false;
 }
 
 void CanvasPaint::on_UndoButton_clicked()
@@ -258,4 +266,28 @@ void CanvasPaint::on_UndoButton_clicked()
 
         update();
     }
+
+    if(drawingOrErasing)
+    {
+        isDrawing = true;
+        isErasing = false;
+        isUndoing = false;
+    }
+    else
+    {
+        isDrawing = false;
+        isErasing = true;
+        isUndoing = false;
+    }
+}
+
+void CanvasPaint::on_messageButton_clicked()
+{
+    ui->messageBox->clear();
+}
+
+void CanvasPaint::closeEvent(QCloseEvent *event)
+{
+    QCoreApplication::quit();
+    event->accept();
 }

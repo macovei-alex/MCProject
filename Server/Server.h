@@ -9,7 +9,7 @@
 // import serverUtilsMod;
 #include "Game.h"
 #include "Database.h"
-// #include "MockDatabase.h"
+#include "MockDatabase.h"
 
 class Server
 {
@@ -38,9 +38,9 @@ public:
 
 private:
 	crow::SimpleApp m_app;
-	std::map<uint64_t, Game> m_games;
-
 	uint16_t m_port;
 	std::string m_IPAddress;
-	Database m_database;
+
+	MockDatabase m_database;
+	std::map<uint64_t, Game> m_games;
 };

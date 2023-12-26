@@ -18,6 +18,7 @@ class CanvasPaint : public QDialog
 public:
     CanvasPaint(QWidget *parent = nullptr);
     ~CanvasPaint();
+    void setDrawingFlag(bool value);
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
@@ -26,6 +27,7 @@ public:
     QPixmap canvasPixmap;
 protected:
     void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
+    void closeEvent(QCloseEvent *event) override;
 private slots:
     void on_Button_clicked();
     void on_LeaveServerButton_clicked();
@@ -38,6 +40,8 @@ private slots:
 
     void on_UndoButton_clicked();
 
+    void on_messageButton_clicked();
+
 private:
     struct DrawnLine {
         bool isDrawing; // true pentru desenare, false pentru ștergere
@@ -46,8 +50,7 @@ private:
     bool isDrawing;
     bool isErasing;
     bool isUndoing;
-    bool erasingInProgress = false;
-
+    bool drawingOrErasing;
     Ui::CanvasPaint *ui;
      QPoint lastPoint;
     MainWindow *obiect;

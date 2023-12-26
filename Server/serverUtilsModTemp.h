@@ -3,7 +3,8 @@
 #include <vector>
 #include <string>
 #include <chrono>
-#include <map>
+#include <unordered_map>
+#include <variant>
 
 namespace utils
 {
@@ -25,5 +26,6 @@ namespace utils
 	std::pair<std::string, std::string> SplitToPair(const std::string& str, const std::string& delim);
 	std::string DecodeMessage(const std::string& message);
 	uint64_t DateTimeAsInteger(std::chrono::system_clock::time_point dateTime = std::chrono::system_clock::now());
-	std::map<std::string, std::string> ParseRequestBody(const std::string& requestBody);
+	std::unordered_map<std::string, std::string> ParseRequestBody(const std::string& requestBody);
+	std::vector<std::unordered_map<std::string, std::variant<int64_t, std::string>>> ListOfMapsFromJsonListStr(const std::string& jsonStr);
 }
