@@ -1,46 +1,46 @@
 #include "MockDatabase.h"
 
-MockDatabase::MockDatabase(const std::string& filename)
+db::MockDatabase::MockDatabase(const std::string& filename)
 {
 	/* mock empty */
 }
 
-void MockDatabase::PopulateStorage()
+void db::MockDatabase::PopulateStorage()
 {
 	/* mock empty */
 }
 
-bool MockDatabase::IfPlayerExist(const std::string& playerName)
+bool db::MockDatabase::IfPlayerExist(const std::string& playerName)
 {
 	return false;
 }
 
-db::ReturnValue MockDatabase::SignUp(const std::string& playerName, const std::string& password)
+db::ReturnValue db::MockDatabase::SignUp(const std::string& playerName, const std::string& password)
 {
-	return { true, "" };
+	return { true, "Successfuly signed up" };
 }
 
-db::ReturnValue MockDatabase::SignIn(const std::string& playerName, const std::string& password)
+db::ReturnValue db::MockDatabase::SignIn(const std::string& playerName, const std::string& password)
 {
-	return { true, "" };
+	return { true, "Successfuly signed in" };
 }
 
-db::ReturnValue MockDatabase::SignOut(const std::string& playerName)
+db::ReturnValue db::MockDatabase::SignOut(const std::string& playerName)
 {
-	return { true, "" };
+	return { true, "Successfuly signed out" };
 }
 
-void MockDatabase::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
-{
-	/* mock empty */
-}
-
-void MockDatabase::GetGameHistory(const std::string& playerName)
+void db::MockDatabase::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
 {
 	/* mock empty */
 }
 
-std::vector<std::string> MockDatabase::GetRandomWords(int number, const std::string& difficulty)
+void db::MockDatabase::GetGameHistory(const std::string& playerName)
+{
+	/* mock empty */
+}
+
+std::vector<std::string> db::MockDatabase::GetRandomWords(int number, const std::string& difficulty)
 {
 	static const std::map<std::string, std::vector<std::string>> mockWords = {
 		{"easy", {"mock1", "mock2", "mock3", "mock4"}},

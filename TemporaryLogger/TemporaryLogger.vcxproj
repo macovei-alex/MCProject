@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,33 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ba4bf910-c2e9-4ab0-bc55-dd57c310c2fd}</ProjectGuid>
-    <RootNamespace>Client</RootNamespace>
+    <ProjectGuid>{a9c8cb5d-f9e1-4b30-9ef3-db16e8b4dfcc}</ProjectGuid>
+    <RootNamespace>TemporaryLogger</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Server</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -78,9 +77,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableModules>true</EnableModules>
-      <BuildStlModules>true</BuildStlModules>
-      <AdditionalOptions>/D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -96,9 +92,6 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableModules>true</EnableModules>
-      <BuildStlModules>true</BuildStlModules>
-      <AdditionalOptions>/D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,9 +107,6 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableModules>true</EnableModules>
-      <BuildStlModules>true</BuildStlModules>
-      <AdditionalOptions>/D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,9 +122,6 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableModules>true</EnableModules>
-      <BuildStlModules>true</BuildStlModules>
-      <AdditionalOptions>/D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,57 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\commonUtils.cpp" />
-    <ClCompile Include="..\Common\GameSettings.cpp" />
-    <ClCompile Include="Chat.cpp" />
-    <ClCompile Include="Database.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MockDatabase.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="Turn.cpp" />
-    <ClCompile Include="serverUtils.cpp" />
-    <ClCompile Include="serverUtilsMod.cpp" />
-    <ClCompile Include="serverUtilsMod.cppm" />
-    <ClCompile Include="serverUtilsModTemp.cpp" />
+    <ClInclude Include="logger.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\commonUtils.h" />
-    <ClInclude Include="..\Common\constantLiterals.h" />
-    <ClInclude Include="..\Common\GameSettings.h" />
-    <ClInclude Include="Chat.h" />
-    <ClInclude Include="Database.h" />
-    <ClInclude Include="DatabasePrerequisites.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="MockDatabase.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="Turn.h" />
-    <ClCompile Include="Game.cpp" />
-    <ClInclude Include="serverUtils.h" />
-    <ClInclude Include="serverUtilsModTemp.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Game.h" />
-    <ClCompile Include="Player.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Player.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="server.log" />
-    <Text Include="serverSettings.txt" />
-    <Text Include="words.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="database.sqlite" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Logger\Logger.vcxproj">
-      <Project>{da4eecc0-5d97-4535-971b-8adbea611fdf}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TemporaryLogger\TemporaryLogger.vcxproj">
-      <Project>{a9c8cb5d-f9e1-4b30-9ef3-db16e8b4dfcc}</Project>
-    </ProjectReference>
+    <ClCompile Include="logger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

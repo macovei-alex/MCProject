@@ -11,6 +11,9 @@
 #include "Database.h"
 #include "MockDatabase.h"
 
+#include "../TemporaryLogger/logger.h"
+//import logger;
+
 class Server
 {
 public:
@@ -41,6 +44,7 @@ private:
 	uint16_t m_port;
 	std::string m_IPAddress;
 
-	MockDatabase m_database;
+	db::MockDatabase m_database;
+	Logger m_logger;
 	std::map<uint64_t, Game> m_games;
 };

@@ -10,7 +10,8 @@ Server::Server() :
 	m_games{ },
 	m_port{ 0 },
 	m_IPAddress{ "127.0.0.1" },
-	m_database{ "database.sqlite" }
+	m_database{ "database.sqlite" },
+	m_logger{ "server.log" }
 {
 	/* empty */
 }
@@ -27,6 +28,7 @@ Server& Server::TestHandlers()
 		return "Test connection succesful\n";
 		});
 
+	m_logger.Log("Test handler set");
 	return *this;
 }
 
@@ -102,6 +104,7 @@ Server& Server::ChatHandlers()
 		return crow::json::wvalue{ chat.GetMessagesOrderedJsonList(start, author) };
 			});
 
+	m_logger.Log("Chat handlers set");
 	return *this;
 }
 
@@ -147,6 +150,7 @@ Server& Server::RoomHandlers()
 		return crow::response(200, "Player left Lobby");
 		});*/
 
+	m_logger.Log("Room handlers set");
 	return *this;
 }
 
@@ -225,6 +229,7 @@ Server& Server::AccountHandlers()
 		return crow::response(200, std::format("Player < {} > logged out", username));
 			});
 
+	m_logger.Log("Account handlers set");
 	return *this;
 }
 
@@ -304,7 +309,7 @@ Server& Server::DrawingHandlers()
 		return crow::response(200);
 			});
 
-
+	m_logger.Log("Draw handlers set");
 	return *this;
 }
 
@@ -316,7 +321,10 @@ Server& Server::GameSettingsHandlers()
 		static const crow::json::wvalue errorValue{ {literals::error, literals::emptyCString} };
 
 		if (m_games.find(gameID) == m_games.end())
+		{
+			m_logger.Log(std::format("Invalid game ID < {} >", gameID), Logger::Level::Error);
 			return errorValue;
+		}
 
 		return crow::json::wvalue{
 			{literals::jsonKeys::settings::drawTime, m_games[gameID].GetGameSettings().GetDrawTime()},
@@ -329,10 +337,17 @@ Server& Server::GameSettingsHandlers()
 		([this](const crow::request& request, uint64_t gameID) {
 
 		if (request.body.empty())
+		{
+			m_logger.Log("Empty request body", Logger::Level::Error);
 			return crow::response(404, "Empty request body");
+		}
 
 		if (m_games.find(gameID) == m_games.end())
-			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
+		{
+			std::string errorString{std::format("Invalid game ID < {} >", gameID) };
+			m_logger.Log(errorString, Logger::Level::Error);
+			return crow::response(404, errorString);
+		}
 
 		auto& game = m_games[gameID];
 
@@ -351,13 +366,14 @@ Server& Server::GameSettingsHandlers()
 		}
 		catch (const std::exception& exception)
 		{
-			std::cerr << exception.what() << '\n';
+			m_logger.Log("Invalid parameter values", Logger::Level::Error);
 			return crow::response(404, "Invalid parameter values");
 		}
 
 		return crow::response(200);
 			});
 
+	m_logger.Log("Game settings handlers set");
 	return *this;
 }
 
@@ -377,15 +393,16 @@ void Server::Run()
 {
 	if (m_port == 0)
 	{
-		std::cerr << "Port not set\n";
+		m_logger.Log("Port not set", Logger::Level::Error);
 		return;
 	}
 	if (m_IPAddress.empty())
 	{
-		std::cerr << "IP Address not set";
+		m_logger.Log("IP Address not set", Logger::Level::Error);
 		return;
 	}
 
+	m_logger.Log("Server ready to run");
 	m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
 }
 
@@ -399,7 +416,7 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 		roomHandlers,
 		drawingHandlers
 	};
-	const std::map<std::string, ServerSetting> settingsMap
+	static const std::map<std::string, ServerSetting> settingsMap
 	{
 		{"allHandlers", allHandlers},
 		{"chatHandlers", chatHandlers},
@@ -434,5 +451,7 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 			break;
 		}
 	}
+
+	m_logger.Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
 	return *this;
 }

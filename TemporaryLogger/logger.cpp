@@ -1,7 +1,7 @@
-module logger;
+#include "logger.h"
 
-import <format>;
-import <fstream>;
+#include <format>
+#include <fstream>
 
 std::string_view LogLevelToString(Logger::Level level)
 {

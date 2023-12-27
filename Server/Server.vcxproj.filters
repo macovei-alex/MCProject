@@ -112,6 +112,9 @@
     <Text Include="serverSettings.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="server.log">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="database.sqlite">

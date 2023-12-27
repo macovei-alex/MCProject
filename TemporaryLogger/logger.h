@@ -1,12 +1,12 @@
-export module logger;
+#pragma once
 
-import <iostream>;
-import <fstream>;
-import <string_view>;
-import <string>;
-import <chrono>;
+#include <iostream>
+#include <fstream>
+#include <string_view>
+#include <string>
+#include <chrono>
 
-export class __declspec(dllexport) Logger
+class __declspec(dllexport) Logger
 {
 public:
 	enum class Level : uint8_t
@@ -22,7 +22,7 @@ public:
 
 	void SetMinimumLogLevel(Level level);
 
-	void Log(const std::string_view& message, Level level);
+	void Log(const std::string_view& message, Level level = Level::Info);
 
 private:
 	std::ostream& m_os;

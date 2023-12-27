@@ -10,7 +10,7 @@ namespace db
 	struct ReturnValue
 	{
 		bool success;
-		std::string_view reason;
+		std::string reason;
 	};
 
 	struct Word

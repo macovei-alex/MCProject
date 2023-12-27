@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-Database::Database(const std::string& filename) :
+db::Database::Database(const std::string& filename) :
 	m_storage{ db::CreateStorage(filename) }
 {
 	m_storage.sync_schema();
@@ -14,7 +14,7 @@ Database::Database(const std::string& filename) :
 		std::cout << std::format("{}. {} {}\n", word.id, word.text, word.difficulty);*/
 }
 
-void Database::PopulateStorage()
+void db::Database::PopulateStorage()
 {
 	std::vector<db::Word> words;
 	for (std::ifstream wordsIn{ "words.txt" }; !wordsIn.eof(); /* empty */)
@@ -35,7 +35,7 @@ void Database::PopulateStorage()
 	m_storage.update(firstWord);
 }
 
-bool Database::IfPlayerExist(const std::string& playerName)
+bool db::Database::IfPlayerExist(const std::string& playerName)
 {
 	auto result = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
@@ -43,10 +43,10 @@ bool Database::IfPlayerExist(const std::string& playerName)
 	return result.size() == 1;
 }
 
-db::ReturnValue Database::SignUp(const std::string& playerName, const std::string& password)
+db::ReturnValue db::Database::SignUp(const std::string& playerName, const std::string& password)
 {
-	std::string_view errorMessage;
-	try {
+	try
+	{
 		if (IfPlayerExist(playerName))
 		{
 			throw std::exception("Player already exists!");
@@ -59,33 +59,32 @@ db::ReturnValue Database::SignUp(const std::string& playerName, const std::strin
 			player.password = password;
 			player.isOnline = true;
 			m_storage.insert(player);
-			errorMessage = "Account succesfully created!";
-			return {true, errorMessage};
+
+			return {true, "Account succesfully created" };
 		}
 	}
-	catch (std::exception& msg)
+	catch (const std::exception& exception)
 	{
-		errorMessage = msg.what();
 		/*Logger logger(std::cout);
 		logger.Log(errorMessage, Logger::Level::Error);*/
-		return {false, errorMessage};
+		return {false, exception.what() };
 	}
 
 }
 
-db::ReturnValue Database::SignIn(const std::string& playerName, const std::string& password)
+db::ReturnValue db::Database::SignIn(const std::string& playerName, const std::string& password)
 {
 	auto result = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
 	);
-	bool IsPlayerOnline = result[0].isOnline;
-	std::string_view errorMessage;
+	bool playerOnline = result[0].isOnline;
+	std::string errorMessage;
 	try {
 		if (result.size() == 0)
 		{
 			throw std::exception("Player does not exist!");
 		}
-		if (IsPlayerOnline)
+		if (playerOnline)
 		{
 			throw std::exception("Player is already online!");
 		}
@@ -100,31 +99,28 @@ db::ReturnValue Database::SignIn(const std::string& playerName, const std::strin
 			{
 				result[0].isOnline = true;
 				m_storage.update(result[0]);
-				errorMessage = "Succesfully logged in!";
-				return {true, errorMessage};
+				return {true, "Succesfully logged in" };
 			}
 		}
 	}
-	catch (std::exception& msg)
+	catch (const std::exception& exception)
 	{
-		errorMessage = msg.what();
-		return {false, errorMessage};
+		return {false, exception.what() };
 	}
 }
 
-db::ReturnValue Database::SignOut(const std::string& playerName)
+db::ReturnValue db::Database::SignOut(const std::string& playerName)
 {
-	std::string_view errorMessage;
 	auto result = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
 	);
 	result[0].isOnline = false;
 	m_storage.update(result[0]);
-	errorMessage = "Succesfully logged out!";
-	return {true, errorMessage};
+
+	return {true, "Succesfully logged out" };
 }
 
-void Database::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
+void db::Database::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
 {
 	auto player = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
@@ -138,7 +134,7 @@ void Database::AddGame(const std::string& playerName, int score, const std::stri
 	m_storage.insert(game);
 }
 
-void Database::GetGameHistory(const std::string& playerName)
+void db::Database::GetGameHistory(const std::string& playerName)
 {
 	auto player = m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName)
@@ -158,7 +154,7 @@ void Database::GetGameHistory(const std::string& playerName)
 	std::cout << "Total score: " << totalScore << std::endl;
 }
 
-std::vector<std::string> Database::GetRandomWords(int number, const std::string& difficulty)
+std::vector<std::string> db::Database::GetRandomWords(int number, const std::string& difficulty)
 {
 	std::vector<std::string> randomWords;
 	auto words = m_storage.get_all<db::Word>(
