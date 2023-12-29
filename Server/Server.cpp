@@ -1,9 +1,9 @@
 #include "Server.h"
 
-#include "../Common/constantLiterals.h"
-
 #include <format>
 #include <stack>
+
+#include "constantLiterals.h"
 
 Server::Server() :
 	m_app{ },
@@ -120,9 +120,9 @@ Server& Server::RoomHandlers()
 
 		auto& game = m_games[newGameID];
 
-		game.GetImage().AddUpdate(utils::img::Update{ utils::img::Point{ 0, 0, utils::img::Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-		game.GetImage().AddUpdate(utils::img::Update{ utils::img::Point{ 1, 2, utils::img::Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
-		game.GetImage().AddUpdate(utils::img::Update{ utils::img::Point{ 5, 0, utils::img::Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(common::img::Update{ common::img::Point{ 0, 0, common::img::Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(common::img::Update{ common::img::Point{ 1, 2, common::img::Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(common::img::Update{ common::img::Point{ 5, 0, common::img::Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 
 		return crow::json::wvalue{ {literals::jsonKeys::game::ID, newGameID } };
 			});
@@ -292,13 +292,13 @@ Server& Server::DrawingHandlers()
 		{
 			try
 			{
-				utils::img::Point point{
+				common::img::Point point{
 					std::get<int64_t>(pointMap.at(pointXStrKey)),
 					std::get<int64_t>(pointMap.at(pointYStrKey)),
 					std::get<int64_t>(pointMap.at(colorStrKey))
 				};
 
-				gameIt->second.GetImage().AddUpdate(utils::img::Update{ point, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+				gameIt->second.GetImage().AddUpdate(common::img::Update{ point, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
 			}
 			catch (const std::exception& exception)
 			{

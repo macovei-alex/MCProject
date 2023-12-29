@@ -77,6 +77,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Mac\Facultate\Anul_2\MC\Project\ClientServices;C:\Mac\Facultate\Anul_2\MC\Project\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,6 +93,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Mac\Facultate\Anul_2\MC\Project\ClientServices;C:\Mac\Facultate\Anul_2\MC\Project\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Mac\Facultate\Anul_2\MC\Project\ClientServices;C:\Mac\Facultate\Anul_2\MC\Project\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,6 +125,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Mac\Facultate\Anul_2\MC\Project\ClientServices;C:\Mac\Facultate\Anul_2\MC\Project\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,18 +135,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\commonUtils.cpp" />
-    <ClCompile Include="..\Common\GameSettings.cpp" />
-    <ClCompile Include="services.cpp" />
-    <ClCompile Include="clientUtils.cpp" />
+    <ClCompile Include="consoleUtils.cpp" />
     <ClCompile Include="ConsoleClient.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\commonUtils.h" />
-    <ClInclude Include="..\Common\constantLiterals.h" />
-    <ClInclude Include="..\Common\GameSettings.h" />
-    <ClInclude Include="services.h" />
-    <ClInclude Include="clientUtils.h" />
+    <ClInclude Include="consoleUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClientServices\ClientServices.vcxproj">
+      <Project>{29706771-8306-494f-9e54-a94bfb1ae06a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{a608b73c-5d6c-49ee-8f27-02e9cbee3670}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

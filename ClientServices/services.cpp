@@ -1,10 +1,11 @@
 #include "services.h"
 
-#include "../Common/constantLiterals.h"
-#include "../Common/commonUtils.h"
-
 #include <iostream>
+#include <format>
 #include <crow.h>
+
+#include "servicesUtils.h"
+#include "constantLiterals.h"
 
 uint64_t services::CreateRoom(std::ostream& outStream, std::ostream& errStream)
 {
@@ -129,7 +130,7 @@ bool services::SignOut(const std::string& username, std::ostream& outStream, std
 
 		auto response = cpr::Put(
 			cpr::Url{ url.str() },
-			cpr::Payload{{literals::jsonKeys::account::username, username}});
+			cpr::Payload{ {literals::jsonKeys::account::username, username} });
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
@@ -234,7 +235,7 @@ void services::ReceiveNewMessages(const std::string& username, uint64_t gameID, 
 	}
 }
 
-void services::SendImageUpdates(uint64_t gameID, const std::vector<utils::img::Point>& points, std::ostream& outStream, std::ostream& errStream)
+void services::SendImageUpdates(uint64_t gameID, const std::vector<common::img::Point>& points, std::ostream& outStream, std::ostream& errStream)
 {
 	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
 
@@ -251,7 +252,7 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<utils::img::P
 				{literals::jsonKeys::draw::pointX, point.x},
 				{literals::jsonKeys::draw::pointY, point.y},
 				{literals::jsonKeys::draw::color, point.color.ToInt32()}} });
-		
+
 		auto flattened = crow::json::wvalue(pointsJsonList);
 		std::string str = flattened.dump();
 		std::cout << str;
@@ -316,7 +317,7 @@ void services::ReceiveImageUpdates(uint64_t gameID, std::ostream& outStream, std
 
 		for (auto& pointJson : pointsJsonList)
 		{
-			utils::img::Point point{
+			common::img::Point point{
 				pointJson[literals::jsonKeys::draw::pointX].i(),
 				pointJson[literals::jsonKeys::draw::pointY].i(),
 				pointJson[literals::jsonKeys::draw::color].i() };

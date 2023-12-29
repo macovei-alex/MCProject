@@ -25,6 +25,4 @@ namespace utils
 	std::string GetString(const char* message = nullptr);
 	void PrintMenu1();
 	void PrintMenu2();
-	chr::time_point<chr::system_clock, chr::seconds> DateTimeFromInteger(uint64_t millis);
-	uint64_t NowAsInteger();
 }

@@ -15,15 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleClient.cpp">
+    <ClCompile Include="services.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="consoleUtils.cpp">
+    <ClCompile Include="servicesUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="consoleUtils.h">
+    <ClInclude Include="services.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="servicesUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

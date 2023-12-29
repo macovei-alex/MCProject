@@ -5,7 +5,7 @@
 const uint16_t GameSettings::defaultChooseWordOptionCount = 3;
 const uint16_t GameSettings::defaultDrawTime = 120;
 const uint16_t GameSettings::defaultRoundCount = 4;
-
+ 
 GameSettings::GameSettings() noexcept :
 	m_roundCount{ defaultRoundCount },
 	m_drawTime{ defaultDrawTime },
@@ -15,7 +15,7 @@ GameSettings::GameSettings() noexcept :
 }
 
 GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount) noexcept :
-	m_roundCount{ roundCount },
+m_roundCount{ roundCount },
 	m_drawTime{ drawTime },
 	m_chooseWordOptionCount{ chooseWordOtionCount }
 {

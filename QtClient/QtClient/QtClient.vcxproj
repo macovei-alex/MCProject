@@ -223,6 +223,11 @@
     <QtMoc Include="canvaspaint.h" />
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.vcxproj">
+      <Project>{a608b73c-5d6c-49ee-8f27-02e9cbee3670}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />
   <ImportGroup Label="ExtensionTargets" />

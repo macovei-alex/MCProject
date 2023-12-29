@@ -51,9 +51,6 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\commonUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Common\GameSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,16 +80,10 @@
     <ClInclude Include="serverUtilsModTemp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\constantLiterals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Chat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\commonUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\GameSettings.h">

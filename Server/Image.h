@@ -3,7 +3,7 @@
 #include <vector>
 #include <crow.h>
 
-#include "../Common/commonUtils.h"
+#include "common.h"
 
 class Image
 {
@@ -15,15 +15,15 @@ public:
 	Image& operator=(Image&& other) = default;
 
 public:
-	void AddUpdate(const utils::img::Update& update);
-	void AddUpdate(utils::img::Update&& update);
-	std::vector<utils::img::Update> GetUpdatesAfter(uint64_t timestamp);
+	void AddUpdate(const common::img::Update& update);
+	void AddUpdate(common::img::Update&& update);
+	std::vector<common::img::Update> GetUpdatesAfter(uint64_t timestamp);
 	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp);
 	
 public:
-	static crow::json::wvalue UpdatesToJson(const std::vector<utils::img::Update>& updates);
+	static crow::json::wvalue UpdatesToJson(const std::vector<common::img::Update>& updates);
 
 private:
-	std::vector<utils::img::Update> m_updates;
+	std::vector<common::img::Update> m_updates;
 };
 

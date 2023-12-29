@@ -1,4 +1,4 @@
-#include "clientUtils.h"
+#include "consoleUtils.h"
 
 #include <iostream>
 #include <format>
@@ -44,17 +44,4 @@ void utils::PrintMenu2()
 		<< '\t' << utils::Menu2Options::SIGN_OUT << ". Sign out\n"
 		<< '\t' << utils::Menu2Options::EXIT_2 << ". Exit\n";
 	std::cout << "******************************************\n\n";
-}
-
-chr::time_point<chr::system_clock, chr::seconds> utils::DateTimeFromInteger(uint64_t millis)
-{
-	return chr::time_point<chr::system_clock, chr::seconds>
-		(chr::duration_cast<chr::seconds>
-			(chr::milliseconds{ millis }));
-}
-
-uint64_t utils::NowAsInteger()
-{
-	return chr::duration_cast<chr::milliseconds>
-		(chr::system_clock::now().time_since_epoch()).count();
 }

@@ -6,7 +6,7 @@
 
 #include "Player.h"
 #include "Turn.h"
-#include "../Common/GameSettings.h"
+#include "GameSettings.h"
 #include "Image.h"
 #include "Chat.h"
 

@@ -2,19 +2,19 @@
 
 #include "../Common/constantLiterals.h"
 
-void Image::AddUpdate(const utils::img::Update& update)
+void Image::AddUpdate(const common::img::Update& update)
 {
 	this->m_updates.push_back(update);
 }
 
-void Image::AddUpdate(utils::img::Update&& update)
+void Image::AddUpdate(common::img::Update&& update)
 {
 	this->m_updates.push_back(std::move(update));
 }
 
-std::vector<utils::img::Update> Image::GetUpdatesAfter(uint64_t timestamp)
+std::vector<common::img::Update> Image::GetUpdatesAfter(uint64_t timestamp)
 {
-	std::vector<utils::img::Update> updates;
+	std::vector<common::img::Update> updates;
 	for (auto it{ m_updates.rbegin() }; it != m_updates.rend() && it->timestamp >= timestamp; it++)
 		updates.push_back(*it);
 
@@ -26,7 +26,7 @@ crow::json::wvalue Image::GetUpdatesJsonAfter(uint64_t timestamp)
 	return UpdatesToJson(GetUpdatesAfter(timestamp));
 }
 
-crow::json::wvalue Image::UpdatesToJson(const std::vector<utils::img::Update>& updates)
+crow::json::wvalue Image::UpdatesToJson(const std::vector<common::img::Update>& updates)
 {
 	if (updates.size() == 0)
 		return crow::json::wvalue{ crow::json::wvalue::list{} };
