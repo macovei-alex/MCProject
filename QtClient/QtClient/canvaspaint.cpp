@@ -7,7 +7,7 @@
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog(parent),
 	ui(new Ui::CanvasPaint),
-	drawState{ DrawState::DRAWING }
+	drawState{ DrawingState::DRAWING }
 {
 	ui->setupUi(this);
 
@@ -19,8 +19,8 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 	setGeometry(0, 0, screenSize.width(), screenSize.height());
 	setStyleSheet("QDialog { border: 2px solid black; }");
 
-	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height()); // Ajustează dimensiunile după necesități
-	canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă
+	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height());
+	canvasPixmap.fill(Qt::white);
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 }
@@ -30,7 +30,7 @@ CanvasPaint::~CanvasPaint()
 	delete ui;
 }
 
-void CanvasPaint::setDrawState(DrawState state)
+void CanvasPaint::setDrawState(DrawingState state)
 {
 	drawState = state;
 }
@@ -46,10 +46,8 @@ void CanvasPaint::paintEvent(QPaintEvent* event)
 	painter.drawPixmap(2, 2, canvasPixmap);
 }
 
-// Actualizează metoda mousePressEvent
 void CanvasPaint::mousePressEvent(QMouseEvent* event)
 {
-	// Verifică dacă evenimentul este un clic al mouse-ului
 	if (event->button() == Qt::LeftButton)
 	{
 		if (event->x() < width() * 3 / 4)
@@ -59,14 +57,13 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 	}
 }
 
-// Adaugă o nouă metodă pentru gestionarea mișcării mouse-ului
 void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
 	if (canvasPixmap.rect().contains(event->pos()))
 	{
 		QPoint currentPos = event->pos();
 
-		if (drawState == DrawState::DRAWING)
+		if (drawState == DrawingState::DRAWING)
 		{
 			QPainter painter(&canvasPixmap);
 			painter.setPen(DRAWING_PEN);
@@ -80,7 +77,7 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 			update();
 		}
 
-		else if (drawState == DrawState::ERASING)
+		else if (drawState == DrawingState::ERASING)
 		{
 			QPainter painter(&canvasPixmap);
 			painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -136,17 +133,17 @@ void CanvasPaint::on_leaveServerButton_clicked()
 void CanvasPaint::on_resetCanvas_clicked()
 {
 	clearCanvas();
-	drawState = DrawState::DRAWING;
+	drawState = DrawingState::DRAWING;
 }
 
 void CanvasPaint::on_drawButton_clicked()
 {
-	drawState = DrawState::DRAWING;
+	drawState = DrawingState::DRAWING;
 }
 
 void CanvasPaint::on_eraseButton_clicked()
 {
-	drawState = DrawState::ERASING;
+	drawState = DrawingState::ERASING;
 }
 
 void CanvasPaint::on_undoButton_clicked()
@@ -159,7 +156,7 @@ void CanvasPaint::on_undoButton_clicked()
 
 		for (const auto& line : drawnLines)
 		{
-			painter.setPen(line.drawState == DrawState::DRAWING ? DRAWING_PEN : ERASING_PEN);
+			painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
 
 			for (int i = 1; i < line.points.size(); i++)
 				painter.drawLine(line.points[i - 1], line.points[i]);

@@ -4,16 +4,19 @@
 
 #include <QMessageBox>
 #include <QPixmap>
-//#include <QQuickWidget>
 
-//#include "services.h"
+#define DO_SERVER_CONNECT 0
+
+#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && (DO_SERVER_CONNECT == 1)
+
+#include "services.h"
+
+#endif
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 {
-	qDebug() << "MainWindow constructor";
-
 	ui->setupUi(this);
 	QPixmap pix(":Resource Files/Images/Background.jpg");
     int width = ui->backgroundLabel->width();
@@ -22,6 +25,7 @@ MainWindow::MainWindow(QWidget* parent)
 	QPixmap pix1(":Resource Files/Images/login_icon.png");
     ui->loginLabel->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
     ui->loginLabel->raise();
+
 	/* QQuickWidget *qmlWidget = new QQuickWidget();
 	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
 	 ui->centralwidget->layout()->addWidget(qmlWidget);
@@ -42,10 +46,12 @@ void MainWindow::on_loginButton_clicked()
 		return;
 	}
 
-     /*if (!services::SignIn(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
+#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && (DO_SERVER_CONNECT == 1)
+
+     if (!services::SignIn(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
      {
      	QMessageBox msgBox;
-         msgBox.setText("No account with username {}" + ui->usernameLineEdit->text() +
+         msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
              "and password " + ui->passwordLineEdit->text() +
              " exists. Do you want to create one?");
 	
@@ -67,7 +73,9 @@ void MainWindow::on_loginButton_clicked()
      	{
      		return;
      	}
-     }*/
+     }
+
+#endif // MSVC C++20
 	
 	 /*CanvasPaint child;
 	 child.setModal(true);
@@ -75,7 +83,7 @@ void MainWindow::on_loginButton_clicked()
 
 	hide();
 	child = new CanvasPaint(this);
-	child->setDrawState(CanvasPaint::DrawState::DRAWING);
+	child->setDrawState(CanvasPaint::DrawingState::DRAWING);
 	child->show();
 }
 

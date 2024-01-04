@@ -17,7 +17,7 @@ class CanvasPaint : public QDialog
 	Q_OBJECT
 
 public:
-	enum class DrawState : uint8_t {
+	enum class DrawingState : uint8_t {
 		DRAWING,
 		ERASING
 	};
@@ -25,7 +25,7 @@ public:
 	struct DrawnLine
 	{
 		QList<QPoint> points;
-		DrawState drawState;
+		DrawingState drawState;
 	};
 
 public:
@@ -38,10 +38,10 @@ public:
 	void resizeEvent(QResizeEvent* event) override;
 
 	void clearCanvas();
-	void setDrawState(DrawState state);
+	void setDrawState(DrawingState state);
 
 protected:
-	void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
+	void paintEvent(QPaintEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
 
 private slots:
@@ -60,7 +60,7 @@ private:
 	DrawnLine currentLine;
 	QPoint lastPoint;
 
-	DrawState drawState;
+	DrawingState drawState;
 	Ui::CanvasPaint* ui;
 
 private:
