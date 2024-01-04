@@ -6,7 +6,7 @@
 #include <QPixmap>
 //#include <QQuickWidget>
 
-#include "services.h"
+//#include "services.h"
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
@@ -16,12 +16,12 @@ MainWindow::MainWindow(QWidget* parent)
 
 	ui->setupUi(this);
 	QPixmap pix(":Resource Files/Images/Background.jpg");
-	int width = ui->label->width();
-	int height = ui->label->height();
-	ui->label->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
+    int width = ui->label->width();
+    int height = ui->label->height();
+    ui->label->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
 	QPixmap pix1(":Resource Files/Images/login_icon.png");
-	ui->label_login->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
-	ui->label_login->raise();
+    ui->loginLabel->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
+    ui->loginLabel->raise();
 	/* QQuickWidget *qmlWidget = new QQuickWidget();
 	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
 	 ui->centralwidget->layout()->addWidget(qmlWidget);
@@ -36,40 +36,38 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_LoginButton_clicked()
 {
-	if (ui->lineEdit->text().isEmpty() || ui->lineEdit_2->text().isEmpty())
+	if (ui->usernameLineEdit->text().isEmpty() || ui->passwordLineEdit->text().isEmpty())
 	{
 		QMessageBox::warning(this, "Login", "Username or password is empty");
 		return;
 	}
 
-	if (!services::SignIn(ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString()))
-	{
-		QMessageBox msgBox;
-		msgBox.setText(std::format(
-			"No account with username {} and password {} exists. Do you want to create one?",
-			ui->lineEdit->text().toStdString(),
-			ui->lineEdit_2->text().toStdString())
-			.c_str());
+    // if (!services::SignIn(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
+    // {
+    // 	QMessageBox msgBox;
+ //        msgBox.setText("No account with username {}" + ui->usernameLineEdit->text() +
+ //            "and password " + ui->passwordLineEdit->text() +
+ //            " exists. Do you want to create one?");
 
-		QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
-		QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
-		msgBox.setDefaultButton(noButton);
+    // 	QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
+    // 	QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
+    // 	msgBox.setDefaultButton(noButton);
 
-		msgBox.exec();
+    // 	msgBox.exec();
 
-		if (msgBox.clickedButton() == yesButton)
-		{
-			if (!services::SignUp(ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString()))
-			{
-				QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
-				return;
-			}
-		}
-		else
-		{
-			return;
-		}
-	}
+    // 	if (msgBox.clickedButton() == yesButton)
+    // 	{
+    // 		if (!services::SignUp(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
+    // 		{
+    // 			QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
+    // 			return;
+    // 		}
+    // 	}
+    // 	else
+    // 	{
+    // 		return;
+    // 	}
+    // }
 
 	// CanvasPaint child;
 	// child.setModal(true);

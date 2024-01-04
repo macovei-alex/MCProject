@@ -15,11 +15,16 @@ SOURCES += \
 
 HEADERS += \
     canvaspaint.h \
-    mainwindow.h
+    mainwindow.h \
+    ui_mainwindow.h
 
 FORMS += \
     canvaspaint.ui \
     mainwindow.ui
+	
+INCLUDEPATH += \
+	../../Common \
+	../../ClientServices
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
