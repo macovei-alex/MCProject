@@ -44,13 +44,36 @@ void MainWindow::on_LoginButton_clicked()
 
 	if (!services::SignIn(ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString()))
 	{
-		QMessageBox::warning(this, "Login", "Username or password is incorrect");
-		return;
+		QMessageBox msgBox;
+		msgBox.setText(std::format(
+			"No account with username {} and password {} exists. Do you want to create one?",
+			ui->lineEdit->text().toStdString(),
+			ui->lineEdit_2->text().toStdString())
+			.c_str());
+
+		QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
+		QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
+		msgBox.setDefaultButton(noButton);
+
+		msgBox.exec();
+
+		if (msgBox.clickedButton() == yesButton)
+		{
+			if (!services::SignUp(ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString()))
+			{
+				QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
 	}
 
-	// CanvasPaint obiect;
-	// obiect.setModal(true);
-	// obiect.exec();
+	// CanvasPaint child;
+	// child.setModal(true);
+	// child.exec();
 
 	hide();
 	child = new CanvasPaint(this);
