@@ -17,14 +17,21 @@ class CanvasPaint : public QDialog
 	Q_OBJECT
 
 public:
+	enum class DrawState : uint8_t {
+		DRAWING,
+		ERASING
+	};
+
+public:
 	CanvasPaint(QWidget* parent = nullptr);
 	~CanvasPaint();
-	void setDrawingFlag(bool value);
 	void mousePressEvent(QMouseEvent* event);
 	void mouseMoveEvent(QMouseEvent* event);
 	void mouseReleaseEvent(QMouseEvent* event);
 	void resizeEvent(QResizeEvent* event) override;
 	void clearCanvas();
+	void setDrawState(DrawState state);
+
 	QPixmap canvasPixmap;
 
 protected:
@@ -44,11 +51,10 @@ private:
 	struct DrawnLine {
 		bool isDrawing; // true pentru desenare, false pentru ștergere
 		QList<QPoint> points;
+		DrawState drawState;
 	};
 
-	bool isDrawing;
-	bool isErasing;
-	bool isUndoing;
+	DrawState drawState;
 
 	bool drawingOrErasing;
 	Ui::CanvasPaint* ui;
@@ -57,6 +63,8 @@ private:
 	QList<DrawnLine> drawnLines;
 	DrawnLine currentLine;
 
+	const QPen drawingPen = QPen(Qt::black);
+	const QPen erasingPen = QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 };
 
 #endif // CANVASPAINT_H

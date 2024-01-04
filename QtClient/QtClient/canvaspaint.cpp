@@ -7,10 +7,7 @@
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog(parent),
 	ui(new Ui::CanvasPaint),
-	isDrawing(true),
-	isErasing(false),
-	isUndoing(false),
-	drawingOrErasing(true)
+	drawState{ DrawState::DRAWING }
 {
 	ui->setupUi(this);
 
@@ -39,9 +36,9 @@ CanvasPaint::~CanvasPaint()
 	delete ui;
 }
 
-void CanvasPaint::setDrawingFlag(bool value)
+void CanvasPaint::setDrawState(DrawState state)
 {
-	isDrawing = value;
+	drawState = state;
 }
 
 void CanvasPaint::paintEvent(QPaintEvent* event)
@@ -74,24 +71,6 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 	{
 		if (event->x() < width() * 3 / 4)
 		{
-			if (isDrawing)
-			{
-				isDrawing = true;
-				isErasing = false;
-				isUndoing = false;
-			}
-			else if (isErasing)
-			{
-				isDrawing = false;
-				isErasing = true;
-				isUndoing = false;
-			}
-			else
-			{
-				isDrawing = false;
-				isErasing = false;
-				isUndoing = true;
-			}
 			lastPoint = event->pos();
 		}
 	}
@@ -104,14 +83,12 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 	{
 		QPoint currentPoint = event->pos();
 
-		if (isDrawing)
+		if (drawState == DrawState::DRAWING)
 		{
 			QPainter painter(&canvasPixmap);
 			painter.setPen(Qt::black);
 			currentLine.isDrawing = true;
 			currentLine.points.append(currentPoint);
-
-
 
 			for (int i = 1; i < currentLine.points.size(); ++i)
 			{
@@ -120,7 +97,8 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 
 			update();
 		}
-		else if (isErasing)
+
+		else if (drawState == DrawState::ERASING)
 		{
 			QPainter painter(&canvasPixmap);
 			painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -145,22 +123,10 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 	// Verifică dacă butonul stâng al mouse-ului este eliberat
 	if (event->button() == Qt::LeftButton)
 	{
-		if (isDrawing)
+		if (drawState == DrawState::DRAWING)
 		{
-			isErasing = false;
-			isUndoing = false;
 			drawnLines.append(currentLine);
 			currentLine.points.clear();
-		}
-		else if (isErasing)
-		{
-			isDrawing = false;
-			isUndoing = false;
-		}
-		else if (isUndoing)
-		{
-			isDrawing = false;
-			isErasing = false;
 		}
 	}
 }
@@ -195,7 +161,7 @@ void CanvasPaint::on_leaveServerButton_clicked()
 void CanvasPaint::on_resetCanvas_clicked()
 {
 	clearCanvas();
-	isDrawing = true;
+	drawState = DrawState::DRAWING;
 }
 
 //void CanvasPaint::minimizeButtonClicked()
@@ -206,24 +172,18 @@ void CanvasPaint::on_resetCanvas_clicked()
 
 void CanvasPaint::on_drawButton_clicked()
 {
-	isDrawing = true;
-	isErasing = false;
-	isUndoing = false;
 	drawingOrErasing = true;
+	drawState = DrawState::DRAWING;
 }
 
 void CanvasPaint::on_eraseButton_clicked()
 {
-	isDrawing = false;
-	isErasing = true;
-	isUndoing = false;
 	drawingOrErasing = false;
+	drawState = DrawState::ERASING;
 }
 
 void CanvasPaint::on_undoButton_clicked()
 {
-	isDrawing = false;
-	isErasing = false;
 	if (!drawnLines.isEmpty())
 	{
 		drawnLines.pop_back();
@@ -237,14 +197,10 @@ void CanvasPaint::on_undoButton_clicked()
 		{
 			for (int i = 1; i < line.points.size(); ++i) {
 				if (line.isDrawing)
-
 					painter.setPen(Qt::black);
-
 				else
-
-				{
 					painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-				}
+
 				painter.drawLine(line.points[i - 1], line.points[i]);
 			}
 
@@ -252,19 +208,6 @@ void CanvasPaint::on_undoButton_clicked()
 		canvasPixmap = newPixmap;
 
 		update();
-	}
-
-	if (drawingOrErasing)
-	{
-		isDrawing = true;
-		isErasing = false;
-		isUndoing = false;
-	}
-	else
-	{
-		isDrawing = false;
-		isErasing = true;
-		isUndoing = false;
 	}
 }
 
