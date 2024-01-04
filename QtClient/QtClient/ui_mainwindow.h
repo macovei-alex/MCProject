@@ -122,7 +122,7 @@ public:
 		SignIn_GroupBox->setTitle(QCoreApplication::translate("MainWindow", "Sign In", nullptr));
 		usernameLabel->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
 		passwordLabel->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));
-		loginButton->setText(QCoreApplication::translate("MainWindow", "Login", nullptr));
+		loginButton->setText(QCoreApplication::translate("MainWindow", "Sign up / Sign in", nullptr));
 		backgroundLabel->setText(QString());
 	} // retranslateUi
 

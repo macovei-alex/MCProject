@@ -35,11 +35,11 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::on_LoginButton_clicked()
+void MainWindow::on_loginButton_clicked()
 {
 	if (ui->usernameLineEdit->text().isEmpty() || ui->passwordLineEdit->text().isEmpty())
 	{
-		QMessageBox::warning(this, "Login", "Username or password is empty");
+		QMessageBox::warning(this, "Sign up / Sign in", "Username or password is empty");
 		return;
 	}
 

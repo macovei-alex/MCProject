@@ -21,7 +21,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
-    void on_LoginButton_clicked();
+    void on_loginButton_clicked();
    
 
 private:
