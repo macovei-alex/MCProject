@@ -224,6 +224,9 @@
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ClientServices\ClientServices.vcxproj">
+      <Project>{29706771-8306-494f-9e54-a94bfb1ae06a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.vcxproj">
       <Project>{a608b73c-5d6c-49ee-8f27-02e9cbee3670}</Project>
     </ProjectReference>
