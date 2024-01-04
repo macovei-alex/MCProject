@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include "GameSettings.h"
+#include "..\TemporaryLogger\logger.h"
 
 namespace services
 {
@@ -30,4 +31,8 @@ namespace services
 	void MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing);
 	void MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing);
 	void ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing);
+
+	static Logger* logger = nullptr;
+	void SetLogFile(const std::string& filename);
+	void Log(const std::string_view& message, Logger::Level level = Logger::Level::Info);
 }

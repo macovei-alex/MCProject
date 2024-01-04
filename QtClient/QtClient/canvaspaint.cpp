@@ -117,6 +117,8 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
             currentLine.isDrawing = true;
             currentLine.points.append(currentPoint);
 
+
+
             for (int i = 1; i < currentLine.points.size(); ++i)
             {
                 painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);

@@ -35,7 +35,7 @@ Logger::Logger(std::ostream& os, Level minimumLevel)
 
 Logger::Logger(const std::string& filename, Level minimumLevel)
 	: m_minimumLevel{ minimumLevel }
-	, temp_outputStream{ filename }
+	, temp_outputStream{ filename, std::ios::trunc }
 	, m_os{ temp_outputStream }
 {
 	/* EMPTY */

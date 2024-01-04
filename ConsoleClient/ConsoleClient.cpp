@@ -9,6 +9,7 @@
 
 int main()
 {
+	services::SetLogFile("servicesOut.log");
 	const std::string returnCommand = "/b";
 
 	std::string username;

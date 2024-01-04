@@ -25,12 +25,12 @@ uint64_t services::CreateRoom(std::ostream& outStream, std::ostream& errStream)
 		}
 
 		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::game::ID].u();
-		outStream << std::format("[Create] New room with roomID < {} > created\n", roomID);
+		Log(std::format("[Create] New room with roomID < {} > created\n", roomID));
 		return roomID;
 	}
 	catch (const std::exception& exception)
 	{
-		errStream << "[Create room]: " << exception.what() << '\n';
+		Log(std::format("[Create room]: {}\n", exception.what()));
 		return LONG_MAX;
 	}
 }
@@ -410,4 +410,18 @@ void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
 		services::ReceiveImageUpdates(gameID);
 		std::this_thread::sleep_for(0.5s);
 	}
+}
+
+void services::SetLogFile(const std::string& filename)
+{
+	if(services::logger != nullptr)
+		delete services::logger;
+
+	services::logger = new Logger{ filename };
+}
+
+void services::Log(const std::string_view& message, Logger::Level level)
+{
+	if(services::logger != nullptr)
+		services::logger->Log(message, level);
 }

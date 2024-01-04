@@ -1,9 +1,10 @@
 ﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
+
 #include <QDialog>
 #include <QPainter>
 #include <QMouseEvent>
-#include<qpixmap.h>
+#include <qpixmap.h>
 
 class MainWindow;
 
