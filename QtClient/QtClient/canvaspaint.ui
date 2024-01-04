@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Canvas</string>
   </property>
-  <widget class="QPushButton" name="ResetCanvas">
+  <widget class="QPushButton" name="resetCanvas">
    <property name="geometry">
     <rect>
      <x>1200</x>
@@ -26,7 +26,7 @@
     <string>ResetCanvas</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="LeaveServerButton">
+  <widget class="QPushButton" name="leaveServerButton">
    <property name="geometry">
     <rect>
      <x>1290</x>
@@ -39,7 +39,7 @@
     <string>Leave Server</string>
    </property>
   </widget>
-  <widget class="QWidget" name="GameChat" native="true">
+  <widget class="QWidget" name="gameChat" native="true">
    <property name="geometry">
     <rect>
      <x>1200</x>
@@ -48,7 +48,7 @@
      <height>641</height>
     </rect>
    </property>
-   <widget class="QLabel" name="GameChatLabel">
+   <widget class="QLabel" name="gameChatLabel">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -61,7 +61,7 @@
      <string>Game Chat</string>
     </property>
    </widget>
-   <widget class="QWidget" name="ChatMessages" native="true">
+   <widget class="QWidget" name="chatMessages" native="true">
     <property name="geometry">
      <rect>
       <x>-20</x>
@@ -97,7 +97,7 @@
     <zorder>messageButton</zorder>
    </widget>
   </widget>
-  <widget class="QPushButton" name="DrawButton">
+  <widget class="QPushButton" name="drawButton">
    <property name="geometry">
     <rect>
      <x>1200</x>
@@ -110,7 +110,7 @@
     <string>Draw</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="EraseButton">
+  <widget class="QPushButton" name="eraseButton">
    <property name="geometry">
     <rect>
      <x>1290</x>
@@ -123,7 +123,7 @@
     <string>Erase</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="UndoButton">
+  <widget class="QPushButton" name="undoButton">
    <property name="geometry">
     <rect>
      <x>1380</x>

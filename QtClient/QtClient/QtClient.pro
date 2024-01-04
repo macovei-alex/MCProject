@@ -16,6 +16,7 @@ SOURCES += \
 HEADERS += \
     canvaspaint.h \
     mainwindow.h \
+    ui_canvaspaint.h \
     ui_mainwindow.h
 
 FORMS += \

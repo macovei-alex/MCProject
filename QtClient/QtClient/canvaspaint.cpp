@@ -5,188 +5,173 @@
 #include <QScreen>
 
 CanvasPaint::CanvasPaint(QWidget* parent) :
-    QDialog(parent),
-    ui(new Ui::CanvasPaint),
-    isDrawing(true),
-    isErasing(false),
-    isUndoing(false),
-    drawingOrErasing(true)
+	QDialog(parent),
+	ui(new Ui::CanvasPaint),
+	isDrawing(true),
+	isErasing(false),
+	isUndoing(false),
+	drawingOrErasing(true)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    QLabel* GameChatLabel = ui->GameChatLabel;
-    GameChatLabel->setStyleSheet("border: none;");
+	ui->gameChatLabel->setStyleSheet("border: none;");
+	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
-    QWidget* gameChatWidget = ui->GameChat;
-    gameChatWidget->setStyleSheet("QWidget { border: 1px solid black; }");
+	QScreen* primaryScreen = QGuiApplication::primaryScreen();
+	QRect screenRect = primaryScreen->geometry();
+	setGeometry(0, 0, screenRect.width(), screenRect.height());
+	setStyleSheet("QDialog { border: 2px solid black; }");
 
-    QScreen* primaryScreen = QGuiApplication::primaryScreen();
-    QRect screenRect = primaryScreen->geometry();
-    setGeometry(0, 0, screenRect.width(), screenRect.height());
-    setStyleSheet("QDialog { border: 2px solid black; }");
-    canvasPixmap = QPixmap(screenRect.size()); // Ajustează dimensiunile după necesități
-    canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă sau culoarea dorită
-    setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
-  //  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
-    //connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);
-    /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
-    connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
+	canvasPixmap = QPixmap(screenRect.size()); // Ajustează dimensiunile după necesități
+	canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă
 
-    connect(ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
+	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+	//  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
+	  //connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);
+	  /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
+	  connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
+
+	connect(ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
 }
-//void CanvasPaint::minimizeButtonClicked()
-//{
-//    qDebug() << "Minimize button clicked";
-//    showMinimized();
-//}
 
 CanvasPaint::~CanvasPaint()
 {
-    delete ui;
+	delete ui;
 }
 
 void CanvasPaint::setDrawingFlag(bool value)
 {
-    isDrawing = value;
+	isDrawing = value;
 }
 
 void CanvasPaint::paintEvent(QPaintEvent* event)
 {
-    Q_UNUSED(event);
+	Q_UNUSED(event);
 
-    QPainter painter(this);
-    QPen pen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap,Qt::BevelJoin);
-    painter.setPen(pen);
-    QRect canvasRect=rect();
-    painter.drawRect(canvasRect);
-    painter.drawPixmap(2, 2, canvasPixmap);
+	QPainter painter(this);
+	QPen pen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
+	painter.setPen(pen);
+	QRect canvasRect = rect();
+	painter.drawRect(canvasRect);
+	painter.drawPixmap(2, 2, canvasPixmap);
 }
 
-void CanvasPaint::on_Button_clicked()
+void CanvasPaint::on_button_clicked()
 {
-    
-        QPainter painter(&canvasPixmap);
-        painter.drawLine(10, 10, 100, 100);
+	QPainter painter(&canvasPixmap);
+	painter.drawLine(10, 10, 100, 100);
 
-        // Actualizează afișarea
-        update();
-    
+	// Actualizează afișarea
+	update();
+
 }
+
 // Actualizează metoda mousePressEvent
 void CanvasPaint::mousePressEvent(QMouseEvent* event)
 {
-    // Verifică dacă evenimentul este un clic al mouse-ului
-    if (event->button() == Qt::LeftButton)
-    {
-            if (event->x() < width() * 3 / 4)
-            {
-                if (isDrawing)
-                {
-                    isDrawing = true;
-                    isErasing = false;
-                    isUndoing = false;
-                }
-                else if(isErasing)
-                {
-                    isDrawing = false;
-                    isErasing = true;
-                    isUndoing = false;
-                }
-                else
-                {
-                    isDrawing = false;
-                    isErasing = false;
-                    isUndoing = true;
-                }
-                lastPoint = event->pos();
-            }
-    }
+	// Verifică dacă evenimentul este un clic al mouse-ului
+	if (event->button() == Qt::LeftButton)
+	{
+		if (event->x() < width() * 3 / 4)
+		{
+			if (isDrawing)
+			{
+				isDrawing = true;
+				isErasing = false;
+				isUndoing = false;
+			}
+			else if (isErasing)
+			{
+				isDrawing = false;
+				isErasing = true;
+				isUndoing = false;
+			}
+			else
+			{
+				isDrawing = false;
+				isErasing = false;
+				isUndoing = true;
+			}
+			lastPoint = event->pos();
+		}
+	}
 }
 
 // Adaugă o nouă metodă pentru gestionarea mișcării mouse-ului
 void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
-    if (event->x() < width() * 3 / 4)
-    {
-        QPoint currentPoint = event->pos();
+	if (event->x() < width() * 3 / 4)
+	{
+		QPoint currentPoint = event->pos();
 
-        if (isDrawing)
-        {
-            QPainter painter(&canvasPixmap);
-            painter.setPen(Qt::black);
-            currentLine.isDrawing = true;
-            currentLine.points.append(currentPoint);
+		if (isDrawing)
+		{
+			QPainter painter(&canvasPixmap);
+			painter.setPen(Qt::black);
+			currentLine.isDrawing = true;
+			currentLine.points.append(currentPoint);
 
 
 
-            for (int i = 1; i < currentLine.points.size(); ++i)
-            {
-                painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
-            }
+			for (int i = 1; i < currentLine.points.size(); ++i)
+			{
+				painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
+			}
 
-            update();
-        }
-        else if (isErasing)
-        {
-            QPainter painter(&canvasPixmap);
-            painter.setCompositionMode(QPainter::CompositionMode_Source);
-            painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+			update();
+		}
+		else if (isErasing)
+		{
+			QPainter painter(&canvasPixmap);
+			painter.setCompositionMode(QPainter::CompositionMode_Source);
+			painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-            currentLine.isDrawing = true;
-            currentLine.points.append(currentPoint);
+			currentLine.isDrawing = true;
+			currentLine.points.append(currentPoint);
 
-            for (int i = 1; i < currentLine.points.size(); ++i)
-            {
-                painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
-            }
+			for (int i = 1; i < currentLine.points.size(); ++i)
+			{
+				painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
+			}
 
-            update();
-        }
-    }
+			update();
+		}
+	}
 }
-
-
-
-
-
-
-
-
-
 
 // Adaugă o nouă metodă pentru gestionarea eliberării butonului mouse-ului
 void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 {
-    // Verifică dacă butonul stâng al mouse-ului este eliberat
-    if (event->button() == Qt::LeftButton)
-    {
-        if(isDrawing)
-        {
-            isErasing = false;
-            isUndoing = false;
-            drawnLines.append(currentLine);
-            currentLine.points.clear();
-        }
-        else if(isErasing)
-        {
-            isDrawing = false;
-            isUndoing = false;
-        }
-        else if(isUndoing)
-        {
-            isDrawing = false;
-            isErasing = false;
-        }
-    }
+	// Verifică dacă butonul stâng al mouse-ului este eliberat
+	if (event->button() == Qt::LeftButton)
+	{
+		if (isDrawing)
+		{
+			isErasing = false;
+			isUndoing = false;
+			drawnLines.append(currentLine);
+			currentLine.points.clear();
+		}
+		else if (isErasing)
+		{
+			isDrawing = false;
+			isUndoing = false;
+		}
+		else if (isUndoing)
+		{
+			isDrawing = false;
+			isErasing = false;
+		}
+	}
 }
 
 void CanvasPaint::resizeEvent(QResizeEvent* event)
 {
-// Creează o nouă imagine cu dimensiunile actualizate
+	// Creează o nouă imagine cu dimensiunile actualizate
 	QPixmap newPixmap(event->size());
 	newPixmap.fill(Qt::white);
 	QPainter painter(&newPixmap);
-    painter.drawPixmap(QRect(0, 0, event->size().width(), event->size().height()), canvasPixmap);
+	painter.drawPixmap(QRect(0, 0, event->size().width(), event->size().height()), canvasPixmap);
 	canvasPixmap = newPixmap;
 
 	// Actualizează afișarea
@@ -195,22 +180,22 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 
 void CanvasPaint::clearCanvas()
 {
-    // sterge ce s-a desenat
-    canvasPixmap.fill(Qt::white);
-    update();
+	// sterge ce s-a desenat
+	canvasPixmap.fill(Qt::white);
+	update();
 }
 
-void CanvasPaint::on_LeaveServerButton_clicked()
+void CanvasPaint::on_leaveServerButton_clicked()
 {
-    hide();
-    obiect = new MainWindow(this);
-    obiect->show();
+	hide();
+	obiect = new MainWindow(this);
+	obiect->show();
 }
 
-void CanvasPaint::on_ResetCanvas_clicked()
+void CanvasPaint::on_resetCanvas_clicked()
 {
-    clearCanvas();
-    isDrawing= true;
+	clearCanvas();
+	isDrawing = true;
 }
 
 //void CanvasPaint::minimizeButtonClicked()
@@ -219,77 +204,77 @@ void CanvasPaint::on_ResetCanvas_clicked()
 //	showMinimized();
 //}
 
-void CanvasPaint::on_DrawButton_clicked()
+void CanvasPaint::on_drawButton_clicked()
 {
-    isDrawing = true;
-    isErasing = false;
-    isUndoing = false;
-    drawingOrErasing = true;
+	isDrawing = true;
+	isErasing = false;
+	isUndoing = false;
+	drawingOrErasing = true;
 }
 
-void CanvasPaint::on_EraseButton_clicked()
+void CanvasPaint::on_eraseButton_clicked()
 {
-    isDrawing = false;
-    isErasing = true;
-    isUndoing = false;
-    drawingOrErasing = false;
+	isDrawing = false;
+	isErasing = true;
+	isUndoing = false;
+	drawingOrErasing = false;
 }
 
-void CanvasPaint::on_UndoButton_clicked()
+void CanvasPaint::on_undoButton_clicked()
 {
-    isDrawing = false;
-    isErasing = false;
-    if (!drawnLines.isEmpty())
-    {
-        drawnLines.pop_back();
-       // clearCanvas();
-        QPixmap newPixmap(size());
-        newPixmap.fill(Qt::white);
+	isDrawing = false;
+	isErasing = false;
+	if (!drawnLines.isEmpty())
+	{
+		drawnLines.pop_back();
+		// clearCanvas();
+		QPixmap newPixmap(size());
+		newPixmap.fill(Qt::white);
 
 
-        QPainter painter(&newPixmap);
-        for(const auto& line : drawnLines)
-        {
-            for (int i = 1; i < line.points.size(); ++i) {
-                if (line.isDrawing)
-                
-                    painter.setPen(Qt::black);
-               
-                else 
-                
-                {
-                    painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                }
-                painter.drawLine(line.points[i - 1], line.points[i]);
-            }
+		QPainter painter(&newPixmap);
+		for (const auto& line : drawnLines)
+		{
+			for (int i = 1; i < line.points.size(); ++i) {
+				if (line.isDrawing)
 
-        }
-        canvasPixmap = newPixmap;
+					painter.setPen(Qt::black);
 
-        update();
-    }
+				else
 
-    if(drawingOrErasing)
-    {
-        isDrawing = true;
-        isErasing = false;
-        isUndoing = false;
-    }
-    else
-    {
-        isDrawing = false;
-        isErasing = true;
-        isUndoing = false;
-    }
+				{
+					painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+				}
+				painter.drawLine(line.points[i - 1], line.points[i]);
+			}
+
+		}
+		canvasPixmap = newPixmap;
+
+		update();
+	}
+
+	if (drawingOrErasing)
+	{
+		isDrawing = true;
+		isErasing = false;
+		isUndoing = false;
+	}
+	else
+	{
+		isDrawing = false;
+		isErasing = true;
+		isUndoing = false;
+	}
 }
 
 void CanvasPaint::on_messageButton_clicked()
 {
-    ui->messageBox->clear();
+	ui->messageBox->clear();
 }
 
-void CanvasPaint::closeEvent(QCloseEvent *event)
+void CanvasPaint::closeEvent(QCloseEvent* event)
 {
-    QCoreApplication::quit();
-    event->accept();
+	QCoreApplication::quit();
+	event->accept();
 }

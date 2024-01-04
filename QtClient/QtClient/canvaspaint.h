@@ -9,55 +9,54 @@
 class MainWindow;
 
 namespace Ui {
-class CanvasPaint;
+	class CanvasPaint;
 }
 
 class CanvasPaint : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    CanvasPaint(QWidget *parent = nullptr);
-    ~CanvasPaint();
-    void setDrawingFlag(bool value);
-    void mousePressEvent(QMouseEvent* event);
-    void mouseMoveEvent(QMouseEvent* event);
-    void mouseReleaseEvent(QMouseEvent* event);
-    void resizeEvent(QResizeEvent* event) override;
-    void clearCanvas();
-    QPixmap canvasPixmap;
+	CanvasPaint(QWidget* parent = nullptr);
+	~CanvasPaint();
+	void setDrawingFlag(bool value);
+	void mousePressEvent(QMouseEvent* event);
+	void mouseMoveEvent(QMouseEvent* event);
+	void mouseReleaseEvent(QMouseEvent* event);
+	void resizeEvent(QResizeEvent* event) override;
+	void clearCanvas();
+	QPixmap canvasPixmap;
+
 protected:
-    void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
-    void closeEvent(QCloseEvent *event) override;
+	void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
+	void closeEvent(QCloseEvent* event) override;
+
 private slots:
-    void on_Button_clicked();
-    void on_LeaveServerButton_clicked();
-    void on_ResetCanvas_clicked();
-   // void minimizeButtonClicked();
-
-    void on_DrawButton_clicked();
-
-    void on_EraseButton_clicked();
-
-    void on_UndoButton_clicked();
-
-    void on_messageButton_clicked();
+	void on_button_clicked();
+	void on_leaveServerButton_clicked();
+	void on_resetCanvas_clicked();
+	void on_drawButton_clicked();
+	void on_eraseButton_clicked();
+	void on_undoButton_clicked();
+	void on_messageButton_clicked();
 
 private:
-    struct DrawnLine {
-        bool isDrawing; // true pentru desenare, false pentru ștergere
-        QList<QPoint> points;
-    };
-    bool isDrawing;
-    bool isErasing;
-    bool isUndoing;
-    bool drawingOrErasing;
-    Ui::CanvasPaint *ui;
-     QPoint lastPoint;
-    MainWindow *obiect;
-    QList<DrawnLine> drawnLines;
-    DrawnLine currentLine;
- 
+	struct DrawnLine {
+		bool isDrawing; // true pentru desenare, false pentru ștergere
+		QList<QPoint> points;
+	};
+
+	bool isDrawing;
+	bool isErasing;
+	bool isUndoing;
+
+	bool drawingOrErasing;
+	Ui::CanvasPaint* ui;
+	QPoint lastPoint;
+	MainWindow* obiect;
+	QList<DrawnLine> drawnLines;
+	DrawnLine currentLine;
+
 };
 
 #endif // CANVASPAINT_H
