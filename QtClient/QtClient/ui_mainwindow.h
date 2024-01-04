@@ -27,98 +27,109 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
-    QWidget *centralwidget;
-    QLabel *loginLabel;
-    QGroupBox *SignIn_GroupBox;
-    QVBoxLayout *verticalLayout;
-    QSplitter *usernameSplitter;
-    QLabel *usernameLabel;
-    QLineEdit *usernameLineEdit;
-    QSplitter *passwordSplitter;
-    QLabel *passwordLabel;
-    QLineEdit *passwordLineEdit;
-    QPushButton *loginButton;
-    QLabel *label;
-    QMenuBar *menubar;
-    QStatusBar *statusbar;
+	QWidget *centralwidget;
+	QLabel *loginLabel;
+	QGroupBox *SignIn_GroupBox;
+	QVBoxLayout *verticalLayout;
+	QSplitter *usernameSplitter;
+	QLabel *usernameLabel;
+	QLineEdit *usernameLineEdit;
+	QSplitter *passwordSplitter;
+	QLabel *passwordLabel;
+	QLineEdit *passwordLineEdit;
+	QPushButton *loginButton;
+	QLabel *backgroundLabel;
+	QMenuBar *menubar;
+	QStatusBar *statusbar;
 
-    void setupUi(QMainWindow *MainWindow)
-    {
-        if (MainWindow->objectName().isEmpty())
-            MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(737, 808);
-        centralwidget = new QWidget(MainWindow);
-        centralwidget->setObjectName("centralwidget");
-        loginLabel = new QLabel(centralwidget);
-        loginLabel->setObjectName("loginLabel");
-        loginLabel->setGeometry(QRect(590, 550, 121, 121));
-        SignIn_GroupBox = new QGroupBox(centralwidget);
-        SignIn_GroupBox->setObjectName("SignIn_GroupBox");
-        SignIn_GroupBox->setGeometry(QRect(240, 220, 271, 231));
-        verticalLayout = new QVBoxLayout(SignIn_GroupBox);
-        verticalLayout->setObjectName("verticalLayout");
-        usernameSplitter = new QSplitter(SignIn_GroupBox);
-        usernameSplitter->setObjectName("usernameSplitter");
-        usernameSplitter->setOrientation(Qt::Horizontal);
-        usernameLabel = new QLabel(usernameSplitter);
-        usernameLabel->setObjectName("usernameLabel");
-        usernameSplitter->addWidget(usernameLabel);
-        usernameLineEdit = new QLineEdit(usernameSplitter);
-        usernameLineEdit->setObjectName("usernameLineEdit");
-        usernameSplitter->addWidget(usernameLineEdit);
+	void setupUi(QMainWindow *MainWindow)
+	{
+		if (MainWindow->objectName().isEmpty())
+			MainWindow->setObjectName("MainWindow");
+		MainWindow->resize(737, 808);
 
-        verticalLayout->addWidget(usernameSplitter);
+		centralwidget = new QWidget(MainWindow);
+		centralwidget->setObjectName("centralwidget");
 
-        passwordSplitter = new QSplitter(SignIn_GroupBox);
-        passwordSplitter->setObjectName("passwordSplitter");
-        passwordSplitter->setOrientation(Qt::Horizontal);
-        passwordLabel = new QLabel(passwordSplitter);
-        passwordLabel->setObjectName("passwordLabel");
-        passwordSplitter->addWidget(passwordLabel);
-        passwordLineEdit = new QLineEdit(passwordSplitter);
-        passwordLineEdit->setObjectName("passwordLineEdit");
-        passwordLineEdit->setEchoMode(QLineEdit::Password);
-        passwordSplitter->addWidget(passwordLineEdit);
+		backgroundLabel = new QLabel(centralwidget);
+		backgroundLabel->setObjectName("label");
+		backgroundLabel->setGeometry(QRect(0, 0, MainWindow->width(), MainWindow->height()));
 
-        verticalLayout->addWidget(passwordSplitter);
+		loginLabel = new QLabel(centralwidget);
+		loginLabel->setObjectName("loginLabel");
+		loginLabel->setGeometry(QRect(590, 550, 121, 121));
 
-        loginButton = new QPushButton(SignIn_GroupBox);
-        loginButton->setObjectName("loginButton");
+		SignIn_GroupBox = new QGroupBox(centralwidget);
+		SignIn_GroupBox->setObjectName("SignIn_GroupBox");
+		SignIn_GroupBox->setGeometry(QRect(240, 220, 271, 231));
 
-        verticalLayout->addWidget(loginButton);
+		verticalLayout = new QVBoxLayout(SignIn_GroupBox);
+		verticalLayout->setObjectName("verticalLayout");
 
-        label = new QLabel(centralwidget);
-        label->setObjectName("label");
-        label->setGeometry(QRect(340, 150, 16, 16));
-        MainWindow->setCentralWidget(centralwidget);
-        menubar = new QMenuBar(MainWindow);
-        menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 737, 25));
-        MainWindow->setMenuBar(menubar);
-        statusbar = new QStatusBar(MainWindow);
-        statusbar->setObjectName("statusbar");
-        MainWindow->setStatusBar(statusbar);
+		usernameSplitter = new QSplitter(SignIn_GroupBox);
+		usernameSplitter->setObjectName("usernameSplitter");
+		usernameSplitter->setOrientation(Qt::Horizontal);
 
-        retranslateUi(MainWindow);
+		usernameLabel = new QLabel(usernameSplitter);
+		usernameLabel->setObjectName("usernameLabel");
+		usernameSplitter->addWidget(usernameLabel);
 
-        QMetaObject::connectSlotsByName(MainWindow);
-    } // setupUi
+		usernameLineEdit = new QLineEdit(usernameSplitter);
+		usernameLineEdit->setObjectName("usernameLineEdit");
+		usernameSplitter->addWidget(usernameLineEdit);
 
-    void retranslateUi(QMainWindow *MainWindow)
-    {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        loginLabel->setText(QString());
-        SignIn_GroupBox->setTitle(QCoreApplication::translate("MainWindow", "Sign In", nullptr));
-        usernameLabel->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
-        passwordLabel->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));
-        loginButton->setText(QCoreApplication::translate("MainWindow", "Login", nullptr));
-        label->setText(QString());
-    } // retranslateUi
+		passwordSplitter = new QSplitter(SignIn_GroupBox);
+		passwordSplitter->setObjectName("passwordSplitter");
+		passwordSplitter->setOrientation(Qt::Horizontal);
+
+		passwordLabel = new QLabel(passwordSplitter);
+		passwordLabel->setObjectName("passwordLabel");
+		passwordSplitter->addWidget(passwordLabel);
+
+		passwordLineEdit = new QLineEdit(passwordSplitter);
+		passwordLineEdit->setObjectName("passwordLineEdit");
+		passwordLineEdit->setEchoMode(QLineEdit::Password);
+		passwordSplitter->addWidget(passwordLineEdit);
+
+		verticalLayout->addWidget(usernameSplitter);
+		verticalLayout->addWidget(passwordSplitter);
+
+		loginButton = new QPushButton(SignIn_GroupBox);
+		loginButton->setObjectName("loginButton");
+
+		verticalLayout->addWidget(loginButton);
+
+		MainWindow->setCentralWidget(centralwidget);
+
+		menubar = new QMenuBar(MainWindow);
+		menubar->setObjectName("menubar");
+		menubar->setGeometry(QRect(0, 0, 737, 25));
+		MainWindow->setMenuBar(menubar);
+
+		statusbar = new QStatusBar(MainWindow);
+		statusbar->setObjectName("statusbar");
+		MainWindow->setStatusBar(statusbar);
+
+		retranslateUi(MainWindow);
+
+		QMetaObject::connectSlotsByName(MainWindow);
+	} // setupUi
+
+	void retranslateUi(QMainWindow *MainWindow)
+	{
+		MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+		loginLabel->setText(QString());
+		SignIn_GroupBox->setTitle(QCoreApplication::translate("MainWindow", "Sign In", nullptr));
+		usernameLabel->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
+		passwordLabel->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));
+		loginButton->setText(QCoreApplication::translate("MainWindow", "Login", nullptr));
+		backgroundLabel->setText(QString());
+	} // retranslateUi
 
 };
 
 namespace Ui {
-    class MainWindow: public Ui_MainWindow {};
+	class MainWindow: public Ui_MainWindow {};
 } // namespace Ui
 
 QT_END_NAMESPACE

@@ -16,9 +16,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 	ui->setupUi(this);
 	QPixmap pix(":Resource Files/Images/Background.jpg");
-    int width = ui->label->width();
-    int height = ui->label->height();
-    ui->label->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
+    int width = ui->backgroundLabel->width();
+    int height = ui->backgroundLabel->height();
+	qDebug() << "width: " << width << "height: " << height;
+    ui->backgroundLabel->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
 	QPixmap pix1(":Resource Files/Images/login_icon.png");
     ui->loginLabel->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
     ui->loginLabel->raise();

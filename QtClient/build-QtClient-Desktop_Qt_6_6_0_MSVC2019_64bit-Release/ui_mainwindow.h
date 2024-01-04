@@ -38,7 +38,7 @@ public:
     QLabel *passwordLabel;
     QLineEdit *passwordLineEdit;
     QPushButton *loginButton;
-    QLabel *label;
+    QLabel *backgroundLabel;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -87,9 +87,9 @@ public:
 
         verticalLayout->addWidget(loginButton);
 
-        label = new QLabel(centralwidget);
-        label->setObjectName("label");
-        label->setGeometry(QRect(340, 150, 16, 16));
+        backgroundLabel = new QLabel(centralwidget);
+        backgroundLabel->setObjectName("backgroundLabel");
+        backgroundLabel->setGeometry(QRect(340, 150, 16, 16));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -112,7 +112,7 @@ public:
         usernameLabel->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
         passwordLabel->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));
         loginButton->setText(QCoreApplication::translate("MainWindow", "Login", nullptr));
-        label->setText(QString());
+        backgroundLabel->setText(QString());
     } // retranslateUi
 
 };
