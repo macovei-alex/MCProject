@@ -476,7 +476,7 @@ void Server::Run()
 
 void Server::Log(const std::string_view& message, Logger::Level level)
 {
-	Log(message, level);
+	m_logger.Log(message, level);
 }
 
 Server& Server::SetSettingsFromFile(const std::string& filePath)

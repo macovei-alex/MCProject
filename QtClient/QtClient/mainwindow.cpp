@@ -6,6 +6,7 @@
 #include <QPixmap>
 //#include <QQuickWidget>
 
+#include "services.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
