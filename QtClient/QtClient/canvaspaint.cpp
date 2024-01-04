@@ -1,6 +1,7 @@
 ﻿#include "canvaspaint.h"
 #include "mainwindow.h"
 #include "ui_canvaspaint.h"
+
 #include <QGuiApplication>
 #include <QScreen>
 
@@ -50,7 +51,7 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		if (event->x() < width() * 3 / 4)
+		if (canvasPixmap.rect().contains(event->pos()))
 		{
 			lastPoint = event->pos();
 		}
@@ -95,12 +96,34 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 	}
 }
 
+#ifdef ONLINE
+std::vector<common::img::Point> CanvasPaint::convertToCommonPoints(const DrawnLine& line)
+{
+	std::vector<common::img::Point> commonPoints;
+	commonPoints.reserve(line.points.size());
+	for (const auto& point : line.points)
+	{
+		common::img::Point commonPoint;
+		commonPoint.x = point.x();
+		commonPoint.y = point.y();
+		commonPoint.color = (line.drawState == DrawingState::DRAWING ? 0x000000 : 0xFFFFFF);
+		commonPoints.emplace_back(std::move(commonPoint));
+	}
+	return commonPoints;
+}
+#endif
+
 void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
 		currentLine.drawState = drawState;
 		drawnLines.append(currentLine);
+
+#ifdef ONLINE
+		services::SendImageUpdates(0, convertToCommonPoints(currentLine));
+#endif
+
 		currentLine.points.clear();
 	}
 }

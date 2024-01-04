@@ -5,12 +5,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#define DO_SERVER_CONNECT 0
-
-#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && (DO_SERVER_CONNECT == 1)
-
-#include "services.h"
-
+#ifdef ONLINE
 #endif
 
 MainWindow::MainWindow(QWidget* parent)
@@ -46,8 +41,7 @@ void MainWindow::on_loginButton_clicked()
 		return;
 	}
 
-#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && (DO_SERVER_CONNECT == 1)
-
+#ifdef ONLINE
      if (!services::SignIn(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
      {
      	QMessageBox msgBox;
@@ -74,8 +68,7 @@ void MainWindow::on_loginButton_clicked()
      		return;
      	}
      }
-
-#endif // MSVC C++20
+#endif
 	
 	 /*CanvasPaint child;
 	 child.setModal(true);

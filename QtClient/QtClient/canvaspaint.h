@@ -1,10 +1,19 @@
 ﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
 
+#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 0
+#define ONLINE
+#endif
+
 #include <QDialog>
 #include <QPainter>
 #include <QMouseEvent>
 #include <qpixmap.h>
+
+#ifdef ONLINE
+#include "services.h"
+#include <vector>
+#endif
 
 class MainWindow;
 
@@ -66,6 +75,11 @@ private:
 private:
 	const QPen DRAWING_PEN = QPen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
 	const QPen ERASING_PEN = QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+private:
+#ifdef ONLINE
+	std::vector<common::img::Point> convertToCommonPoints(const DrawnLine& points);
+#endif
 };
 
 #endif // CANVASPAINT_H
