@@ -26,6 +26,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    CanvasPaint *obiect;
+    CanvasPaint *child;
 };
 #endif // MAINWINDOW_H

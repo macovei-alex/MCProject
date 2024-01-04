@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 {
+	qDebug() << "MainWindow constructor";
+
 	ui->setupUi(this);
 	QPixmap pix(":Resource Files/Images/Background.jpg");
 	int width = ui->label->width();
@@ -24,8 +26,6 @@ MainWindow::MainWindow(QWidget* parent)
 	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
 	 ui->centralwidget->layout()->addWidget(qmlWidget);
 	 QObject:: connect(qmlWidget->rootObject(), SIGNAL(qmlSignal()), this, SLOT(handelQmlSignal()));*/
-
-
 }
 
 
@@ -36,7 +36,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_LoginButton_clicked()
 {
-	if (services::SignIn(ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString()))
+	if (ui->lineEdit->text().isEmpty() || ui->lineEdit_2->text().isEmpty())
+	{
+		QMessageBox::warning(this, "Login", "Username or password is empty");
+		return;
+	}
+
+	if (!services::SignIn(ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString()))
 	{
 		QMessageBox::warning(this, "Login", "Username or password is incorrect");
 		return;
@@ -47,9 +53,9 @@ void MainWindow::on_LoginButton_clicked()
 	// obiect.exec();
 
 	hide();
-	obiect = new CanvasPaint(this);
-	obiect->setDrawingFlag(true);
-	obiect->show();
+	child = new CanvasPaint(this);
+	child->setDrawingFlag(true);
+	child->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

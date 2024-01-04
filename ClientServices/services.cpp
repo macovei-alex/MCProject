@@ -25,12 +25,12 @@ uint64_t services::CreateRoom(std::ostream& outStream, std::ostream& errStream)
 		}
 
 		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::game::ID].u();
-		Log(std::format("[Create] New room with roomID < {} > created\n", roomID));
+		errStream << std::format("[Create] New room with roomID < {} > created\n", roomID);
 		return roomID;
 	}
 	catch (const std::exception& exception)
 	{
-		Log(std::format("[Create room]: {}\n", exception.what()));
+		errStream << std::format("[Create room]: {}\n", exception.what());
 		return LONG_MAX;
 	}
 }
