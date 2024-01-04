@@ -7,13 +7,10 @@
 #include "serverUtils.h"
 #include "Game.h"
 #include "Database.h"
-
 #include "MockDatabase.h"
-// temp
 
 #include "serverUtilsModTemp.h"
 // import serverUtilsMod;
-
 #include "../TemporaryLogger/logger.h"
 //import logger;
 
@@ -41,9 +38,6 @@ public:
 
 public:
 	void Run();
-
-private:
-	void Log(const std::string_view& message, Logger::Level level = Logger::Level::Info);
 
 private:
 	crow::SimpleApp m_app;

@@ -18,13 +18,8 @@ Server::Server() :
 
 Server& Server::AllHandlers()
 {
-	return (*this)
-		.TestHandlers()
-		.ChatHandlers()
-		.RoomHandlers()
-		.AccountHandlers()
-		.DrawingHandlers()
-		.GameSettingsHandlers();
+	this->TestHandlers().ChatHandlers().RoomHandlers().AccountHandlers().DrawingHandlers();
+	return *this;
 }
 
 Server& Server::TestHandlers()
@@ -33,7 +28,7 @@ Server& Server::TestHandlers()
 		return "Test connection succesful\n";
 		});
 
-	Log("Test handler set");
+	m_logger.Log("Test handler set");
 	return *this;
 }
 
@@ -44,18 +39,10 @@ Server& Server::ChatHandlers()
 
 		auto gameIt = this->m_games.find(gameID);
 		if (gameIt == this->m_games.end())
-		{
-			auto responseMessage{ std::format("Invalid room ID < {} >", gameID) };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, std::format("Invalid room ID < {} >", gameID));
 
 		if (request.body.empty())
-		{
-			auto responseMessage{ "Empty request body" };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, "Empty request body");
 
 		auto& chat = gameIt->second.GetChat();
 
@@ -64,18 +51,14 @@ Server& Server::ChatHandlers()
 		auto contentIterator = jsonMap.find(literals::jsonKeys::message::content);
 		auto authorIterator = jsonMap.find(literals::jsonKeys::message::author);
 		if (contentIterator == jsonMap.end() || authorIterator == jsonMap.end())
-		{
-			auto responseMessage{ "Invalid parameter keys" };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, "Invalid parameter keys");
 
 		utils::Message message{
 			utils::DecodeMessage(contentIterator->second),
 			utils::DecodeMessage(authorIterator->second),
 			utils::DateTimeAsInteger(std::chrono::system_clock::now()) };
 
-		Log(std::format("New message at ({}) from [{}]: {}\n", message.timeMilliseconds, message.author, message.content));
+		std::cout << std::format("[{} at {}]: {}\n", message.author, message.timeMilliseconds, message.content);
 		chat.Emplace(std::move(message));
 
 		return crow::response(200);
@@ -89,10 +72,7 @@ Server& Server::ChatHandlers()
 
 		auto gameIt = this->m_games.find(gameID);
 		if (gameIt == this->m_games.end())
-		{
-			Log(std::format("Invalid room ID < {} >", gameID), Logger::Level::Error);
 			return errorValue;
-		}
 
 		const auto& chat = gameIt->second.GetChat();
 
@@ -117,7 +97,6 @@ Server& Server::ChatHandlers()
 		}
 		catch (const std::exception& ex)
 		{
-			Log(ex.what(), Logger::Level::Error);
 			std::cerr << ex.what() << '\n';
 			return errorValue;
 		}
@@ -125,7 +104,7 @@ Server& Server::ChatHandlers()
 		return crow::json::wvalue{ chat.GetMessagesOrderedJsonList(start, author) };
 			});
 
-	Log("Chat handlers set");
+	m_logger.Log("Chat handlers set");
 	return *this;
 }
 
@@ -139,7 +118,12 @@ Server& Server::RoomHandlers()
 
 		m_games.emplace(newGameID, Game());
 
-		Log(std::format("New room created with ID < {} >", newGameID), Logger::Level::Info);
+		auto& game = m_games[newGameID];
+
+		game.GetImage().AddUpdate(common::img::Update{ common::img::Point{ 0, 0, common::img::Color{ 0x0009A2 }}, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(common::img::Update{ common::img::Point{ 1, 2, common::img::Color{ 0xE00784 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+		game.GetImage().AddUpdate(common::img::Update{ common::img::Point{ 5, 0, common::img::Color{ 0xAB02F5 } }, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+
 		return crow::json::wvalue{ {literals::jsonKeys::game::ID, newGameID } };
 			});
 
@@ -149,15 +133,9 @@ Server& Server::RoomHandlers()
 
 		auto gameIt = this->m_games.find(gameID);
 		if (gameIt == m_games.end())
-		{
-			auto responseMessage{ std::format("Invalid room id < {} >", gameID) };
-			Log(responseMessage);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, std::format("Invalid room ID < {} >", gameID));
 
-		auto responseMessage{ std::format("Connection to room < {} > successful", gameID) };
-		Log(responseMessage, Logger::Level::Info);
-		return crow::response(200, responseMessage);
+		return crow::response(200, std::format("Connection to room < {} > successful", gameID));
 			});
 
 
@@ -172,7 +150,7 @@ Server& Server::RoomHandlers()
 		return crow::response(200, "Player left Lobby");
 		});*/
 
-	Log("Room handlers set");
+	m_logger.Log("Room handlers set");
 	return *this;
 }
 
@@ -190,22 +168,13 @@ Server& Server::AccountHandlers()
 		std::string password{ passwordChar };
 
 		if (username.empty() || password.empty())
-		{
-			auto responseMessage{ std::format("Invalid username < {} > or password < {} >", username, password) };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
 		db::ReturnValue returnValue{ std::move(m_database.SignIn(username, password)) };
 		if (!returnValue.success)
-		{
-			Log(returnValue.reason, Logger::Level::Error);
-			return crow::response(404, returnValue.reason);
-		}
+			return crow::response(404, "eroare db");
 
-		auto responseMessage{ std::format("Player logged in as < {} >", username) };
-		Log(responseMessage, Logger::Level::Info);
-		return crow::response(200, responseMessage);
+		return crow::response(200, std::format("Player logged in as < {} >", username));
 			});
 
 
@@ -213,43 +182,26 @@ Server& Server::AccountHandlers()
 		([this](const crow::request& request) {
 
 		if (request.body.empty())
-		{
-			auto responseMessage{ "Empty request body" };
-			Log(responseMessage, Logger::Level::Error);
 			return crow::response(404, "Empty request body");
-		}
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
 		auto usernameIterator = jsonMap.find(literals::jsonKeys::account::username);
 		auto passwordIterator = jsonMap.find(literals::jsonKeys::account::password);
 		if (usernameIterator == jsonMap.end() || passwordIterator == jsonMap.end())
-		{
-			auto responseMessage{ "Invalid parameter keys" };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, "Invalid parameter keys");
 
 		std::string username{ std::move(usernameIterator->second) };
 		std::string password{ std::move(passwordIterator->second) };
 
 		if (username.empty() || password.empty())
-		{
-			auto responseMessage{ std::format("Invalid username < {} > or password < {} >", username, password) };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, std::format("Invalid username < {} > or password < {} >", username, password));
 
 		db::ReturnValue returnValue = m_database.SignUp(username, password);
 		if (!returnValue.success)
-		{
-			Log(returnValue.reason, Logger::Level::Error);
 			return crow::response(404, returnValue.reason);
-		}
 
-		auto responseMessage{ std::format("Player logged in as < {} >", username) };
-		Log(responseMessage, Logger::Level::Info);
-		return crow::response(200, responseMessage);
+		return crow::response(200, std::format("Player logged in as < {} >", username));
 			});
 
 
@@ -257,43 +209,27 @@ Server& Server::AccountHandlers()
 		([this](const crow::request& request) {
 
 		if (request.body.empty())
-		{
-			auto responseMessage{ "Empty request body" };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, "Empty request body");
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
 		auto usernameIterator = jsonMap.find(literals::jsonKeys::account::username);
 		if (usernameIterator == jsonMap.end())
-		{
-			auto responseMessage{ "Invalid parameter keys" };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, "Invalid parameter keys");
 
 		std::string username{ std::move(usernameIterator->second) };
 
 		if (username.empty())
-		{
-			auto responseMessage{ std::format("Invalid username < {} >", username) };
-			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
-		}
+			return crow::response(404, std::format("Invalid username < {} >", username));
 
 		db::ReturnValue returnValue = m_database.SignOut(username);
 		if (!returnValue.success)
-		{
-			Log(returnValue.reason, Logger::Level::Error);
 			return crow::response(404, returnValue.reason);
-		}
 
-		Log(std::format("Player < {} > logged out", username), Logger::Level::Info);
 		return crow::response(200, std::format("Player < {} > logged out", username));
 			});
 
-	Log("Account handlers set");
+	m_logger.Log("Account handlers set");
 	return *this;
 }
 
@@ -316,7 +252,6 @@ Server& Server::DrawingHandlers()
 		}
 		catch (const std::exception& ex)
 		{
-			Log(ex.what(), Logger::Level::Error);
 			std::cerr << ex.what() << '\n';
 			return errorValue;
 		}
@@ -367,16 +302,14 @@ Server& Server::DrawingHandlers()
 			}
 			catch (const std::exception& exception)
 			{
-				Log(exception.what(), Logger::Level::Error);
 				std::cerr << exception.what() << '\n';
 			}
 		}
 
-		Log("new updates added", Logger::Level::Info);
 		return crow::response(200);
 			});
 
-	Log("Draw handlers set");
+	m_logger.Log("Draw handlers set");
 	return *this;
 }
 
@@ -389,11 +322,10 @@ Server& Server::GameSettingsHandlers()
 
 		if (m_games.find(gameID) == m_games.end())
 		{
-			Log(std::format("Invalid game ID < {} >", gameID), Logger::Level::Error);
+			m_logger.Log(std::format("Invalid game ID < {} >", gameID), Logger::Level::Error);
 			return errorValue;
 		}
 
-		Log(std::format("Game settings requested for game < {} >", gameID), Logger::Level::Info);
 		return crow::json::wvalue{
 			{literals::jsonKeys::settings::drawTime, m_games[gameID].GetGameSettings().GetDrawTime()},
 			{literals::jsonKeys::settings::roundCount, m_games[gameID].GetGameSettings().GetRoundCount()},
@@ -406,14 +338,14 @@ Server& Server::GameSettingsHandlers()
 
 		if (request.body.empty())
 		{
-			Log("Empty request body", Logger::Level::Error);
+			m_logger.Log("Empty request body", Logger::Level::Error);
 			return crow::response(404, "Empty request body");
 		}
 
 		if (m_games.find(gameID) == m_games.end())
 		{
-			std::string errorString{ std::format("Invalid game ID < {} >", gameID) };
-			Log(errorString, Logger::Level::Error);
+			std::string errorString{std::format("Invalid game ID < {} >", gameID) };
+			m_logger.Log(errorString, Logger::Level::Error);
 			return crow::response(404, errorString);
 		}
 
@@ -434,14 +366,14 @@ Server& Server::GameSettingsHandlers()
 		}
 		catch (const std::exception& exception)
 		{
-			Log("Invalid parameter values", Logger::Level::Error);
+			m_logger.Log("Invalid parameter values", Logger::Level::Error);
 			return crow::response(404, "Invalid parameter values");
 		}
 
 		return crow::response(200);
 			});
 
-	Log("Game settings handlers set");
+	m_logger.Log("Game settings handlers set");
 	return *this;
 }
 
@@ -461,22 +393,17 @@ void Server::Run()
 {
 	if (m_port == 0)
 	{
-		Log("Port not set", Logger::Level::Error);
+		m_logger.Log("Port not set", Logger::Level::Error);
 		return;
 	}
 	if (m_IPAddress.empty())
 	{
-		Log("IP Address not set", Logger::Level::Error);
+		m_logger.Log("IP Address not set", Logger::Level::Error);
 		return;
 	}
 
-	Log("Server ready to run");
+	m_logger.Log("Server ready to run");
 	m_app.bindaddr(m_IPAddress).port(m_port).multithreaded().run();
-}
-
-void Server::Log(const std::string_view& message, Logger::Level level)
-{
-	Log(message, level);
 }
 
 Server& Server::SetSettingsFromFile(const std::string& filePath)
@@ -498,13 +425,6 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 	};
 
 	std::ifstream file{ filePath };
-
-	if(!file.is_open())
-	{
-		Log(std::format("Failed to open settings file < {} >", filePath), Logger::Level::Error);
-		return *this;
-	}
-
 	std::string line;
 
 	std::getline(file, line);
@@ -532,6 +452,6 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 		}
 	}
 
-	Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
+	m_logger.Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
 	return *this;
 }
