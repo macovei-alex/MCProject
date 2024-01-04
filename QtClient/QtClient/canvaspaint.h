@@ -1,7 +1,7 @@
 ﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
 
-#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 0
+#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 1
 #define ONLINE
 #endif
 
@@ -35,19 +35,30 @@ public:
 	{
 		QList<QPoint> points;
 		DrawingState drawState;
+
+		DrawnLine() = default;
+
+#ifdef ONLINE
+		DrawnLine(std::vector<common::img::Point>&& points, uint32_t color);
+		std::vector<common::img::Point> ToCommonPoints() const;
+#endif
 	};
 
 public:
 	CanvasPaint(QWidget* parent = nullptr);
 	~CanvasPaint();
 
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 	void resizeEvent(QResizeEvent* event) override;
 
-	void clearCanvas();
-	void setDrawState(DrawingState state);
+	void ClearCanvas();
+	void SetDrawState(DrawingState state);
+
+#ifdef ONLINE
+	void SetRoomID(uint64_t roomID);
+#endif
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -71,6 +82,10 @@ private:
 
 	DrawingState drawState;
 	Ui::CanvasPaint* ui;
+
+#ifdef ONLINE
+	uint64_t roomID;
+#endif
 
 private:
 	const QPen DRAWING_PEN = QPen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);

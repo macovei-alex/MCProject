@@ -31,10 +31,17 @@ CanvasPaint::~CanvasPaint()
 	delete ui;
 }
 
-void CanvasPaint::setDrawState(DrawingState state)
+void CanvasPaint::SetDrawState(DrawingState state)
 {
 	drawState = state;
 }
+
+#ifdef ONLINE
+void CanvasPaint::SetRoomID(uint64_t roomID)
+{
+	this->roomID = roomID;
+}
+#endif
 
 void CanvasPaint::paintEvent(QPaintEvent* event)
 {
@@ -97,18 +104,30 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 }
 
 #ifdef ONLINE
-std::vector<common::img::Point> CanvasPaint::convertToCommonPoints(const DrawnLine& line)
+CanvasPaint::DrawnLine::DrawnLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
+	drawState{ color == 0x000000 ? DrawingState::ERASING : DrawingState::DRAWING }
+{
+	points.reserve(commonPoints.size());
+	for (const auto& commonPoint : commonPoints)
+		points.emplace_back(commonPoint.x, commonPoint.y);
+}
+
+std::vector<common::img::Point> CanvasPaint::DrawnLine::ToCommonPoints() const
 {
 	std::vector<common::img::Point> commonPoints;
-	commonPoints.reserve(line.points.size());
-	for (const auto& point : line.points)
+	commonPoints.reserve(points.size());
+
+	for (const auto& point : points)
 	{
 		common::img::Point commonPoint;
+
 		commonPoint.x = point.x();
 		commonPoint.y = point.y();
-		commonPoint.color = (line.drawState == DrawingState::DRAWING ? 0x000000 : 0xFFFFFF);
+		commonPoint.color = (drawState == DrawingState::DRAWING ? 0x000000 : 0xFFFFFF);
+
 		commonPoints.emplace_back(std::move(commonPoint));
 	}
+
 	return commonPoints;
 }
 #endif
@@ -121,7 +140,7 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 		drawnLines.append(currentLine);
 
 #ifdef ONLINE
-		services::SendImageUpdates(0, convertToCommonPoints(currentLine));
+		services::SendImageUpdates(roomID, currentLine.ToCommonPoints());
 #endif
 
 		currentLine.points.clear();
@@ -139,7 +158,7 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 	update();
 }
 
-void CanvasPaint::clearCanvas()
+void CanvasPaint::ClearCanvas()
 {
 	canvasPixmap.fill(Qt::white);
 	drawnLines.clear();
@@ -155,7 +174,7 @@ void CanvasPaint::on_leaveServerButton_clicked()
 
 void CanvasPaint::on_resetCanvas_clicked()
 {
-	clearCanvas();
+	ClearCanvas();
 	drawState = DrawingState::DRAWING;
 }
 

@@ -8,18 +8,19 @@
 #ifdef ONLINE
 #endif
 
-MainWindow::MainWindow(QWidget* parent)
-	: QMainWindow(parent)
-	, ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget* parent) :
+	QMainWindow(parent),
+	ui(new Ui::MainWindow),
+	roomID{ INT_MAX }
 {
 	ui->setupUi(this);
 	QPixmap pix(":Resource Files/Images/Background.jpg");
-    int width = ui->backgroundLabel->width();
-    int height = ui->backgroundLabel->height();
-    ui->backgroundLabel->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
+	int width = ui->backgroundLabel->width();
+	int height = ui->backgroundLabel->height();
+	ui->backgroundLabel->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
 	QPixmap pix1(":Resource Files/Images/login_icon.png");
-    ui->loginLabel->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
-    ui->loginLabel->raise();
+	ui->loginLabel->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
+	ui->loginLabel->raise();
 
 	/* QQuickWidget *qmlWidget = new QQuickWidget();
 	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
@@ -42,41 +43,48 @@ void MainWindow::on_loginButton_clicked()
 	}
 
 #ifdef ONLINE
-     if (!services::SignIn(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
-     {
-     	QMessageBox msgBox;
-         msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
-             "and password " + ui->passwordLineEdit->text() +
-             " exists. Do you want to create one?");
-	
-     	QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
-     	QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
-     	msgBox.setDefaultButton(noButton);
-	
-     	msgBox.exec();
-	
-     	if (msgBox.clickedButton() == yesButton)
-     	{
-     		if (!services::SignUp(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
-     		{
-     			QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
-     			return;
-     		}
-     	}
-     	else
-     	{
-     		return;
-     	}
-     }
+	if (!services::SignIn(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
+	{
+		QMessageBox msgBox;
+		msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
+			"and password " + ui->passwordLineEdit->text() +
+			" exists. Do you want to create one?");
+
+		QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
+		QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::NoRole);
+		msgBox.setDefaultButton(noButton);
+
+		msgBox.exec();
+
+		if (msgBox.clickedButton() == yesButton)
+		{
+			if (!services::SignUp(ui->usernameLineEdit->text().toStdString(), ui->passwordLineEdit->text().toStdString()))
+			{
+				QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	roomID = services::CreateRoom();
 #endif
-	
-	 /*CanvasPaint child;
-	 child.setModal(true);
-	 child.exec();*/
+
+	/*CanvasPaint child;
+	child.setModal(true);
+	child.exec();*/
 
 	hide();
 	child = new CanvasPaint(this);
-	child->setDrawState(CanvasPaint::DrawingState::DRAWING);
+	child->SetDrawState(CanvasPaint::DrawingState::DRAWING);
+
+#ifdef ONLINE
+	child->SetRoomID(roomID);
+#endif
+
 	child->show();
 }
 

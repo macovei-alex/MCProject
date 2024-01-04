@@ -22,7 +22,9 @@ protected:
 
 private slots:
     void on_loginButton_clicked();
-   
+  
+public:
+    uint64_t roomID;
 
 private:
     Ui::MainWindow *ui;
