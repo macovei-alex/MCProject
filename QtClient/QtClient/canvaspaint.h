@@ -22,24 +22,29 @@ public:
 		ERASING
 	};
 
+	struct DrawnLine
+	{
+		QList<QPoint> points;
+		DrawState drawState;
+	};
+
 public:
 	CanvasPaint(QWidget* parent = nullptr);
 	~CanvasPaint();
-	void mousePressEvent(QMouseEvent* event);
-	void mouseMoveEvent(QMouseEvent* event);
-	void mouseReleaseEvent(QMouseEvent* event);
+
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 	void resizeEvent(QResizeEvent* event) override;
+
 	void clearCanvas();
 	void setDrawState(DrawState state);
-
-	QPixmap canvasPixmap;
 
 protected:
 	void paintEvent(QPaintEvent* event) override; // Asigură-te că override este specificat aici
 	void closeEvent(QCloseEvent* event) override;
 
 private slots:
-	void on_button_clicked();
 	void on_leaveServerButton_clicked();
 	void on_resetCanvas_clicked();
 	void on_drawButton_clicked();
@@ -48,23 +53,19 @@ private slots:
 	void on_messageButton_clicked();
 
 private:
-	struct DrawnLine {
-		bool isDrawing; // true pentru desenare, false pentru ștergere
-		QList<QPoint> points;
-		DrawState drawState;
-	};
+	MainWindow* signInWindow;
 
-	DrawState drawState;
-
-	bool drawingOrErasing;
-	Ui::CanvasPaint* ui;
-	QPoint lastPoint;
-	MainWindow* obiect;
+	QPixmap canvasPixmap;
 	QList<DrawnLine> drawnLines;
 	DrawnLine currentLine;
+	QPoint lastPoint;
 
-	const QPen drawingPen = QPen(Qt::black);
-	const QPen erasingPen = QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	DrawState drawState;
+	Ui::CanvasPaint* ui;
+
+private:
+	const QPen DRAWING_PEN = QPen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
+	const QPen ERASING_PEN = QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 };
 
 #endif // CANVASPAINT_H

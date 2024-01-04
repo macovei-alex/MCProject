@@ -15,20 +15,14 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
 	QScreen* primaryScreen = QGuiApplication::primaryScreen();
-	QRect screenRect = primaryScreen->geometry();
-	setGeometry(0, 0, screenRect.width(), screenRect.height());
+	QSize screenSize = primaryScreen->geometry().size();
+	setGeometry(0, 0, screenSize.width(), screenSize.height());
 	setStyleSheet("QDialog { border: 2px solid black; }");
 
-	canvasPixmap = QPixmap(screenRect.size()); // Ajustează dimensiunile după necesități
+	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height()); // Ajustează dimensiunile după necesități
 	canvasPixmap.fill(Qt::white); // Umple canvas-ul cu culoarea albă
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
-	//  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
-	  //connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);
-	  /*  connect(ui->minimize, SIGNAL(clicked()), this, SLOT(minimizeButtonClicked()));
-	  connect(ui->minimize, &QPushButton::clicked, this, &CanvasPaint::minimizeButtonClicked);*/
-
-	connect(ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
 }
 
 CanvasPaint::~CanvasPaint()
@@ -46,21 +40,10 @@ void CanvasPaint::paintEvent(QPaintEvent* event)
 	Q_UNUSED(event);
 
 	QPainter painter(this);
-	QPen pen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
-	painter.setPen(pen);
+	painter.setPen(DRAWING_PEN);
 	QRect canvasRect = rect();
 	painter.drawRect(canvasRect);
 	painter.drawPixmap(2, 2, canvasPixmap);
-}
-
-void CanvasPaint::on_button_clicked()
-{
-	QPainter painter(&canvasPixmap);
-	painter.drawLine(10, 10, 100, 100);
-
-	// Actualizează afișarea
-	update();
-
 }
 
 // Actualizează metoda mousePressEvent
@@ -79,18 +62,17 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 // Adaugă o nouă metodă pentru gestionarea mișcării mouse-ului
 void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
-	if (event->x() < width() * 3 / 4)
+	if (canvasPixmap.rect().contains(event->pos()))
 	{
-		QPoint currentPoint = event->pos();
+		QPoint currentPos = event->pos();
 
 		if (drawState == DrawState::DRAWING)
 		{
 			QPainter painter(&canvasPixmap);
-			painter.setPen(Qt::black);
-			currentLine.isDrawing = true;
-			currentLine.points.append(currentPoint);
+			painter.setPen(DRAWING_PEN);
+			currentLine.points.append(currentPos);
 
-			for (int i = 1; i < currentLine.points.size(); ++i)
+			for (int i = 1; i < currentLine.points.size(); i++)
 			{
 				painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
 			}
@@ -102,12 +84,11 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 		{
 			QPainter painter(&canvasPixmap);
 			painter.setCompositionMode(QPainter::CompositionMode_Source);
-			painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+			painter.setPen(ERASING_PEN);
 
-			currentLine.isDrawing = true;
-			currentLine.points.append(currentPoint);
+			currentLine.points.append(currentPos);
 
-			for (int i = 1; i < currentLine.points.size(); ++i)
+			for (int i = 1; i < currentLine.points.size(); i++)
 			{
 				painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
 			}
@@ -117,45 +98,39 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 	}
 }
 
-// Adaugă o nouă metodă pentru gestionarea eliberării butonului mouse-ului
 void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 {
-	// Verifică dacă butonul stâng al mouse-ului este eliberat
 	if (event->button() == Qt::LeftButton)
 	{
-		if (drawState == DrawState::DRAWING)
-		{
-			drawnLines.append(currentLine);
-			currentLine.points.clear();
-		}
+		currentLine.drawState = drawState;
+		drawnLines.append(currentLine);
+		currentLine.points.clear();
 	}
 }
 
 void CanvasPaint::resizeEvent(QResizeEvent* event)
 {
-	// Creează o nouă imagine cu dimensiunile actualizate
-	QPixmap newPixmap(event->size());
+	QPixmap newPixmap(event->size().width() * 3 / 4, event->size().height());
 	newPixmap.fill(Qt::white);
 	QPainter painter(&newPixmap);
-	painter.drawPixmap(QRect(0, 0, event->size().width(), event->size().height()), canvasPixmap);
-	canvasPixmap = newPixmap;
+	painter.drawPixmap(QRect(0, 0, event->size().width() * 3 / 4, event->size().height()), canvasPixmap);
+	canvasPixmap = std::move(newPixmap);
 
-	// Actualizează afișarea
 	update();
 }
 
 void CanvasPaint::clearCanvas()
 {
-	// sterge ce s-a desenat
 	canvasPixmap.fill(Qt::white);
+	drawnLines.clear();
 	update();
 }
 
 void CanvasPaint::on_leaveServerButton_clicked()
 {
 	hide();
-	obiect = new MainWindow(this);
-	obiect->show();
+	signInWindow = new MainWindow(this);
+	signInWindow->show();
 }
 
 void CanvasPaint::on_resetCanvas_clicked()
@@ -164,21 +139,13 @@ void CanvasPaint::on_resetCanvas_clicked()
 	drawState = DrawState::DRAWING;
 }
 
-//void CanvasPaint::minimizeButtonClicked()
-//{
-//    qDebug() << "Minimize button clicked";
-//	showMinimized();
-//}
-
 void CanvasPaint::on_drawButton_clicked()
 {
-	drawingOrErasing = true;
 	drawState = DrawState::DRAWING;
 }
 
 void CanvasPaint::on_eraseButton_clicked()
 {
-	drawingOrErasing = false;
 	drawState = DrawState::ERASING;
 }
 
@@ -186,26 +153,17 @@ void CanvasPaint::on_undoButton_clicked()
 {
 	if (!drawnLines.isEmpty())
 	{
+		canvasPixmap.fill(Qt::white);
+		QPainter painter(&canvasPixmap);
 		drawnLines.pop_back();
-		// clearCanvas();
-		QPixmap newPixmap(size());
-		newPixmap.fill(Qt::white);
 
-
-		QPainter painter(&newPixmap);
 		for (const auto& line : drawnLines)
 		{
-			for (int i = 1; i < line.points.size(); ++i) {
-				if (line.isDrawing)
-					painter.setPen(Qt::black);
-				else
-					painter.setPen(QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+			painter.setPen(line.drawState == DrawState::DRAWING ? DRAWING_PEN : ERASING_PEN);
 
+			for (int i = 1; i < line.points.size(); i++)
 				painter.drawLine(line.points[i - 1], line.points[i]);
-			}
-
 		}
-		canvasPixmap = newPixmap;
 
 		update();
 	}
