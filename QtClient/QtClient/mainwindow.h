@@ -11,23 +11,21 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+	MainWindow(QWidget *parent = nullptr);
+	~MainWindow();
 
 protected:
-    void closeEvent(QCloseEvent *event) override;
+	void closeEvent(QCloseEvent *event) override;
 
 private slots:
-    void on_loginButton_clicked();
-  
-public:
-    uint64_t roomID;
+	void on_loginButton_clicked();
 
 private:
-    Ui::MainWindow *ui;
-    CanvasPaint *canvasPaint;
+	Ui::MainWindow *ui;
+	CanvasPaint *canvasPaint;
+	uint64_t roomID;
 };
 #endif // MAINWINDOW_H

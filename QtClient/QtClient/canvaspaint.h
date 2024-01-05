@@ -28,7 +28,10 @@ struct MyLine
 {
 	static const int32_t DRAWING_COLOR_INT;
 	static const int32_t ERASING_COLOR_INT;
+
+#ifdef ONLINE
 	static const int32_t INVALID_COLOR_INT;
+#endif
 
 	QList<QPoint> points;
 	DrawingState drawState;

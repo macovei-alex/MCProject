@@ -8,7 +8,10 @@
 
 const int32_t MyLine::DRAWING_COLOR_INT{ 0x000000 };
 const int32_t MyLine::ERASING_COLOR_INT{ 0xFFFFFF };
+
+#ifdef ONLINE
 const int32_t MyLine::INVALID_COLOR_INT{ 0xFFFFFE };
+#endif
 
 #ifdef ONLINE
 MyLine::MyLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
@@ -289,7 +292,7 @@ void CanvasPaint::on_undoButton_clicked()
 		{
 			painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
 
-			for (size_t i = 1; i < line.points.size(); i++)
+            for (qsizetype i = 1; i < line.points.size(); i++)
 				painter.drawLine(line.points[i - 1], line.points[i]);
 		}
 
@@ -309,7 +312,7 @@ void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 	for (auto& line : *newLines)
 	{
 		painter.setPen((line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN));
-		for (size_t i = 1; i < line.points.size(); i++)
+        for (qsizetype i = 1; i < line.points.size(); i++)
 			painter.drawLine(line.points[i - 1], line.points[i]);
 
 		myLines.emplace_back(std::move(line));
