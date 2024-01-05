@@ -14,13 +14,15 @@ MainWindow::MainWindow(QWidget* parent) :
 	roomID{ INT_MAX }
 {
 	ui->setupUi(this);
-	QPixmap pix(":Resource Files/Images/Background.jpg");
-	int width = ui->backgroundLabel->width();
-	int height = ui->backgroundLabel->height();
-	ui->backgroundLabel->setPixmap(pix.scaled(width, height, Qt::KeepAspectRatio));
-	QPixmap pix1(":Resource Files/Images/login_icon.png");
-	ui->loginLabel->setPixmap(pix1.scaled(100, 100, Qt::KeepAspectRatio));
-	ui->loginLabel->raise();
+
+	QPixmap backgroundImage(":Resource Files/Images/Background.jpg");
+	int width = ui->centralwidget->width();
+	int height = ui->centralwidget->height();
+	ui->backgroundLabel->setPixmap(backgroundImage.scaled(width, height, Qt::KeepAspectRatio));
+
+	QPixmap humanFigure(":Resource Files/Images/login_icon.png");
+    ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
+    ui->humanFigureLabel->raise();
 
 	/* QQuickWidget *qmlWidget = new QQuickWidget();
 	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));

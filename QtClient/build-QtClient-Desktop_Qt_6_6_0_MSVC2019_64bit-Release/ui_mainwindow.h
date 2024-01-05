@@ -28,7 +28,7 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QLabel *loginLabel;
+    QLabel *humanFigureLabel;
     QGroupBox *SignIn_GroupBox;
     QVBoxLayout *verticalLayout;
     QSplitter *usernameSplitter;
@@ -49,9 +49,9 @@ public:
         MainWindow->resize(737, 808);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
-        loginLabel = new QLabel(centralwidget);
-        loginLabel->setObjectName("loginLabel");
-        loginLabel->setGeometry(QRect(590, 550, 121, 121));
+        humanFigureLabel = new QLabel(centralwidget);
+        humanFigureLabel->setObjectName("humanFigureLabel");
+        humanFigureLabel->setGeometry(QRect(590, 550, 121, 121));
         SignIn_GroupBox = new QGroupBox(centralwidget);
         SignIn_GroupBox->setObjectName("SignIn_GroupBox");
         SignIn_GroupBox->setGeometry(QRect(240, 220, 271, 231));
@@ -107,7 +107,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        loginLabel->setText(QString());
+        humanFigureLabel->setText(QString());
         SignIn_GroupBox->setTitle(QCoreApplication::translate("MainWindow", "Sign In", nullptr));
         usernameLabel->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
         passwordLabel->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));

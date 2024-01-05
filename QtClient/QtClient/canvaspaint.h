@@ -1,20 +1,20 @@
 ﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
 
-#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 0
+#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 1
 #define ONLINE
 #endif
 
 #include <QDialog>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QThread>
 #include <qpixmap.h>
 #include <cstdint>
+#include <vector>
 
 #ifdef ONLINE
 #include "services.h"
-#include <vector>
-#include <QThread>
 #endif
 
 class MainWindow;
@@ -27,6 +27,9 @@ enum class DrawingState : uint8_t
 
 struct DrawnLine
 {
+	static const uint32_t DRAWING_COLOR_INT;
+	static const uint32_t ERASING_COLOR_INT;
+
 	QList<QPoint> points;
 	DrawingState drawState;
 
@@ -36,17 +39,29 @@ struct DrawnLine
 	DrawnLine(std::vector<common::img::Point>&& points, uint32_t color);
 	std::vector<common::img::Point> ToCommonPoints() const;
 #endif
+
 };
 
-#ifdef ONLINE
-class ImageReceiver : public QObject
+class ImageReceiver : public QThread
 {
 	Q_OBJECT
 
-public slots:
-	void ImageReceiverSlot(uint64_t roomID, QList<DrawnLine>& lines, bool& keepGoing);
+public:
+	ImageReceiver(uint64_t roomID, bool& keepGoing, QWidget* parent = nullptr);
+	~ImageReceiver() = default;
+
+	void Stop();
+
+signals:
+	void LinesReceived(QList<DrawnLine>* lines);
+
+public:
+	uint64_t roomID;
+	bool& keepGoing;
+
+public:
+	void run() override;
 };
-#endif
 
 namespace Ui {
 	class CanvasPaint;
@@ -54,6 +69,7 @@ namespace Ui {
 
 class CanvasPaint : public QDialog
 {
+
 	Q_OBJECT
 
 public:
@@ -84,6 +100,11 @@ private slots:
 	void on_undoButton_clicked();
 	void on_messageButton_clicked();
 
+	void HandleAddLines(QList<DrawnLine>* newLines);
+
+signals:
+	void Signal();
+
 private:
 	MainWindow* signInWindow;
 
@@ -97,14 +118,13 @@ private:
 
 #ifdef ONLINE
 	uint64_t roomID;
-	QThread imageReceiverThread;
-	ImageReceiver imageReceiver;
+	ImageReceiver* imageReceiver;
 	bool keepGoing;
 #endif
 
 private:
-	const QPen DRAWING_PEN = QPen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
-	const QPen ERASING_PEN = QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	const QPen DRAWING_PEN = QPen(QColor(DrawnLine::DRAWING_COLOR_INT), 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
+	const QPen ERASING_PEN = QPen(QColor(DrawnLine::ERASING_COLOR_INT), 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 };
 
 #endif // CANVASPAINT_H

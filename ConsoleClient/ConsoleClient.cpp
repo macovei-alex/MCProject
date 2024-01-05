@@ -9,7 +9,6 @@
 
 int main()
 {
-	services::SetLogFile("servicesOut.log");
 	const std::string returnCommand = "/b";
 
 	std::string username;
@@ -122,11 +121,6 @@ menu2:
 		std::cout << "Invalid option. Please try again.\n";
 		goto menu2;
 	}
-
-	std::vector<common::img::Point> points{ 
-		common::img::Point{ 1, 2, 0x24AB73 },
-		common::img::Point{ -5, -2, 0x118FF0 } };
-	services::SendImageUpdates(roomID, points);
 
 	bool keepGoing = true;
 	std::thread messagesSender(services::MessageSender, roomID, username, &keepGoing);

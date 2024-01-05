@@ -4,10 +4,14 @@
 
 #include <QGuiApplication>
 #include <QScreen>
+#include <QObject>
+
+const uint32_t DrawnLine::DRAWING_COLOR_INT = 0x000000;
+const uint32_t DrawnLine::ERASING_COLOR_INT = 0xFFFFFF;
 
 #ifdef ONLINE
 DrawnLine::DrawnLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
-	drawState{ color == 0x000000 ? DrawingState::ERASING : DrawingState::DRAWING }
+	drawState{ color == ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING }
 {
 	points.reserve(commonPoints.size());
 	for (const auto& commonPoint : commonPoints)
@@ -24,13 +28,21 @@ std::vector<common::img::Point> DrawnLine::ToCommonPoints() const
 		commonPoints.emplace_back(
 			point.x(),
 			point.y(),
-			(drawState == DrawingState::DRAWING ? 0x000000 : 0xFFFFFF));
+			(drawState == DrawingState::DRAWING ? DRAWING_COLOR_INT : ERASING_COLOR_INT));
 	}
 
 	return commonPoints;
 }
 
-void ImageReceiver::ImageReceiverSlot(uint64_t roomID, QList<DrawnLine>& lines, bool& keepGoing)
+ImageReceiver::ImageReceiver(uint64_t roomID, bool& keepGoing, QWidget* parent) :
+	QThread(parent),
+	keepGoing{ keepGoing },
+	roomID{ roomID }
+{
+	/* empty */
+}
+
+void ImageReceiver::run()
 {
 	using std::chrono_literals::operator""s;
 	try
@@ -38,10 +50,37 @@ void ImageReceiver::ImageReceiverSlot(uint64_t roomID, QList<DrawnLine>& lines, 
 		while (keepGoing)
 		{
 			auto points{ std::move(services::ReceiveImageUpdates(roomID)) };
-			if (!points.empty())
+			qDebug() << "Received points: " << points.size();
+
+			if (points.size() != 0)
 			{
-				lines.append(DrawnLine{ std::move(points), 0xFFFFFF });
+				QList<DrawnLine>* newLines = new QList<DrawnLine>();
+				DrawnLine line;
+				line.drawState = (points[0].color == DrawnLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
+
+				for (const auto& point : points)
+				{
+					uint32_t currentColor = (line.drawState == DrawingState::DRAWING ? DrawnLine::DRAWING_COLOR_INT : DrawnLine::ERASING_COLOR_INT);
+					if (point.color != currentColor)
+					{
+						if (line.points.size() > 0)
+						{
+							newLines->append(line);
+						}
+
+						line.points.clear();
+						line.drawState = (point.color == DrawnLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
+					}
+
+					qDebug() << "Point: " << point.x << ", " << point.y << ", " << point.color.ToInt32();
+					line.points.append(QPoint(point.x, point.y));
+				}
+
+				qDebug() << "Received lines: " << newLines->size();
+
+				emit LinesReceived(newLines);
 			}
+
 			std::this_thread::sleep_for(0.25s);
 		}
 	}
@@ -55,7 +94,8 @@ void ImageReceiver::ImageReceiverSlot(uint64_t roomID, QList<DrawnLine>& lines, 
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog(parent),
 	ui(new Ui::CanvasPaint),
-	drawState{ DrawingState::DRAWING }
+	drawState{ DrawingState::DRAWING },
+	drawnLines{ }
 {
 	ui->setupUi(this);
 
@@ -81,9 +121,8 @@ CanvasPaint::CanvasPaint(uint64_t roomID, QWidget* parent) :
 	ui(new Ui::CanvasPaint),
 	drawState{ DrawingState::DRAWING },
 	keepGoing{ true },
-	imageReceiver{ },
-	imageReceiverThread{ }
-
+	roomID{ roomID },
+	drawnLines{ }
 {
 	ui->setupUi(this);
 
@@ -102,11 +141,10 @@ CanvasPaint::CanvasPaint(uint64_t roomID, QWidget* parent) :
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	imageReceiver.moveToThread(&imageReceiverThread);
-	connect(&imageReceiverThread, &QThread::started, [=]() {
-		imageReceiver.ImageReceiverSlot(roomID, drawnLines, keepGoing);
-		});
-	imageReceiverThread.start();
+	imageReceiver = new	ImageReceiver(roomID, keepGoing, this);
+	connect(imageReceiver, &ImageReceiver::LinesReceived, this, &CanvasPaint::HandleAddLines);
+	connect(imageReceiver, &ImageReceiver::finished, imageReceiver, &QObject::deleteLater);
+	imageReceiver->start();
 }
 #endif
 
@@ -115,6 +153,8 @@ CanvasPaint::~CanvasPaint()
 
 #ifdef ONLINE
 	keepGoing = false;
+	imageReceiver->quit();
+	imageReceiver->wait();
 #endif
 
 	delete ui;
@@ -126,6 +166,7 @@ void CanvasPaint::paintEvent(QPaintEvent* event)
 
 	QPainter painter(this);
 	painter.setPen(DRAWING_PEN);
+
 	QRect canvasRect = rect();
 	painter.drawRect(canvasRect);
 	painter.drawPixmap(2, 2, canvasPixmap);
@@ -187,9 +228,15 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 		currentLine.drawState = drawState;
 		drawnLines.append(currentLine);
 
-#ifdef ONLINE
+		#ifdef ONLINE
+		auto commonPoints = currentLine.ToCommonPoints();
+		qDebug() << "Sending points: " << commonPoints.size();
+		if (commonPoints.size() != 0)
+		{
+			qDebug() << "First point: " << commonPoints[0].color.ToInt32();
+		}
 		services::SendImageUpdates(roomID, currentLine.ToCommonPoints());
-#endif
+		#endif
 
 		currentLine.points.clear();
 	}
@@ -259,6 +306,23 @@ void CanvasPaint::on_undoButton_clicked()
 void CanvasPaint::on_messageButton_clicked()
 {
 	ui->messageBox->clear();
+}
+
+void CanvasPaint::HandleAddLines(QList<DrawnLine>* newLines)
+{
+	QPainter painter(&canvasPixmap);
+
+	for (auto& line : *newLines)
+	{
+		painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
+		for (int i = 1; i < line.points.size(); i++)
+			painter.drawLine(line.points[i - 1], line.points[i]);
+
+		drawnLines.append(line);
+	}
+
+	delete newLines;
+	update();
 }
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
