@@ -13,15 +13,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui->setupUi(this);
 
 	QPixmap backgroundImage{ ":Resource Files/Images/Background.jpg" };
-
-#ifdef ONLINE
-	auto [width, height] { ui->centralwidget->size() };
-#else
-	int width = ui->centralwidget->width();
-	int height = ui->centralwidget->height();
-#endif
-
-	ui->backgroundLabel->setPixmap(backgroundImage.scaled(width, height, Qt::KeepAspectRatio));
+	ui->backgroundLabel->setPixmap(backgroundImage.scaled(ui->centralwidget->size(), Qt::KeepAspectRatio));
+	ui->backgroundLabel->raise();
 
 	QPixmap humanFigure{ ":Resource Files/Images/login_icon.png" };
     ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
