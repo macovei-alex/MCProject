@@ -5,9 +5,6 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#ifdef ONLINE
-#endif
-
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow{ parent },
 	ui{ new Ui::MainWindow },
