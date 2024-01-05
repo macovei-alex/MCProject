@@ -1,7 +1,7 @@
 ﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
 
-#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 1
+#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 0
 #define ONLINE
 #endif
 
@@ -9,13 +9,44 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <qpixmap.h>
+#include <cstdint>
 
 #ifdef ONLINE
 #include "services.h"
 #include <vector>
+#include <QThread>
 #endif
 
 class MainWindow;
+
+enum class DrawingState : uint8_t
+{
+	DRAWING,
+	ERASING
+};
+
+struct DrawnLine
+{
+	QList<QPoint> points;
+	DrawingState drawState;
+
+	DrawnLine() = default;
+
+#ifdef ONLINE
+	DrawnLine(std::vector<common::img::Point>&& points, uint32_t color);
+	std::vector<common::img::Point> ToCommonPoints() const;
+#endif
+};
+
+#ifdef ONLINE
+class ImageReceiver : public QObject
+{
+	Q_OBJECT
+
+public slots:
+	void ImageReceiverSlot(uint64_t roomID, QList<DrawnLine>& lines, bool& keepGoing);
+};
+#endif
 
 namespace Ui {
 	class CanvasPaint;
@@ -26,26 +57,12 @@ class CanvasPaint : public QDialog
 	Q_OBJECT
 
 public:
-	enum class DrawingState : uint8_t {
-		DRAWING,
-		ERASING
-	};
-
-	struct DrawnLine
-	{
-		QList<QPoint> points;
-		DrawingState drawState;
-
-		DrawnLine() = default;
+	CanvasPaint(QWidget* parent = nullptr);
 
 #ifdef ONLINE
-		DrawnLine(std::vector<common::img::Point>&& points, uint32_t color);
-		std::vector<common::img::Point> ToCommonPoints() const;
+	CanvasPaint(uint64_t roomID, QWidget* parent = nullptr);
 #endif
-	};
 
-public:
-	CanvasPaint(QWidget* parent = nullptr);
 	~CanvasPaint();
 
 	void mousePressEvent(QMouseEvent* event) override;
@@ -54,11 +71,6 @@ public:
 	void resizeEvent(QResizeEvent* event) override;
 
 	void ClearCanvas();
-	void SetDrawState(DrawingState state);
-
-#ifdef ONLINE
-	void SetRoomID(uint64_t roomID);
-#endif
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -85,16 +97,14 @@ private:
 
 #ifdef ONLINE
 	uint64_t roomID;
+	QThread imageReceiverThread;
+	ImageReceiver imageReceiver;
+	bool keepGoing;
 #endif
 
 private:
 	const QPen DRAWING_PEN = QPen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
 	const QPen ERASING_PEN = QPen(Qt::white, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
-private:
-#ifdef ONLINE
-	std::vector<common::img::Point> convertToCommonPoints(const DrawnLine& points);
-#endif
 };
 
 #endif // CANVASPAINT_H

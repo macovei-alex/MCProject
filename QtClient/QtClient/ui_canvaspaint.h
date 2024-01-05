@@ -38,46 +38,35 @@ public:
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
         CanvasPaint->resize(1854, 967);
-
         resetCanvas = new QPushButton(CanvasPaint);
         resetCanvas->setObjectName("resetCanvas");
         resetCanvas->setGeometry(QRect(1200, 720, 80, 24));
-
         leaveServerButton = new QPushButton(CanvasPaint);
         leaveServerButton->setObjectName("leaveServerButton");
         leaveServerButton->setGeometry(QRect(1290, 720, 91, 24));
-
         gameChat = new QWidget(CanvasPaint);
         gameChat->setObjectName("gameChat");
         gameChat->setGeometry(QRect(1200, 30, 301, 641));
-
         gameChatLabel = new QLabel(gameChat);
         gameChatLabel->setObjectName("gameChatLabel");
         gameChatLabel->setGeometry(QRect(110, 10, 81, 21));
-
         chatMessages = new QWidget(gameChat);
         chatMessages->setObjectName("chatMessages");
         chatMessages->setGeometry(QRect(-20, -130, 381, 781));
-
         messageButton = new QPushButton(chatMessages);
         messageButton->setObjectName("messageButton");
         messageButton->setGeometry(QRect(220, 730, 80, 24));
-
         messageBox = new QLineEdit(chatMessages);
         messageBox->setObjectName("messageBox");
         messageBox->setGeometry(QRect(40, 730, 171, 24));
         messageBox->raise();
-
         messageButton->raise();
-
         drawButton = new QPushButton(CanvasPaint);
         drawButton->setObjectName("drawButton");
         drawButton->setGeometry(QRect(1200, 690, 80, 24));
-
         eraseButton = new QPushButton(CanvasPaint);
         eraseButton->setObjectName("eraseButton");
         eraseButton->setGeometry(QRect(1290, 690, 80, 24));
-
         undoButton = new QPushButton(CanvasPaint);
         undoButton->setObjectName("undoButton");
         undoButton->setGeometry(QRect(1380, 690, 80, 24));
@@ -90,7 +79,7 @@ public:
     void retranslateUi(QDialog *CanvasPaint)
     {
         CanvasPaint->setWindowTitle(QCoreApplication::translate("CanvasPaint", "Canvas", nullptr));
-        resetCanvas->setText(QCoreApplication::translate("CanvasPaint", "Reset canvas", nullptr));
+        resetCanvas->setText(QCoreApplication::translate("CanvasPaint", "ResetCanvas", nullptr));
         leaveServerButton->setText(QCoreApplication::translate("CanvasPaint", "Leave Server", nullptr));
         gameChatLabel->setText(QCoreApplication::translate("CanvasPaint", "Game Chat", nullptr));
         messageButton->setText(QCoreApplication::translate("CanvasPaint", "Send", nullptr));

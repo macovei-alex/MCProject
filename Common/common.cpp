@@ -8,6 +8,14 @@ common::img::Color::Color(int64_t color) :
 	/* empty */
 }
 
+common::img::Color::Color(uint8_t r, uint8_t g, uint8_t b) :
+	r{ r },
+	g{ g },
+	b{ b }
+{
+	/* empty */
+}
+
 int32_t common::img::Color::ToInt32() const
 {
 	return r << 16 | g << 8 | b;

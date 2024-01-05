@@ -28,6 +28,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    CanvasPaint *child;
+    CanvasPaint *canvasPaint;
 };
 #endif // MAINWINDOW_H

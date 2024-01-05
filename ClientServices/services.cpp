@@ -275,7 +275,7 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<common::img::
 	}
 }
 
-void services::ReceiveImageUpdates(uint64_t gameID, std::ostream& outStream, std::ostream& errStream)
+std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, std::ostream& errStream)
 {
 	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
 
@@ -305,7 +305,7 @@ void services::ReceiveImageUpdates(uint64_t gameID, std::ostream& outStream, std
 			serverErrorDetected = false;
 
 		if (serverErrorDetected)
-			return;
+			return {};
 
 		auto pointsJsonList = crow::json::load(response.text);
 		if (pointsJsonList.size() == 0)
@@ -315,6 +315,9 @@ void services::ReceiveImageUpdates(uint64_t gameID, std::ostream& outStream, std
 		else
 			lastTimestamp = pointsJsonList[pointsJsonList.size() - 1][literals::jsonKeys::draw::timestamp].u() + 1;
 
+		std::vector<common::img::Point> points;
+		points.reserve(pointsJsonList.size());
+
 		for (auto& pointJson : pointsJsonList)
 		{
 			common::img::Point point{
@@ -322,12 +325,15 @@ void services::ReceiveImageUpdates(uint64_t gameID, std::ostream& outStream, std
 				pointJson[literals::jsonKeys::draw::pointY].i(),
 				pointJson[literals::jsonKeys::draw::color].i() };
 
-			outStream << std::format("[Drawing updater]: New point({}, {}, color({}, {}, {})) received\n", point.x, point.y, point.color.r, point.color.g, point.color.b);
+			points.emplace_back(point.x, point.y, common::img::Color{ point.color.r, point.color.g, point.color.b });
 		}
+
+		return points;
 	}
 	catch (const std::exception& exception)
 	{
 		errStream << "[Drawing updater]: " << exception.what() << '\n';
+		throw exception;
 	}
 }
 
@@ -410,18 +416,4 @@ void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
 		services::ReceiveImageUpdates(gameID);
 		std::this_thread::sleep_for(0.5s);
 	}
-}
-
-void services::SetLogFile(const std::string& filename)
-{
-	if(services::logger != nullptr)
-		delete services::logger;
-
-	services::logger = new Logger{ filename };
-}
-
-void services::Log(const std::string_view& message, Logger::Level level)
-{
-	if(services::logger != nullptr)
-		services::logger->Log(message, level);
 }

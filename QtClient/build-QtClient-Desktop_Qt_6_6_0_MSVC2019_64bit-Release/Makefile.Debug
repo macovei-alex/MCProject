@@ -362,6 +362,14 @@ debug\moc_canvaspaint.cpp: ..\QtClient\canvaspaint.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\qtextoption.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\qpen.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\QMouseEvent \
+		..\..\ClientServices\services.h \
+		..\..\ClientServices\servicesUtils.h \
+		..\..\Common\common.h \
+		..\..\Common\GameSettings.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\QThread \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthread.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qdeadlinetimer.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qelapsedtimer.h \
 		debug\moc_predefs.h \
 		C:\Qt\6.6.0\msvc2019_64\bin\moc.exe
 	C:\Qt\6.6.0\msvc2019_64\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include C:/Mac/Facultate/Anul_2/MC/Project/QtClient/build-QtClient-Desktop_Qt_6_6_0_MSVC2019_64bit-Release/debug/moc_predefs.h -IC:/Qt/6.6.0/msvc2019_64/mkspecs/win32-msvc -IC:/Mac/Facultate/Anul_2/MC/Project/QtClient/QtClient -IC:/Mac/Facultate/Anul_2/MC/Project/Common -IC:/Mac/Facultate/Anul_2/MC/Project/ClientServices -IC:/Qt/6.6.0/msvc2019_64/include -IC:/Qt/6.6.0/msvc2019_64/include/QtWidgets -IC:/Qt/6.6.0/msvc2019_64/include/QtGui -IC:/Qt/6.6.0/msvc2019_64/include/QtCore -I. -I"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include" -I"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\ATLMFC\include" -I"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\VS\include" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\um" -I"C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\shared" -I"C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\winrt" -I"C:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\cppwinrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um" ..\QtClient\canvaspaint.h -o debug\moc_canvaspaint.cpp
@@ -731,6 +739,14 @@ debug\canvaspaint.obj: ..\QtClient\canvaspaint.cpp ..\QtClient\canvaspaint.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\qtextoption.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\qpen.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\QMouseEvent \
+		..\..\ClientServices\services.h \
+		..\..\ClientServices\servicesUtils.h \
+		..\..\Common\common.h \
+		..\..\Common\GameSettings.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\QThread \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthread.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qdeadlinetimer.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qelapsedtimer.h \
 		..\QtClient\mainwindow.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtWidgets\QMainWindow \
 		C:\Qt\6.6.0\msvc2019_64\include\QtWidgets\qmainwindow.h \
@@ -745,13 +761,10 @@ debug\canvaspaint.obj: ..\QtClient\canvaspaint.cpp ..\QtClient\canvaspaint.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qfuture.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qfutureinterface.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qmutex.h \
-		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qdeadlinetimer.h \
-		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qelapsedtimer.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qtsan_impl.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qresultstore.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qfuture_impl.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthreadpool.h \
-		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthread.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qrunnable.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qexception.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qpromise.h \
@@ -1136,6 +1149,14 @@ debug\mainwindow.obj: ..\QtClient\mainwindow.cpp ..\QtClient\mainwindow.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\qtextoption.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\qpen.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtGui\QMouseEvent \
+		..\..\ClientServices\services.h \
+		..\..\ClientServices\servicesUtils.h \
+		..\..\Common\common.h \
+		..\..\Common\GameSettings.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\QThread \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthread.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qdeadlinetimer.h \
+		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qelapsedtimer.h \
 		..\QtClient\ui_mainwindow.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\QVariant \
 		C:\Qt\6.6.0\msvc2019_64\include\QtWidgets\QApplication \
@@ -1146,13 +1167,10 @@ debug\mainwindow.obj: ..\QtClient\mainwindow.cpp ..\QtClient\mainwindow.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qfuture.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qfutureinterface.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qmutex.h \
-		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qdeadlinetimer.h \
-		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qelapsedtimer.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qtsan_impl.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qresultstore.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qfuture_impl.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthreadpool.h \
-		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qthread.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qrunnable.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qexception.h \
 		C:\Qt\6.6.0\msvc2019_64\include\QtCore\qpromise.h \

@@ -8,7 +8,6 @@
 
 #include "common.h"
 #include "GameSettings.h"
-#include "..\TemporaryLogger\logger.h"
 
 namespace services
 {
@@ -23,7 +22,7 @@ namespace services
 	void ReceiveNewMessages(const std::string& username, uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 
 	void SendImageUpdates(uint64_t gameID, const std::vector<common::img::Point>& points, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
-	void ReceiveImageUpdates(uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
+	std::vector<common::img::Point> ReceiveImageUpdates(uint64_t gameID, std::ostream& errStream = std::cerr);
 
 	void SendGameSettings(uint64_t gameID, const GameSettings& gameSettings, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 	GameSettings ReceiveGameSettings(uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
@@ -31,8 +30,4 @@ namespace services
 	void MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing);
 	void MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing);
 	void ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing);
-
-	static Logger* logger = nullptr;
-	void SetLogFile(const std::string& filename);
-	void Log(const std::string_view& message, Logger::Level level = Logger::Level::Info);
 }

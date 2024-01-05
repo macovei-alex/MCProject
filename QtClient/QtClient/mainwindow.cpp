@@ -70,22 +70,21 @@ void MainWindow::on_loginButton_clicked()
 		}
 	}
 
-	roomID = services::CreateRoom();
+	// roomID = services::CreateRoom();
 #endif
 
 	/*CanvasPaint child;
 	child.setModal(true);
 	child.exec();*/
 
-	hide();
-	child = new CanvasPaint(this);
-	child->SetDrawState(CanvasPaint::DrawingState::DRAWING);
-
 #ifdef ONLINE
-	child->SetRoomID(roomID);
+	hide();
+	canvasPaint = new CanvasPaint(0, this);
+#else
+	canvasPaint = new CanvasPaint(this);
 #endif
 
-	child->show();
+	canvasPaint->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

@@ -14,6 +14,7 @@ namespace common
 
 			Color() = default;
 			Color(int64_t color);
+			Color(uint8_t r, uint8_t g, uint8_t b);
 			Color(const Color& color) = default;
 			Color& operator=(const Color& other) = default;
 			bool operator==(const Color& other) const = default;

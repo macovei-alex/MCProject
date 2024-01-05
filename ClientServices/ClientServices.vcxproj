@@ -150,9 +150,6 @@
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{a608b73c-5d6c-49ee-8f27-02e9cbee3670}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\TemporaryLogger\TemporaryLogger.vcxproj">
-      <Project>{a9c8cb5d-f9e1-4b30-9ef3-db16e8b4dfcc}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

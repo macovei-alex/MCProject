@@ -5,6 +5,53 @@
 #include <QGuiApplication>
 #include <QScreen>
 
+#ifdef ONLINE
+DrawnLine::DrawnLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
+	drawState{ color == 0x000000 ? DrawingState::ERASING : DrawingState::DRAWING }
+{
+	points.reserve(commonPoints.size());
+	for (const auto& commonPoint : commonPoints)
+		points.emplace_back(commonPoint.x, commonPoint.y);
+}
+
+std::vector<common::img::Point> DrawnLine::ToCommonPoints() const
+{
+	std::vector<common::img::Point> commonPoints;
+	commonPoints.reserve(points.size());
+
+	for (const auto& point : points)
+	{
+		commonPoints.emplace_back(
+			point.x(),
+			point.y(),
+			(drawState == DrawingState::DRAWING ? 0x000000 : 0xFFFFFF));
+	}
+
+	return commonPoints;
+}
+
+void ImageReceiver::ImageReceiverSlot(uint64_t roomID, QList<DrawnLine>& lines, bool& keepGoing)
+{
+	using std::chrono_literals::operator""s;
+	try
+	{
+		while (keepGoing)
+		{
+			auto points{ std::move(services::ReceiveImageUpdates(roomID)) };
+			if (!points.empty())
+			{
+				lines.append(DrawnLine{ std::move(points), 0xFFFFFF });
+			}
+			std::this_thread::sleep_for(0.25s);
+		}
+	}
+	catch (const std::exception& e)
+	{
+		qDebug() << e.what() << '\n';
+	}
+}
+#endif
+
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog(parent),
 	ui(new Ui::CanvasPaint),
@@ -23,25 +70,55 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height());
 	canvasPixmap.fill(Qt::white);
 
+	drawState = DrawingState::DRAWING;
+
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 }
 
-CanvasPaint::~CanvasPaint()
-{
-	delete ui;
-}
-
-void CanvasPaint::SetDrawState(DrawingState state)
-{
-	drawState = state;
-}
-
 #ifdef ONLINE
-void CanvasPaint::SetRoomID(uint64_t roomID)
+CanvasPaint::CanvasPaint(uint64_t roomID, QWidget* parent) :
+	QDialog(parent),
+	ui(new Ui::CanvasPaint),
+	drawState{ DrawingState::DRAWING },
+	keepGoing{ true },
+	imageReceiver{ },
+	imageReceiverThread{ }
+
 {
-	this->roomID = roomID;
+	ui->setupUi(this);
+
+	ui->gameChatLabel->setStyleSheet("border: none;");
+	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
+
+	QScreen* primaryScreen = QGuiApplication::primaryScreen();
+	QSize screenSize = primaryScreen->geometry().size();
+	setGeometry(0, 0, screenSize.width(), screenSize.height());
+	setStyleSheet("QDialog { border: 2px solid black; }");
+
+	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height());
+	canvasPixmap.fill(Qt::white);
+
+	drawState = DrawingState::DRAWING;
+
+	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+
+	imageReceiver.moveToThread(&imageReceiverThread);
+	connect(&imageReceiverThread, &QThread::started, [=]() {
+		imageReceiver.ImageReceiverSlot(roomID, drawnLines, keepGoing);
+		});
+	imageReceiverThread.start();
 }
 #endif
+
+CanvasPaint::~CanvasPaint()
+{
+
+#ifdef ONLINE
+	keepGoing = false;
+#endif
+
+	delete ui;
+}
 
 void CanvasPaint::paintEvent(QPaintEvent* event)
 {
@@ -102,35 +179,6 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 }
-
-#ifdef ONLINE
-CanvasPaint::DrawnLine::DrawnLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
-	drawState{ color == 0x000000 ? DrawingState::ERASING : DrawingState::DRAWING }
-{
-	points.reserve(commonPoints.size());
-	for (const auto& commonPoint : commonPoints)
-		points.emplace_back(commonPoint.x, commonPoint.y);
-}
-
-std::vector<common::img::Point> CanvasPaint::DrawnLine::ToCommonPoints() const
-{
-	std::vector<common::img::Point> commonPoints;
-	commonPoints.reserve(points.size());
-
-	for (const auto& point : points)
-	{
-		common::img::Point commonPoint;
-
-		commonPoint.x = point.x();
-		commonPoint.y = point.y();
-		commonPoint.color = (drawState == DrawingState::DRAWING ? 0x000000 : 0xFFFFFF);
-
-		commonPoints.emplace_back(std::move(commonPoint));
-	}
-
-	return commonPoints;
-}
-#endif
 
 void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 {
