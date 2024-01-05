@@ -11,7 +11,6 @@
 #include <QThread>
 #include <qpixmap.h>
 #include <cstdint>
-#include <vector>
 
 #ifdef ONLINE
 #include "services.h"
@@ -27,8 +26,9 @@ enum class DrawingState : uint8_t
 
 struct DrawnLine
 {
-	static const uint32_t DRAWING_COLOR_INT;
-	static const uint32_t ERASING_COLOR_INT;
+	static const int32_t DRAWING_COLOR_INT;
+	static const int32_t ERASING_COLOR_INT;
+	static const int32_t INVALID_COLOR_INT;
 
 	QList<QPoint> points;
 	DrawingState drawState;

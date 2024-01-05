@@ -6,8 +6,9 @@
 #include <QScreen>
 #include <QObject>
 
-const uint32_t DrawnLine::DRAWING_COLOR_INT = 0x000000;
-const uint32_t DrawnLine::ERASING_COLOR_INT = 0xFFFFFF;
+const int32_t DrawnLine::DRAWING_COLOR_INT = 0x000000;
+const int32_t DrawnLine::ERASING_COLOR_INT = 0xFFFFFF;
+const int32_t DrawnLine::INVALID_COLOR_INT = 0x000001;
 
 #ifdef ONLINE
 DrawnLine::DrawnLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
@@ -52,34 +53,32 @@ void ImageReceiver::run()
 			auto points{ std::move(services::ReceiveImageUpdates(roomID)) };
 			qDebug() << "Received points: " << points.size();
 
-			if (points.size() != 0)
+			if (points.empty())
 			{
-				QList<DrawnLine>* newLines = new QList<DrawnLine>();
-				DrawnLine line;
-				line.drawState = (points[0].color == DrawnLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
+				std::this_thread::sleep_for(0.25s);
+				continue;
+			}
 
-				for (const auto& point : points)
+			QList<DrawnLine>* newLines = new QList<DrawnLine>();
+			DrawnLine* line;
+
+			for (size_t i = 0; i < points.size(); i++)
+			{
+				line = new DrawnLine();
+				line->drawState = (points[i].color == DrawnLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
+
+				while(i < points.size() && points[i].color != DrawnLine::INVALID_COLOR_INT)
 				{
-					uint32_t currentColor = (line.drawState == DrawingState::DRAWING ? DrawnLine::DRAWING_COLOR_INT : DrawnLine::ERASING_COLOR_INT);
-					if (point.color != currentColor)
-					{
-						if (line.points.size() > 0)
-						{
-							newLines->append(line);
-						}
-
-						line.points.clear();
-						line.drawState = (point.color == DrawnLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
-					}
-
-					qDebug() << "Point: " << point.x << ", " << point.y << ", " << point.color.ToInt32();
-					line.points.append(QPoint(point.x, point.y));
+					line->points.emplace_back(points[i].x, points[i].y);
+					i++;
 				}
 
-				qDebug() << "Received lines: " << newLines->size();
-
-				emit LinesReceived(newLines);
+				newLines->append(std::move(*line));
 			}
+
+			qDebug() << "Received lines: " << newLines->size();
+
+			emit LinesReceived(newLines);
 
 			std::this_thread::sleep_for(0.25s);
 		}
@@ -228,15 +227,11 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 		currentLine.drawState = drawState;
 		drawnLines.append(currentLine);
 
-		#ifdef ONLINE
-		auto commonPoints = currentLine.ToCommonPoints();
-		qDebug() << "Sending points: " << commonPoints.size();
-		if (commonPoints.size() != 0)
-		{
-			qDebug() << "First point: " << commonPoints[0].color.ToInt32();
-		}
-		services::SendImageUpdates(roomID, currentLine.ToCommonPoints());
-		#endif
+#ifdef ONLINE
+		auto commonPoints{ std::move(currentLine.ToCommonPoints()) };
+		commonPoints.emplace_back(common::img::Point(-1, -1, DrawnLine::INVALID_COLOR_INT));
+		services::SendImageUpdates(roomID, commonPoints);
+#endif
 
 		currentLine.points.clear();
 	}
