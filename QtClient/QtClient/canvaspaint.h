@@ -24,7 +24,7 @@ enum class DrawingState : uint8_t
 	ERASING
 };
 
-struct DrawnLine
+struct MyLine
 {
 	static const int32_t DRAWING_COLOR_INT;
 	static const int32_t ERASING_COLOR_INT;
@@ -33,10 +33,10 @@ struct DrawnLine
 	QList<QPoint> points;
 	DrawingState drawState;
 
-	DrawnLine() = default;
+	MyLine() = default;
 
 #ifdef ONLINE
-	DrawnLine(std::vector<common::img::Point>&& points, uint32_t color);
+	MyLine(std::vector<common::img::Point>&& points, uint32_t color);
 	std::vector<common::img::Point> ToCommonPoints() const;
 #endif
 
@@ -53,7 +53,7 @@ public:
 	void Stop();
 
 signals:
-	void LinesReceived(QList<DrawnLine>* lines);
+	void LinesReceivedSignal(QList<MyLine>* lines);
 
 public:
 	uint64_t roomID;
@@ -100,7 +100,7 @@ private slots:
 	void on_undoButton_clicked();
 	void on_messageButton_clicked();
 
-	void HandleAddLines(QList<DrawnLine>* newLines);
+	void HandleAddLines(QList<MyLine>* newLines);
 
 signals:
 	void Signal();
@@ -109,8 +109,8 @@ private:
 	MainWindow* signInWindow;
 
 	QPixmap canvasPixmap;
-	QList<DrawnLine> drawnLines;
-	DrawnLine currentLine;
+	QList<MyLine> myLines;
+	MyLine currentLine;
 	QPoint lastPoint;
 
 	DrawingState drawState;
@@ -123,8 +123,8 @@ private:
 #endif
 
 private:
-	const QPen DRAWING_PEN = QPen(QColor(DrawnLine::DRAWING_COLOR_INT), 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
-	const QPen ERASING_PEN = QPen(QColor(DrawnLine::ERASING_COLOR_INT), 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	const QPen DRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(MyLine::DRAWING_COLOR_INT) }, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
+	const QPen ERASING_PEN = QPen{ QColor{ static_cast<QRgb>(MyLine::ERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
 };
 
 #endif // CANVASPAINT_H

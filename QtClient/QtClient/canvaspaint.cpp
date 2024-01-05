@@ -6,37 +6,38 @@
 #include <QScreen>
 #include <QObject>
 
-const int32_t DrawnLine::DRAWING_COLOR_INT = 0x000000;
-const int32_t DrawnLine::ERASING_COLOR_INT = 0xFFFFFF;
-const int32_t DrawnLine::INVALID_COLOR_INT = 0x000001;
+const int32_t MyLine::DRAWING_COLOR_INT{ 0x000000 };
+const int32_t MyLine::ERASING_COLOR_INT{ 0xFFFFFF };
+const int32_t MyLine::INVALID_COLOR_INT{ 0xFFFFFE };
 
 #ifdef ONLINE
-DrawnLine::DrawnLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
-	drawState{ color == ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING }
+MyLine::MyLine(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
+	drawState{ color == ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING },
+	points{ static_cast<qsizetype>(commonPoints.size()), QPoint() }
 {
-	points.reserve(commonPoints.size());
+	size_t pos = 0;
 	for (const auto& commonPoint : commonPoints)
-		points.emplace_back(commonPoint.x, commonPoint.y);
+		points[pos++] = QPoint{ commonPoint.x, commonPoint.y };
 }
 
-std::vector<common::img::Point> DrawnLine::ToCommonPoints() const
+std::vector<common::img::Point> MyLine::ToCommonPoints() const
 {
-	std::vector<common::img::Point> commonPoints;
-	commonPoints.reserve(points.size());
+	std::vector<common::img::Point> commonPoints{ static_cast<size_t>(points.size()), common::img::Point{} };
+	size_t pos = 0;
 
 	for (const auto& point : points)
 	{
-		commonPoints.emplace_back(
+		commonPoints[pos++] = {
 			point.x(),
 			point.y(),
-			(drawState == DrawingState::DRAWING ? DRAWING_COLOR_INT : ERASING_COLOR_INT));
+			(drawState == DrawingState::DRAWING ? DRAWING_COLOR_INT : ERASING_COLOR_INT) };
 	}
 
 	return commonPoints;
 }
 
 ImageReceiver::ImageReceiver(uint64_t roomID, bool& keepGoing, QWidget* parent) :
-	QThread(parent),
+	QThread{ parent },
 	keepGoing{ keepGoing },
 	roomID{ roomID }
 {
@@ -50,35 +51,37 @@ void ImageReceiver::run()
 	{
 		while (keepGoing)
 		{
-			auto points{ std::move(services::ReceiveImageUpdates(roomID)) };
-			qDebug() << "Received points: " << points.size();
+			auto commonPoints{ std::move(services::ReceiveImageUpdates(roomID)) };
 
-			if (points.empty())
+			if (commonPoints.empty())
 			{
 				std::this_thread::sleep_for(0.25s);
 				continue;
 			}
 
-			QList<DrawnLine>* newLines = new QList<DrawnLine>();
-			DrawnLine* line;
+			qDebug() << "Received points: " << commonPoints.size();
 
-			for (size_t i = 0; i < points.size(); i++)
+			QList<MyLine>* newLines{ new QList<MyLine> };
+			MyLine* line;
+
+			for (size_t i = 0; i < commonPoints.size(); i++)
 			{
-				line = new DrawnLine();
-				line->drawState = (points[i].color == DrawnLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
+				line = new MyLine;
+				line->drawState = (commonPoints[i].color == MyLine::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
 
-				while(i < points.size() && points[i].color != DrawnLine::INVALID_COLOR_INT)
+				while (i < commonPoints.size() && commonPoints[i].color != MyLine::INVALID_COLOR_INT)
 				{
-					line->points.emplace_back(points[i].x, points[i].y);
+					line->points.emplace_back(commonPoints[i].x, commonPoints[i].y);
 					i++;
 				}
 
-				newLines->append(std::move(*line));
+				newLines->emplace_back(std::move(*line));
+				i++;
 			}
 
 			qDebug() << "Received lines: " << newLines->size();
 
-			emit LinesReceived(newLines);
+			emit LinesReceivedSignal(newLines);
 
 			std::this_thread::sleep_for(0.25s);
 		}
@@ -91,57 +94,49 @@ void ImageReceiver::run()
 #endif
 
 CanvasPaint::CanvasPaint(QWidget* parent) :
-	QDialog(parent),
-	ui(new Ui::CanvasPaint),
-	drawState{ DrawingState::DRAWING },
-	drawnLines{ }
+	QDialog{ parent },
+	ui{ new Ui::CanvasPaint },
+	drawState{ DrawingState::DRAWING }
 {
 	ui->setupUi(this);
 
 	ui->gameChatLabel->setStyleSheet("border: none;");
 	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
-	QScreen* primaryScreen = QGuiApplication::primaryScreen();
-	QSize screenSize = primaryScreen->geometry().size();
+	QSize screenSize{ QGuiApplication::primaryScreen()->geometry().size() };
 	setGeometry(0, 0, screenSize.width(), screenSize.height());
 	setStyleSheet("QDialog { border: 2px solid black; }");
 
-	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height());
+	canvasPixmap = QPixmap{ screenSize.width() * 3 / 4, screenSize.height() };
 	canvasPixmap.fill(Qt::white);
-
-	drawState = DrawingState::DRAWING;
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 }
 
 #ifdef ONLINE
 CanvasPaint::CanvasPaint(uint64_t roomID, QWidget* parent) :
-	QDialog(parent),
-	ui(new Ui::CanvasPaint),
+	QDialog{ parent },
+	ui{ new Ui::CanvasPaint },
 	drawState{ DrawingState::DRAWING },
 	keepGoing{ true },
 	roomID{ roomID },
-	drawnLines{ }
+	imageReceiver{ new ImageReceiver(roomID, keepGoing, this) }
 {
 	ui->setupUi(this);
 
 	ui->gameChatLabel->setStyleSheet("border: none;");
 	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
-	QScreen* primaryScreen = QGuiApplication::primaryScreen();
-	QSize screenSize = primaryScreen->geometry().size();
+	QSize screenSize{ QGuiApplication::primaryScreen()->geometry().size() };
 	setGeometry(0, 0, screenSize.width(), screenSize.height());
 	setStyleSheet("QDialog { border: 2px solid black; }");
 
-	canvasPixmap = QPixmap(screenSize.width() * 3 / 4, screenSize.height());
+	canvasPixmap = QPixmap{ screenSize.width() * 3 / 4, screenSize.height() };
 	canvasPixmap.fill(Qt::white);
-
-	drawState = DrawingState::DRAWING;
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	imageReceiver = new	ImageReceiver(roomID, keepGoing, this);
-	connect(imageReceiver, &ImageReceiver::LinesReceived, this, &CanvasPaint::HandleAddLines);
+	connect(imageReceiver, &ImageReceiver::LinesReceivedSignal, this, &CanvasPaint::HandleAddLines);
 	connect(imageReceiver, &ImageReceiver::finished, imageReceiver, &QObject::deleteLater);
 	imageReceiver->start();
 }
@@ -186,17 +181,20 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
 	if (canvasPixmap.rect().contains(event->pos()))
 	{
-		QPoint currentPos = event->pos();
+		QPoint currentPos{ event->pos() };
 
 		if (drawState == DrawingState::DRAWING)
 		{
-			QPainter painter(&canvasPixmap);
+			QPainter painter{ &canvasPixmap };
 			painter.setPen(DRAWING_PEN);
-			currentLine.points.append(currentPos);
 
-			for (int i = 1; i < currentLine.points.size(); i++)
+			currentLine.points.emplace_back(currentPos);
+
+			if (currentLine.points.size() > 1)
 			{
-				painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
+				painter.drawLine(
+					currentLine.points[currentLine.points.size() - 2],
+					currentLine.points[currentLine.points.size() - 1]);
 			}
 
 			update();
@@ -204,15 +202,17 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 
 		else if (drawState == DrawingState::ERASING)
 		{
-			QPainter painter(&canvasPixmap);
+			QPainter painter{ &canvasPixmap };
 			painter.setCompositionMode(QPainter::CompositionMode_Source);
 			painter.setPen(ERASING_PEN);
 
-			currentLine.points.append(currentPos);
+			currentLine.points.emplace_back(currentPos);
 
-			for (int i = 1; i < currentLine.points.size(); i++)
+			if (currentLine.points.size() > 1)
 			{
-				painter.drawLine(currentLine.points[i - 1], currentLine.points[i]);
+				painter.drawLine(
+					currentLine.points[currentLine.points.size() - 2],
+					currentLine.points[currentLine.points.size() - 1]);
 			}
 
 			update();
@@ -225,24 +225,23 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 	if (event->button() == Qt::LeftButton)
 	{
 		currentLine.drawState = drawState;
-		drawnLines.append(currentLine);
 
 #ifdef ONLINE
 		auto commonPoints{ std::move(currentLine.ToCommonPoints()) };
-		commonPoints.emplace_back(common::img::Point(-1, -1, DrawnLine::INVALID_COLOR_INT));
+		commonPoints.emplace_back(common::img::Point{ -1, -1, MyLine::INVALID_COLOR_INT });
 		services::SendImageUpdates(roomID, commonPoints);
 #endif
 
-		currentLine.points.clear();
+		myLines.emplace_back(std::move(currentLine));
 	}
 }
 
 void CanvasPaint::resizeEvent(QResizeEvent* event)
 {
-	QPixmap newPixmap(event->size().width() * 3 / 4, event->size().height());
+	QPixmap newPixmap{ event->size().width() * 3 / 4, event->size().height() };
 	newPixmap.fill(Qt::white);
 	QPainter painter(&newPixmap);
-	painter.drawPixmap(QRect(0, 0, event->size().width() * 3 / 4, event->size().height()), canvasPixmap);
+	painter.drawPixmap(QRect{ 0, 0, event->size().width() * 3 / 4, event->size().height() }, canvasPixmap);
 	canvasPixmap = std::move(newPixmap);
 
 	update();
@@ -251,7 +250,7 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 void CanvasPaint::ClearCanvas()
 {
 	canvasPixmap.fill(Qt::white);
-	drawnLines.clear();
+	myLines.clear();
 	update();
 }
 
@@ -280,17 +279,17 @@ void CanvasPaint::on_eraseButton_clicked()
 
 void CanvasPaint::on_undoButton_clicked()
 {
-	if (!drawnLines.isEmpty())
+	if (!myLines.isEmpty())
 	{
 		canvasPixmap.fill(Qt::white);
-		QPainter painter(&canvasPixmap);
-		drawnLines.pop_back();
+		QPainter painter{ &canvasPixmap };
+		myLines.pop_back();
 
-		for (const auto& line : drawnLines)
+		for (const auto& line : myLines)
 		{
 			painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
 
-			for (int i = 1; i < line.points.size(); i++)
+			for (size_t i = 1; i < line.points.size(); i++)
 				painter.drawLine(line.points[i - 1], line.points[i]);
 		}
 
@@ -303,17 +302,17 @@ void CanvasPaint::on_messageButton_clicked()
 	ui->messageBox->clear();
 }
 
-void CanvasPaint::HandleAddLines(QList<DrawnLine>* newLines)
+void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 {
-	QPainter painter(&canvasPixmap);
+	QPainter painter{ &canvasPixmap };
 
 	for (auto& line : *newLines)
 	{
-		painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
-		for (int i = 1; i < line.points.size(); i++)
+		painter.setPen((line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN));
+		for (size_t i = 1; i < line.points.size(); i++)
 			painter.drawLine(line.points[i - 1], line.points[i]);
 
-		drawnLines.append(line);
+		myLines.emplace_back(std::move(line));
 	}
 
 	delete newLines;
