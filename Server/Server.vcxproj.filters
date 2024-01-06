@@ -103,7 +103,7 @@
     <Text Include="serverSettings.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="..\x64\Release\server.log">
+    <Text Include="server.log">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

@@ -11,9 +11,9 @@ Server::Server() :
 	m_port{ 0 },
 	m_IPAddress{ "127.0.0.1" },
 	m_database{ "database.sqlite" },
-	m_logger{ "server.log" }
+	m_logger{ std::make_unique<Logger>("server.log") }
 {
-	/* empty */
+	Log(m_database.ResetPlayerAccounts().reason);
 }
 
 Server& Server::AllHandlers()
@@ -476,12 +476,13 @@ void Server::Run()
 
 void Server::Log(const std::string_view& message, Logger::Level level)
 {
-	m_logger.Log(message, level);
+	m_logger->Log(message, level);
 }
 
 Server& Server::SetSettingsFromFile(const std::string& filePath)
 {
 	utils::NavigateToProjectDirectory();
+
 	enum ServerSetting
 	{
 		allHandlers,
@@ -532,6 +533,7 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 		}
 	}
 
-	Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
+	m_logger = std::make_unique<Logger>("server.log");
+	m_logger->Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
 	return *this;
 }

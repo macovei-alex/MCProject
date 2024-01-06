@@ -32,6 +32,7 @@ namespace db
 		db::ReturnValue AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
 		db::GameHistory GetGameHistory(const std::string& playerName);
 		std::vector<std::string> GetRandomWords(int number, const std::string& difficulty);
+		db::ReturnValue ResetPlayerAccounts();
 
 	private:
 		Storage m_storage;

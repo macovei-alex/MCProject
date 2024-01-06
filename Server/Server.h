@@ -51,6 +51,6 @@ private:
 	std::string m_IPAddress;
 
 	db::Database m_database;
-	Logger m_logger;
+	std::unique_ptr<Logger> m_logger;
 	std::map<uint64_t, Game> m_games;
 };

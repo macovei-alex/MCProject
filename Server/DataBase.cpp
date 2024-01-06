@@ -158,3 +158,19 @@ std::vector<std::string> db::Database::GetRandomWords(int number, const std::str
 
 	return randomWords;
 }
+
+db::ReturnValue db::Database::ResetPlayerAccounts()
+{
+	auto players{ std::move(m_storage.get_all<db::Player>()) };
+
+	for (auto& player : players)
+	{
+		if (player.isOnline)
+		{
+			player.isOnline = false;
+			m_storage.update(player);
+		}
+	}
+
+	return { true, "All accounts have been reset" };
+}
