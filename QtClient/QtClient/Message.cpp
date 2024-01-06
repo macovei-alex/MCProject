@@ -32,14 +32,6 @@ Message::Message(const Message& other) :
 	/* empty */
 }
 
-Message::Message(Message&& other) noexcept :
-	text{ std::move(other.text) },
-	author{ std::move(other.author) },
-	timestamp{ other.timestamp }
-{
-	/* empty */
-}
-
 Message& Message::operator=(const Message& other)
 {
 	if (this != &other)
@@ -50,6 +42,15 @@ Message& Message::operator=(const Message& other)
 	}
 
 	return *this;
+}
+
+#ifdef ONLINE
+Message::Message(Message&& other) noexcept :
+    text{ std::move(other.text) },
+    author{ std::move(other.author) },
+    timestamp{ other.timestamp }
+{
+    /* empty */
 }
 
 Message& Message::operator=(Message&& other) noexcept
@@ -63,3 +64,4 @@ Message& Message::operator=(Message&& other) noexcept
 
 	return *this;
 }
+#endif

@@ -12,6 +12,7 @@ SOURCES += \
     ChatThread.cpp \
     GameStateThread.cpp \
     ImageThread.cpp \
+    Message.cpp \
     canvaspaint.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,6 +23,7 @@ HEADERS += \
     GameState.h \
     GameStateThread.h \
     ImageThread.h \
+    Message.h \
     canvaspaint.h \
     macro.h \
     mainwindow.h \
