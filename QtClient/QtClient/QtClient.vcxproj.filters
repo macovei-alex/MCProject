@@ -10,6 +10,9 @@
     <ClCompile Include="canvaspaint.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
+    <ClCompile Include="MyLine.cpp">
+      <Filter>Source Files\Canvas Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui_canvaspaint.h">
@@ -20,6 +23,12 @@
     </ClInclude>
     <ClInclude Include="macro.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingState.h">
+      <Filter>Header Files\Canvas Window</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLine.h">
+      <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

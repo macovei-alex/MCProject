@@ -14,34 +14,9 @@
 #include "services.h"
 #endif
 
+#include "MyLine.h"
+
 class MainWindow;
-
-enum class DrawingState : uint8_t
-{
-	DRAWING,
-	ERASING
-};
-
-struct MyLine
-{
-	static const int32_t DRAWING_COLOR_INT;
-	static const int32_t ERASING_COLOR_INT;
-
-#ifdef ONLINE
-	static const int32_t INVALID_COLOR_INT;
-#endif
-
-	QList<QPoint> points;
-	DrawingState drawState;
-
-	MyLine() = default;
-
-#ifdef ONLINE
-	MyLine(std::vector<common::img::Point>&& points, uint32_t color);
-	std::vector<common::img::Point> ToCommonPoints() const;
-#endif
-
-};
 
 class ImageReceiver : public QThread
 {
@@ -50,8 +25,6 @@ class ImageReceiver : public QThread
 public:
 	ImageReceiver(uint64_t roomID, bool& keepGoing, QWidget* parent = nullptr);
 	~ImageReceiver() = default;
-
-	void Stop();
 
 signals:
 	void LinesReceivedSignal(QList<MyLine>* lines);
@@ -77,7 +50,7 @@ public:
 	CanvasPaint(QWidget* parent = nullptr);
 
 #ifdef ONLINE
-	CanvasPaint(uint64_t roomID, QWidget* parent = nullptr);
+	CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
 #endif
 
 	~CanvasPaint();
@@ -121,6 +94,7 @@ private:
 	uint64_t roomID;
 	ImageReceiver* imageReceiver;
 	bool keepGoing;
+	QString username;
 #endif
 
 private:

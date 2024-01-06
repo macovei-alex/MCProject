@@ -47,7 +47,7 @@ void MainWindow::on_loginButton_clicked()
 	{
 		QMessageBox msgBox;
 		msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
-			"and password " + ui->passwordLineEdit->text() +
+			" and password " + ui->passwordLineEdit->text() +
 			" exists. Do you want to create one?");
 
 		QPushButton* yesButton{ msgBox.addButton(tr("Yes"), QMessageBox::YesRole) };
@@ -75,7 +75,8 @@ void MainWindow::on_loginButton_clicked()
 	hide();
 	// roomID = services::CreateRoom();
 	roomID = 0;
-	canvasPaint = new CanvasPaint(roomID, this);
+
+	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
 #else
 	canvasPaint = new CanvasPaint(this);
 #endif

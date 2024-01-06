@@ -190,6 +190,7 @@
     <ClCompile Include="canvaspaint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="MyLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="mainwindow.h" />
@@ -221,7 +222,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="canvaspaint.h" />
+    <ClInclude Include="DrawingState.h" />
     <ClInclude Include="macro.h" />
+    <ClInclude Include="MyLine.h" />
     <ClInclude Include="ui_canvaspaint.h" />
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>

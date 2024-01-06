@@ -1,10 +1,15 @@
-(2024-01-06 13:20:48) [Info]: All accounts have been reset
-(2024-01-06 13:20:48) [Info]: Test handler set
-(2024-01-06 13:20:48) [Info]: Chat handlers set
-(2024-01-06 13:20:48) [Info]: Room handlers set
-(2024-01-06 13:20:48) [Info]: Account handlers set
-(2024-01-06 13:20:48) [Info]: Draw handlers set
-(2024-01-06 13:20:48) [Info]: Game settings handlers set
-(2024-01-06 13:20:48) [Info]: Server ready to run
-(2024-01-06 13:20:55) [Info]: Player logged in as < root >
-(2024-01-06 13:20:56) [Info]: New room created with ID < 0 >
+(2024-01-06 13:47:28) [Info]: All accounts have been reset
+(2024-01-06 13:47:28) [Info]: Test handler set
+(2024-01-06 13:47:28) [Info]: Chat handlers set
+(2024-01-06 13:47:28) [Info]: Room handlers set
+(2024-01-06 13:47:28) [Info]: Account handlers set
+(2024-01-06 13:47:28) [Info]: Draw handlers set
+(2024-01-06 13:47:28) [Info]: Game settings handlers set
+(2024-01-06 13:47:28) [Info]: Server ready to run
+(2024-01-06 13:47:34) [Info]: Player logged in as < Alex >
+(2024-01-06 13:47:39) [Error]: Player is already online!
+(2024-01-06 13:47:44) [Info]: new updates added
+(2024-01-06 13:47:44) [Info]: new updates added
+(2024-01-06 13:47:50) [Info]: Player < Alex > logged out
+(2024-01-06 13:47:56) [Info]: Player logged in as < Alex >
+(2024-01-06 13:47:58) [Info]: Player < Alex > logged out
