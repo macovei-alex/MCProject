@@ -182,7 +182,7 @@
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="server.log" />
+    <Text Include="..\x64\Release\server.log" />
     <Text Include="serverSettings.txt" />
     <Text Include="words.txt" />
   </ItemGroup>

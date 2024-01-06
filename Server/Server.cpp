@@ -240,7 +240,7 @@ Server& Server::AccountHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		db::ReturnValue returnValue = m_database.SignUp(username, password);
+		db::ReturnValue returnValue{ std::move(m_database.SignUp(username, password)) };
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
@@ -282,7 +282,7 @@ Server& Server::AccountHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		db::ReturnValue returnValue = m_database.SignOut(username);
+		db::ReturnValue returnValue{ std::move(m_database.SignOut(username)) };
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
