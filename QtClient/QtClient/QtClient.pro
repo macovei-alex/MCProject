@@ -15,6 +15,7 @@ SOURCES += \
 
 HEADERS += \
     canvaspaint.h \
+    macro.h \
     mainwindow.h \
     ui_canvaspaint.h \
     ui_mainwindow.h

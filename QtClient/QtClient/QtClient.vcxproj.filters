@@ -1,27 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="canvaspaint.cpp" />
+    <ClCompile Include="canvaspaint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ui_mainwindow.h" />
-    <ClInclude Include="ui_canvaspaint.h" />
+    <ClInclude Include="ui_canvaspaint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="macro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="debug\moc_predefs.h.cbt" />
-    <CustomBuild Include="release\moc_predefs.h.cbt" />
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>CBT Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>CBT Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="mainwindow.h" />
-    <QtMoc Include="canvaspaint.h" />
+    <QtMoc Include="canvaspaint.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="mainwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="resource.qrc" />
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="mainwindow.ui" />
-    <QtUic Include="canvaspaint.ui" />
+    <QtUic Include="mainwindow.ui">
+      <Filter>UI Files</Filter>
+    </QtUic>
+    <QtUic Include="canvaspaint.ui">
+      <Filter>UI Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6c7f4f4f-fa44-452d-9028-6eca0e6b2266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{b2ba1ff4-7583-4a58-b75a-2dd515d3c5bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI Files">
+      <UniqueIdentifier>{fdd885d9-f5e8-4b39-b530-904a17557ec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CBT Files">
+      <UniqueIdentifier>{ee819293-dcb5-4411-bd25-f7b0c7da9369}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

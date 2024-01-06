@@ -1,9 +1,7 @@
 ﻿#ifndef CANVASPAINT_H
 #define CANVASPAINT_H
 
-#if defined(_MSVC_LANG) && (_MSVC_LANG == 202002L) && 1
-#define ONLINE
-#endif
+#include "macro.h"
 
 #include <QDialog>
 #include <QPainter>

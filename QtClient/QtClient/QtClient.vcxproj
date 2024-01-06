@@ -221,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="canvaspaint.h" />
+    <ClInclude Include="macro.h" />
     <ClInclude Include="ui_canvaspaint.h" />
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>
