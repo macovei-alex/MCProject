@@ -39,9 +39,6 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="resource.qrc" />
-  </ItemGroup>
-  <ItemGroup>
     <QtUic Include="mainwindow.ui">
       <Filter>UI Files</Filter>
     </QtUic>
@@ -62,5 +59,13 @@
     <Filter Include="CBT Files">
       <UniqueIdentifier>{ee819293-dcb5-4411-bd25-f7b0c7da9369}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{1173c52f-cd3f-4edf-9e4c-5b929894c141}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="resource.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
 </Project>
