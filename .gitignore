@@ -410,3 +410,4 @@ FodyWeavers.xsd
 /.gitignore
 /.gitignore
 /Common/GameState.cpp
+/Server/server.log

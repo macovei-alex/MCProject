@@ -7,14 +7,14 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QThread>
-#include <qpixmap.h>
+#include <QPixmap>
 
-#include "MyLine.h"
+#include "Line.h"
 #include "GameState.h"
 
 #ifdef ONLINE
-#include "ImageReceiverThread.h"
-#include "GameStateReceiverThread.h"
+#include "ImageThread.h"
+#include "GameStateThread.h"
 #endif
 
 class MainWindow;
@@ -56,7 +56,7 @@ private slots:
 	void on_undoButton_clicked();
 	void on_messageButton_clicked();
 
-	void HandleAddLines(QList<MyLine>* newLines);
+	void HandleAddLines(QList<Line>* newLines);
 	void HandleReceiveState(const QPair<GameState, uint64_t>& gameStatePair);
 
 signals:
@@ -66,8 +66,8 @@ private:
 	MainWindow* signInWindow;
 
 	QPixmap canvasPixmap;
-	QList<MyLine> myLines;
-	MyLine currentLine;
+	QList<Line> lines;
+	Line currentLine;
 	QPoint lastPoint;
 
 	DrawingState drawState;
@@ -75,15 +75,15 @@ private:
 
 #ifdef ONLINE
 	uint64_t roomID;
-	ImageReceiverThread* imageReceiverThread;
-	GameStateReceiverThread* gameStateReceiverThread;
+	ImageThread* imageThread;
+	GameStateThread* gameStateThread;
 	bool keepGoing;
 	QString username;
 #endif
 
 private:
-	const QPen DRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(MyLine::DRAWING_COLOR_INT) }, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
-	const QPen ERASING_PEN = QPen{ QColor{ static_cast<QRgb>(MyLine::ERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
+	const QPen DRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::DRAWING_COLOR_INT) }, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
+	const QPen ERASING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::ERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
 };
 
 #endif // CANVASPAINT_H

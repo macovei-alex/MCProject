@@ -13,7 +13,7 @@
 
 #include "DrawingState.h"
 
-struct MyLine
+struct Line
 {
 	static const int32_t DRAWING_COLOR_INT;
 	static const int32_t ERASING_COLOR_INT;
@@ -25,10 +25,10 @@ struct MyLine
 	QList<QPoint> points;
 	DrawingState drawState;
 
-	MyLine() = default;
+	Line() = default;
 
 #ifdef ONLINE
-	MyLine(std::vector<common::img::Point>&& points, uint32_t color);
+	Line(std::vector<common::img::Point>&& points, uint32_t color);
 	std::vector<common::img::Point> ToCommonPoints() const;
 #endif
 

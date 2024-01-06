@@ -39,8 +39,8 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 	keepGoing{ true },
 	roomID{ roomID },
 	username{ username },
-	imageReceiverThread{ new ImageReceiverThread(roomID, keepGoing, this) },
-	gameStateReceiverThread{ new GameStateReceiverThread(roomID, keepGoing, this) }
+	imageThread{ new ImageThread(roomID, keepGoing, this) },
+	gameStateThread{ new GameStateThread(roomID, keepGoing, this) }
 {
 	ui->setupUi(this);
 
@@ -56,18 +56,18 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	connect(imageReceiverThread, &ImageReceiverThread::ImageReceivedSignal,
+	connect(imageThread, &ImageThread::ImageSignal,
 		this, &CanvasPaint::HandleAddLines);
-	connect(imageReceiverThread, &ImageReceiverThread::finished,
-		imageReceiverThread, &QObject::deleteLater);
+	connect(imageThread, &ImageThread::finished,
+		imageThread, &QObject::deleteLater);
 
-	connect(gameStateReceiverThread, &GameStateReceiverThread::GameStateReceivedSignal,
+	connect(gameStateThread, &GameStateThread::GameStateSignal,
 		this, &CanvasPaint::HandleReceiveState);
-	connect(gameStateReceiverThread, &GameStateReceiverThread::finished,
-		gameStateReceiverThread, &QObject::deleteLater);
+	connect(gameStateThread, &GameStateThread::finished,
+		gameStateThread, &QObject::deleteLater);
 
-	imageReceiverThread->start();
-	gameStateReceiverThread->start();
+	imageThread->start();
+	gameStateThread->start();
 }
 #endif
 
@@ -77,11 +77,11 @@ CanvasPaint::~CanvasPaint()
 #ifdef ONLINE
 	services::SignOut(username.toStdString());
 	keepGoing = false;
-	imageReceiverThread->quit();
-	gameStateReceiverThread->quit();
+	imageThread->quit();
+	gameStateThread->quit();
 
-	imageReceiverThread->wait();
-	gameStateReceiverThread->wait();
+	imageThread->wait();
+	gameStateThread->wait();
 #endif
 
 	delete ui;
@@ -161,11 +161,11 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 
 #ifdef ONLINE
 		auto commonPoints{ std::move(currentLine.ToCommonPoints()) };
-		commonPoints.emplace_back(common::img::Point{ -1, -1, MyLine::INVALID_COLOR_INT });
+		commonPoints.emplace_back(common::img::Point{ -1, -1, Line::INVALID_COLOR_INT });
 		services::SendImageUpdates(roomID, commonPoints);
 #endif
 
-		myLines.emplace_back(std::move(currentLine));
+		lines.emplace_back(std::move(currentLine));
 	}
 }
 
@@ -183,7 +183,7 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 void CanvasPaint::ClearCanvas()
 {
 	canvasPixmap.fill(Qt::white);
-	myLines.clear();
+	lines.clear();
 	update();
 }
 
@@ -212,13 +212,13 @@ void CanvasPaint::on_eraseButton_clicked()
 
 void CanvasPaint::on_undoButton_clicked()
 {
-	if (!myLines.isEmpty())
+	if (!lines.isEmpty())
 	{
 		canvasPixmap.fill(Qt::white);
 		QPainter painter{ &canvasPixmap };
-		myLines.pop_back();
+		lines.pop_back();
 
-		for (const auto& line : myLines)
+		for (const auto& line : lines)
 		{
 			painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
 
@@ -241,7 +241,7 @@ void CanvasPaint::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
-void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
+void CanvasPaint::HandleAddLines(QList<Line>* newLines)
 {
 	QPainter painter{ &canvasPixmap };
 
@@ -251,7 +251,7 @@ void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 		for (qsizetype i = 1; i < line.points.size(); i++)
 			painter.drawLine(line.points[i - 1], line.points[i]);
 
-		myLines.emplace_back(std::move(line));
+		lines.emplace_back(std::move(line));
 	}
 
 	delete newLines;

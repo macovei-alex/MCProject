@@ -9,23 +9,26 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ChatThread.cpp \
+    GameStateThread.cpp \
+    ImageThread.cpp \
     canvaspaint.cpp \
     main.cpp \
     mainwindow.cpp \
-    MyLine.cpp \
-    ImageReceiverThread.cpp \
-    GameStateReceiverThread.cpp
+    Line.cpp
 
 HEADERS += \
+    ChatThread.h \
+    GameState.h \
+    GameStateThread.h \
+    ImageThread.h \
     canvaspaint.h \
     macro.h \
     mainwindow.h \
     ui_canvaspaint.h \
     ui_mainwindow.h \
     DrawingState.h \
-    MyLine.h \
-    ImageReceiverThread.h \
-    GameStateReceiverThread.h
+    Line.h
 
 FORMS += \
     canvaspaint.ui \

@@ -10,13 +10,19 @@
     <ClCompile Include="canvaspaint.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
-    <ClCompile Include="MyLine.cpp">
+    <ClCompile Include="Line.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
-    <ClCompile Include="ImageReceiverThread.cpp">
+    <ClCompile Include="ImageThread.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
-    <ClCompile Include="GameStateReceiverThread.cpp">
+    <ClCompile Include="GameStateThread.cpp">
+      <Filter>Source Files\Canvas Window</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatThread.cpp">
+      <Filter>Source Files\Canvas Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
   </ItemGroup>
@@ -33,10 +39,13 @@
     <ClInclude Include="DrawingState.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
-    <ClInclude Include="MyLine.h">
+    <ClInclude Include="Line.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
     <ClInclude Include="GameState.h">
+      <Filter>Header Files\Canvas Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
   </ItemGroup>
@@ -55,10 +64,13 @@
     <QtMoc Include="canvaspaint.h">
       <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
-    <QtMoc Include="ImageReceiverThread.h">
+    <QtMoc Include="ImageThread.h">
       <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
-    <QtMoc Include="GameStateReceiverThread.h">
+    <QtMoc Include="GameStateThread.h">
+      <Filter>Header Files\Canvas Window</Filter>
+    </QtMoc>
+    <QtMoc Include="ChatThread.h">
       <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
   </ItemGroup>
