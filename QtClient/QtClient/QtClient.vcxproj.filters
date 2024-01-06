@@ -22,9 +22,6 @@
     <ClCompile Include="ChatThread.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
-    <ClCompile Include="Message.cpp">
-      <Filter>Source Files\Canvas Window</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui_canvaspaint.h">
@@ -43,9 +40,6 @@
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
     <ClInclude Include="GameState.h">
-      <Filter>Header Files\Canvas Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Message.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
   </ItemGroup>

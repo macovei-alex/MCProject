@@ -40,7 +40,8 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 	roomID{ roomID },
 	username{ username },
 	imageThread{ new ImageThread(roomID, keepGoing, this) },
-	gameStateThread{ new GameStateThread(roomID, keepGoing, this) }
+	gameStateThread{ new GameStateThread(roomID, keepGoing, this) },
+	chatThread{ new ChatThread(roomID, keepGoing, this) }
 {
 	ui->setupUi(this);
 
@@ -77,6 +78,7 @@ CanvasPaint::~CanvasPaint()
 #ifdef ONLINE
 	services::SignOut(username.toStdString());
 	keepGoing = false;
+
 	imageThread->quit();
 	gameStateThread->quit();
 	chatThread->quit();
