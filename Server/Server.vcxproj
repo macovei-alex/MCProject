@@ -148,7 +148,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\GameSettings.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Image.cpp" />
@@ -162,7 +161,6 @@
     <ClCompile Include="serverUtilsModTemp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\GameSettings.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="DatabasePrerequisites.h" />

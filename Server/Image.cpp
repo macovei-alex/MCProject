@@ -1,6 +1,6 @@
 #include "Image.h"
 
-#include "../Common/constantLiterals.h"
+#include "constantLiterals.h"
 
 void Image::AddUpdate(const common::img::Update& update)
 {

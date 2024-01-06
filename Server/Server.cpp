@@ -4,6 +4,7 @@
 #include <stack>
 
 #include "constantLiterals.h"
+#include "common.h"
 
 Server::Server() :
 	m_app{ },
@@ -62,7 +63,7 @@ Server& Server::ChatHandlers()
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
-		auto contentIterator = jsonMap.find(literals::jsonKeys::message::content);
+		auto contentIterator = jsonMap.find(literals::jsonKeys::message::text);
 		auto authorIterator = jsonMap.find(literals::jsonKeys::message::author);
 		if (contentIterator == jsonMap.end() || authorIterator == jsonMap.end())
 		{
@@ -71,12 +72,12 @@ Server& Server::ChatHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		utils::Message message{
+		common::Message message{
 			utils::DecodeMessage(contentIterator->second),
 			utils::DecodeMessage(authorIterator->second),
 			utils::DateTimeAsInteger(std::chrono::system_clock::now()) };
 
-		Log(std::format("New message at ({}) from [{}]: {}\n", message.timeMilliseconds, message.author, message.content));
+		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
 		chat.Emplace(std::move(message));
 
 		return crow::response(200);

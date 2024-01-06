@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace common
 {
@@ -15,9 +16,11 @@ namespace common
 			Color() = default;
 			Color(int64_t color);
 			Color(uint8_t r, uint8_t g, uint8_t b);
+
 			Color(const Color& color) = default;
 			Color& operator=(const Color& other) = default;
 			bool operator==(const Color& other) const = default;
+
 			int32_t ToInt32() const;
 		};
 
@@ -42,6 +45,7 @@ namespace common
 
 			Update() = default;
 			Update(const Point& point, uint64_t timestamp);
+
 			Update(const Update& other) = default;
 			Update& operator=(const Update& other) = default;
 			bool operator==(const Update& other) const = default;
@@ -88,4 +92,20 @@ namespace common
 			uint16_t m_chooseWordOptionCount;
 		};
 	}
+
+	struct Message
+	{
+		std::string text;
+		std::string author;
+		uint64_t timestamp;
+
+		Message() = default;
+		Message(const std::string& text, const std::string& author, uint64_t timestamp = 0);
+		Message(std::string&& text, std::string&& author, uint64_t timestamp = 0);
+
+		Message(const Message& other) = default;
+		Message& operator=(const Message& other) = default;
+		Message(Message&& other) = default;
+		Message& operator=(Message&& other) = default;
+	};
 }

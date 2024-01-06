@@ -43,3 +43,19 @@ common::img::Update::Update(const Point& point, uint64_t timestamp) :
 {
 	/* empty */
 }
+
+common::Message::Message(const std::string& text, const std::string& author, uint64_t timestamp) :
+	text{ text },
+	author{ author },
+	timestamp{ timestamp }
+{
+	/* empty */
+}
+
+common::Message::Message(std::string&& text, std::string&& author, uint64_t timestamp) :
+	text{ std::move(text) },
+	author{ std::move(author) },
+	timestamp{ timestamp }
+{
+	/* empty */
+}

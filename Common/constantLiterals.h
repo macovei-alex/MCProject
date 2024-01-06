@@ -18,7 +18,7 @@ namespace literals
 		namespace message
 		{
 			constexpr char author[] = "author";
-			constexpr char content[] = "content";
+			constexpr char text[] = "text";
 			constexpr char timestamp[] = "timestamp";
 		}
 

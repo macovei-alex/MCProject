@@ -11,10 +11,12 @@
 
 #include "Line.h"
 #include "GameState.h"
+#include "common.h"
 
 #ifdef ONLINE
 #include "ImageThread.h"
 #include "GameStateThread.h"
+#include "ChatThread.h"
 #endif
 
 class MainWindow;
@@ -56,8 +58,9 @@ private slots:
 	void on_undoButton_clicked();
 	void on_messageButton_clicked();
 
-	void HandleAddLines(QList<Line>* newLines);
-	void HandleReceiveState(const QPair<GameState, uint64_t>& gameStatePair);
+	void HandleImage(QList<Line>* newLines);
+	void HandleGameState(const QPair<GameState, uint64_t>& gameStatePair);
+    void HandleChat(const QList<common::Message>& messages);
 
 signals:
 	void Signal();
@@ -77,6 +80,7 @@ private:
 	uint64_t roomID;
 	ImageThread* imageThread;
 	GameStateThread* gameStateThread;
+	ChatThread* chatThread;
 	bool keepGoing;
 	QString username;
 #endif

@@ -4,14 +4,6 @@
 #include <unordered_map>
 #include <regex>
 
-utils::Message::Message(std::string&& content, std::string&& author, uint64_t milliseconds) noexcept :
-	content{ std::move(content) },
-	author{ std::move(author) },
-	timeMilliseconds{ milliseconds }
-{
-	/* EMPTY */
-}
-
 std::vector<std::string> utils::SplitToVec(const std::string& str, const std::string& delim)
 {
 	std::vector<std::string> result;

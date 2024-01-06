@@ -56,18 +56,18 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	connect(imageThread, &ImageThread::ImageSignal,
-		this, &CanvasPaint::HandleAddLines);
-	connect(imageThread, &ImageThread::finished,
-		imageThread, &QObject::deleteLater);
+	connect(imageThread, &ImageThread::ImageSignal, this, &CanvasPaint::HandleImage);
+	connect(imageThread, &ImageThread::finished, imageThread, &QObject::deleteLater);
 
-	connect(gameStateThread, &GameStateThread::GameStateSignal,
-		this, &CanvasPaint::HandleReceiveState);
-	connect(gameStateThread, &GameStateThread::finished,
-		gameStateThread, &QObject::deleteLater);
+	connect(gameStateThread, &GameStateThread::GameStateSignal,this, &CanvasPaint::HandleGameState);
+	connect(gameStateThread, &GameStateThread::finished, gameStateThread, &QObject::deleteLater);
+
+	connect(chatThread, &ChatThread::ChatSignal, this, &CanvasPaint::HandleChat);
+	connect(chatThread, &ChatThread::finished, chatThread, &QObject::deleteLater);
 
 	imageThread->start();
 	gameStateThread->start();
+	chatThread->start();
 }
 #endif
 
@@ -79,9 +79,15 @@ CanvasPaint::~CanvasPaint()
 	keepGoing = false;
 	imageThread->quit();
 	gameStateThread->quit();
+	chatThread->quit();
 
 	imageThread->wait();
 	gameStateThread->wait();
+	chatThread->wait();
+
+    delete imageThread;
+    delete gameStateThread;
+    delete chatThread;
 #endif
 
 	delete ui;
@@ -241,7 +247,7 @@ void CanvasPaint::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
-void CanvasPaint::HandleAddLines(QList<Line>* newLines)
+void CanvasPaint::HandleImage(QList<Line>* newLines)
 {
 	QPainter painter{ &canvasPixmap };
 
@@ -258,9 +264,17 @@ void CanvasPaint::HandleAddLines(QList<Line>* newLines)
 	update();
 }
 
-void CanvasPaint::HandleReceiveState(const QPair<GameState, uint64_t>& gameStatePair)
+void CanvasPaint::HandleGameState(const QPair<GameState, uint64_t>& gameStatePair)
 {
 	qDebug() << "Received game state: "
 		<< static_cast<uint16_t>(gameStatePair.first) << " "
 		<< gameStatePair.second;
+}
+
+void CanvasPaint::HandleChat(const QList<common::Message>& messages)
+{
+	for (const auto& message : messages)
+	{
+		qDebug() << message.author << ' ' << message.text << ' ' << message.timestamp;
+	}
 }

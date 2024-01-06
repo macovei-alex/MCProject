@@ -162,7 +162,7 @@ void services::SendNewMessage(const std::string& username, const std::string& co
 			cpr::Url{ url },
 			cpr::Payload{
 				{literals::jsonKeys::message::author, username},
-				{literals::jsonKeys::message::content, content} });
+				{literals::jsonKeys::message::text, content} });
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
@@ -178,7 +178,7 @@ void services::SendNewMessage(const std::string& username, const std::string& co
 	}
 }
 
-void services::ReceiveNewMessages(const std::string& username, uint64_t gameID, std::ostream& outStream, std::ostream& errStream)
+std::vector<common::Message> services::ReceiveNewMessages(const std::string& username, uint64_t gameID, std::ostream& outStream, std::ostream& errStream)
 {
 	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::chat::simple} + "/" };
 
@@ -218,20 +218,24 @@ void services::ReceiveNewMessages(const std::string& username, uint64_t gameID, 
 		else
 			lastTimestamp = messagesJsonList[messagesJsonList.size() - 1][literals::jsonKeys::message::timestamp].u() + 1;
 
+		std::vector<common::Message> messages;
+
 		for (auto& messageJson : messagesJsonList)
 		{
-			uint64_t messageTimestampMillis = messageJson[literals::jsonKeys::message::timestamp].u();
-			auto dateTime = utils::DateTimeFromInteger(messageTimestampMillis);
-
-			outStream << std::format("[{} at {}]: {}\n",
+			common::Message message{
 				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
-				dateTime,
-				std::string{ std::move(messageJson[literals::jsonKeys::message::content].s()) });
+				std::string{ std::move(messageJson[literals::jsonKeys::message::text].s()) },
+				messageJson[literals::jsonKeys::message::timestamp].u() };
+
+			messages.emplace_back(std::move(message));
 		}
+
+		return messages;
 	}
 	catch (const std::exception& exception)
 	{
 		errStream << "[Message receiver]: " << exception.what() << '\n';
+		return {};
 	}
 }
 

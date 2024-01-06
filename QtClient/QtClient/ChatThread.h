@@ -2,7 +2,7 @@
 
 #include <QThread>
 
-#include "Message.h"
+#include "common.h"
 
 class ChatThread : public QThread
 {
@@ -13,7 +13,7 @@ public:
 	~ChatThread() = default;
 
 signals:
-	void ChatSignal(QList<Message>);
+	void ChatSignal(QList<common::Message>);
 
 public:
 	uint64_t roomID;

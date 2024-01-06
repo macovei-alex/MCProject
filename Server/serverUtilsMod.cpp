@@ -1,6 +1,6 @@
 //module serverUtilsMod;
 //
-//utils::Message::Message(std::string&& content, std::string&& author, uint64_t milliseconds) noexcept :
+//common::Message::Message(std::string&& content, std::string&& author, uint64_t milliseconds) noexcept :
 //	content{ std::move(content) },
 //	author{ std::move(author) },
 //	timeMilliseconds{ milliseconds }

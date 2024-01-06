@@ -1,5 +1,3 @@
-#include "Message.h"
-#include "Message.h"
 #pragma once
 
 #include <vector>
@@ -12,9 +10,9 @@ namespace utils
 {
 	struct Message
 	{
-		std::string content;
+		std::string text;
 		std::string author;
-		uint64_t timeMilliseconds;
+		uint64_t timestamp;
 
 		Message() noexcept = default;
 		Message(std::string&& content, std::string&& author, uint64_t milliseconds) noexcept;

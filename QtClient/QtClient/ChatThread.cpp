@@ -23,7 +23,7 @@ void ChatThread::run()
 		while (keepGoing)
 		{
 
-			emit ChatSignal(QList<Message>());
+			emit ChatSignal(QList<common::Message>());
 
 			std::this_thread::sleep_for(0.25s);
 		}

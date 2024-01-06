@@ -4,8 +4,7 @@
 #include <crow.h>
 #include <stack>
 
-#include "serverUtilsModTemp.h"
-// import serverUtilsMod;
+#include "common.h"
 
 class Chat
 {
@@ -18,14 +17,14 @@ public:
 	~Chat() noexcept = default;
 
 public:
-	void Add(const utils::Message& message);
-	void Emplace(utils::Message&& message);
-	std::vector<utils::Message> GetMessagesOrdered(uint64_t start, const std::string& skipAuthor) const;
+	void Add(const common::Message& message);
+	void Emplace(common::Message&& message);
+	std::vector<common::Message> GetMessagesOrdered(uint64_t start, const std::string& skipAuthor) const;
 	std::vector<crow::json::wvalue> GetMessagesOrderedJsonList(uint64_t start, const std::string& skipAuthor) const;
 	size_t Size() const noexcept;
 	bool Empty() const noexcept;
-	utils::Message& operator[](size_t index);
+	common::Message& operator[](size_t index);
 
 private:
-	std::vector<utils::Message> m_messages;
+	std::vector<common::Message> m_messages;
 };

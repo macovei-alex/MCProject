@@ -64,7 +64,11 @@ void utils::MessagesReceiver(uint64_t gameID, const std::string& username, bool*
 
 	while (*keepGoing)
 	{
-		services::ReceiveNewMessages(username, gameID);
+		auto messages{ std::move(services::ReceiveNewMessages(username, gameID)) };
+		for (const auto& message : messages)
+		{
+			std::cout << std::format("({}) [{}]: {}\n", utils::DateTimeFromInteger(message.timestamp), message.author, message.text);
+		}
 		std::this_thread::sleep_for(0.5s);
 	}
 }

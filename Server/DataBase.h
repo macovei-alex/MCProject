@@ -25,7 +25,6 @@ namespace db
 		~Database() = default;
 
 		void PopulateStorage();
-		//void SignInOrUp(const std::string& playerName, const std::string& password);
 		db::ReturnValue SignUp(const std::string& playerName, const std::string& password);
 		db::ReturnValue SignIn(const std::string& playerName, const std::string& password);
 		db::ReturnValue SignOut(const std::string& playerName);
