@@ -8,6 +8,7 @@
 #include <sqlite_orm/sqlite_orm.h>
 
 #include "DatabasePrerequisites.h"
+#include "serverUtils.h"
 
 namespace sql = sqlite_orm;
 
@@ -28,8 +29,8 @@ namespace db
 		db::ReturnValue SignUp(const std::string& playerName, const std::string& password);
 		db::ReturnValue SignIn(const std::string& playerName, const std::string& password);
 		db::ReturnValue SignOut(const std::string& playerName);
-		void AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
-		void GetGameHistory(const std::string& playerName);
+		db::ReturnValue AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
+		db::GameHistory GetGameHistory(const std::string& playerName);
 		std::vector<std::string> GetRandomWords(int number, const std::string& difficulty);
 
 	private:

@@ -30,14 +30,14 @@ db::ReturnValue db::MockDatabase::SignOut(const std::string& playerName)
 	return { true, "Successfuly signed out" };
 }
 
-void db::MockDatabase::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
+db::ReturnValue db::MockDatabase::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
 {
-	/* mock empty */
+	return { true , "Game successfuly added" };
 }
 
-void db::MockDatabase::GetGameHistory(const std::string& playerName)
+db::GameHistory db::MockDatabase::GetGameHistory(const std::string& playerName)
 {
-	/* mock empty */
+	return db::GameHistory{};
 }
 
 std::vector<std::string> db::MockDatabase::GetRandomWords(int number, const std::string& difficulty)

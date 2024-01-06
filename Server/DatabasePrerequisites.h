@@ -28,7 +28,7 @@ namespace db
 	
 	struct Player
 	{
-		int id;//primary key
+		int id;
 		std::string playerName;
 		std::string password;
 		bool isOnline;
@@ -36,8 +36,8 @@ namespace db
 	
 	struct GameHistory
 	{
-		int id;//primary key
-		int playerID;//foreign key
+		int id;
+		int playerID;
 		int score;
 		std::string difficulty;
 		std::string date;
