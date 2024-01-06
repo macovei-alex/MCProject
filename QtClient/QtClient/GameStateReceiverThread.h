@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QThread>
+#include <QPair>
 
-#include "common.h"
+#include "GameState.h"
 
 class GameStateReceiverThread : public QThread
 {
@@ -13,7 +14,7 @@ public:
 	~GameStateReceiverThread() = default;
 
 signals:
-	void GameStateReceivedSignal(const std::pair<common::game::GameState, uint64_t>& gameStatePair);
+	void GameStateReceivedSignal(const QPair<GameState, uint64_t>& gameStatePair);
 
 public:
 	uint64_t roomID;

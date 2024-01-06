@@ -227,6 +227,7 @@
     <ClInclude Include="DrawingState.h" />
     <QtMoc Include="ImageReceiverThread.h" />
     <QtMoc Include="GameStateReceiverThread.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="MyLine.h" />
     <ClInclude Include="ui_canvaspaint.h" />

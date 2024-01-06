@@ -8,11 +8,14 @@
 #include <QMouseEvent>
 #include <QThread>
 #include <qpixmap.h>
-#include <cstdint>
 
 #include "MyLine.h"
+#include "GameState.h"
+
+#ifdef ONLINE
 #include "ImageReceiverThread.h"
 #include "GameStateReceiverThread.h"
+#endif
 
 class MainWindow;
 
@@ -54,7 +57,7 @@ private slots:
 	void on_messageButton_clicked();
 
 	void HandleAddLines(QList<MyLine>* newLines);
-	void HandleReceiveState(const std::pair<common::game::GameState, uint64_t>& gameStatePair);
+	void HandleReceiveState(const QPair<GameState, uint64_t>& gameStatePair);
 
 signals:
 	void Signal();

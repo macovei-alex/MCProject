@@ -258,7 +258,7 @@ void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 	update();
 }
 
-void CanvasPaint::HandleReceiveState(const std::pair<common::game::GameState, uint64_t>& gameStatePair)
+void CanvasPaint::HandleReceiveState(const QPair<GameState, uint64_t>& gameStatePair)
 {
 	qDebug() << "Received game state: "
 		<< static_cast<uint16_t>(gameStatePair.first) << " "

@@ -36,6 +36,9 @@
     <ClInclude Include="MyLine.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files\Canvas Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">

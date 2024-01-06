@@ -1,5 +1,4 @@
 #include "ImageReceiverThread.h"
-
 #include "macro.h"
 
 #ifdef ONLINE

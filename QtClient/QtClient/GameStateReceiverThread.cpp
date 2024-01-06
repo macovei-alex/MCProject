@@ -22,12 +22,13 @@ void GameStateReceiverThread::run()
 	{
 		while (keepGoing)
 		{
-			auto gameStatePair{ std::move(services::ReceiveGameStateAndTimer(roomID)) };
+			auto gameStatePair{ services::ReceiveGameStateAndTimer(roomID) };
+			auto gameStateQPair{ QPair{ static_cast<GameState>(gameStatePair.first), gameStatePair.second } };
 
 			qDebug() << "Received game state and timer: "
-				<< static_cast<uint16_t>(gameStatePair.first) << ' ' << gameStatePair.second;
+				<< static_cast<uint16_t>(gameStateQPair.first) << ' ' << gameStateQPair.second;
 
-			emit GameStateReceivedSignal(gameStatePair);
+			emit GameStateReceivedSignal(gameStateQPair);
 
 			std::this_thread::sleep_for(0.25s);
 		}
