@@ -11,14 +11,19 @@ CONFIG += c++17
 SOURCES += \
     canvaspaint.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    MyLine.cpp \
+    ImageReceiverThread.cpp
 
 HEADERS += \
     canvaspaint.h \
     macro.h \
     mainwindow.h \
     ui_canvaspaint.h \
-    ui_mainwindow.h
+    ui_mainwindow.h \
+    DrawingState.h \
+    MyLine.h \
+    ImageReceiverThread.h
 
 FORMS += \
     canvaspaint.ui \

@@ -10,12 +10,9 @@
 #include <qpixmap.h>
 #include <cstdint>
 
-#ifdef ONLINE
-#include "services.h"
-#endif
-
 #include "MyLine.h"
 #include "ImageReceiverThread.h"
+#include "GameStateReceiverThread.h"
 
 class MainWindow;
 
@@ -57,6 +54,7 @@ private slots:
 	void on_messageButton_clicked();
 
 	void HandleAddLines(QList<MyLine>* newLines);
+	void HandleReceiveState(const std::pair<common::game::GameState, uint64_t>& gameStatePair);
 
 signals:
 	void Signal();
@@ -74,7 +72,8 @@ private:
 
 #ifdef ONLINE
 	uint64_t roomID;
-	ImageReceiverThread* imageReceiver;
+	ImageReceiverThread* imageReceiverThread;
+	GameStateReceiverThread* gameStateReceiverThread;
 	bool keepGoing;
 	QString username;
 #endif

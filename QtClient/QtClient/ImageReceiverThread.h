@@ -13,7 +13,7 @@ public:
 	~ImageReceiverThread() = default;
 
 signals:
-	void LinesReceivedSignal(QList<MyLine>* lines);
+	void ImageReceivedSignal(QList<MyLine>* lines);
 
 public:
 	uint64_t roomID;

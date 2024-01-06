@@ -6,7 +6,10 @@
 #include <QScreen>
 #include <QObject>
 
-#include "ImageReceiverThread.h"
+#ifdef ONLINE
+#include "services.h"
+#include "common.h"
+#endif
 
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog{ parent },
@@ -35,8 +38,9 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 	drawState{ DrawingState::DRAWING },
 	keepGoing{ true },
 	roomID{ roomID },
-	username { username },
-	imageReceiver{ new ImageReceiverThread(roomID, keepGoing, this) }
+	username{ username },
+	imageReceiverThread{ new ImageReceiverThread(roomID, keepGoing, this) },
+	gameStateReceiverThread{ new GameStateReceiverThread(roomID, keepGoing, this) }
 {
 	ui->setupUi(this);
 
@@ -52,9 +56,18 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	connect(imageReceiver, &ImageReceiverThread::LinesReceivedSignal, this, &CanvasPaint::HandleAddLines);
-	connect(imageReceiver, &ImageReceiverThread::finished, imageReceiver, &QObject::deleteLater);
-	imageReceiver->start();
+	connect(imageReceiverThread, &ImageReceiverThread::ImageReceivedSignal,
+		this, &CanvasPaint::HandleAddLines);
+	connect(imageReceiverThread, &ImageReceiverThread::finished,
+		imageReceiverThread, &QObject::deleteLater);
+
+	connect(gameStateReceiverThread, &GameStateReceiverThread::GameStateReceivedSignal,
+		this, &CanvasPaint::HandleReceiveState);
+	connect(gameStateReceiverThread, &GameStateReceiverThread::finished,
+		gameStateReceiverThread, &QObject::deleteLater);
+
+	imageReceiverThread->start();
+	gameStateReceiverThread->start();
 }
 #endif
 
@@ -64,8 +77,11 @@ CanvasPaint::~CanvasPaint()
 #ifdef ONLINE
 	services::SignOut(username.toStdString());
 	keepGoing = false;
-	imageReceiver->quit();
-	imageReceiver->wait();
+	imageReceiverThread->quit();
+	gameStateReceiverThread->quit();
+
+	imageReceiverThread->wait();
+	gameStateReceiverThread->wait();
 #endif
 
 	delete ui;
@@ -206,7 +222,7 @@ void CanvasPaint::on_undoButton_clicked()
 		{
 			painter.setPen(line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN);
 
-            for (qsizetype i = 1; i < line.points.size(); i++)
+			for (qsizetype i = 1; i < line.points.size(); i++)
 				painter.drawLine(line.points[i - 1], line.points[i]);
 		}
 
@@ -219,6 +235,12 @@ void CanvasPaint::on_messageButton_clicked()
 	ui->messageBox->clear();
 }
 
+void CanvasPaint::closeEvent(QCloseEvent* event)
+{
+	QCoreApplication::quit();
+	event->accept();
+}
+
 void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 {
 	QPainter painter{ &canvasPixmap };
@@ -226,7 +248,7 @@ void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 	for (auto& line : *newLines)
 	{
 		painter.setPen((line.drawState == DrawingState::DRAWING ? DRAWING_PEN : ERASING_PEN));
-        for (qsizetype i = 1; i < line.points.size(); i++)
+		for (qsizetype i = 1; i < line.points.size(); i++)
 			painter.drawLine(line.points[i - 1], line.points[i]);
 
 		myLines.emplace_back(std::move(line));
@@ -236,8 +258,9 @@ void CanvasPaint::HandleAddLines(QList<MyLine>* newLines)
 	update();
 }
 
-void CanvasPaint::closeEvent(QCloseEvent* event)
+void CanvasPaint::HandleReceiveState(const std::pair<common::game::GameState, uint64_t>& gameStatePair)
 {
-	QCoreApplication::quit();
-	event->accept();
+	qDebug() << "Received game state: "
+		<< static_cast<uint16_t>(gameStatePair.first) << " "
+		<< gameStatePair.second;
 }

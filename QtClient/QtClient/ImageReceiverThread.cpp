@@ -1,13 +1,13 @@
 #include "ImageReceiverThread.h"
 
-#include <QScreen>
+#include "macro.h"
+
+#ifdef ONLINE
 #include <QDebug>
 #include <QWidget>
 
-#include "macro.h"
 #include "services.h"
 
-#ifdef ONLINE
 ImageReceiverThread::ImageReceiverThread(uint64_t roomID, bool& keepGoing, QWidget* parent) :
 	QThread{ parent },
 	keepGoing{ keepGoing },
@@ -53,7 +53,7 @@ void ImageReceiverThread::run()
 
 			qDebug() << "Received lines: " << newLines->size();
 
-			emit LinesReceivedSignal(newLines);
+			emit ImageReceivedSignal(newLines);
 
 			std::this_thread::sleep_for(0.25s);
 		}

@@ -5,6 +5,10 @@
 #include <QMessageBox>
 #include <QPixmap>
 
+#ifdef ONLINE
+#include "services.h"
+#endif
+
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow{ parent },
 	ui{ new Ui::MainWindow },
@@ -48,7 +52,8 @@ void MainWindow::on_loginButton_clicked()
 		QMessageBox msgBox;
 		msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
 			" and password " + ui->passwordLineEdit->text() +
-			" exists or the someone is already connected with this account. Do you want to try to create one?");
+			" exists or the someone is already connected with this account. " +
+			"Do you want to try to create one ? ");
 
 		QPushButton* yesButton{ msgBox.addButton(tr("Yes"), QMessageBox::YesRole) };
 		QPushButton* noButton{ msgBox.addButton(tr("No"), QMessageBox::NoRole) };
