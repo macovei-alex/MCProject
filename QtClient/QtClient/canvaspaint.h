@@ -15,27 +15,9 @@
 #endif
 
 #include "MyLine.h"
+#include "ImageReceiverThread.h"
 
 class MainWindow;
-
-class ImageReceiver : public QThread
-{
-	Q_OBJECT
-
-public:
-	ImageReceiver(uint64_t roomID, bool& keepGoing, QWidget* parent = nullptr);
-	~ImageReceiver() = default;
-
-signals:
-	void LinesReceivedSignal(QList<MyLine>* lines);
-
-public:
-	uint64_t roomID;
-	bool& keepGoing;
-
-public:
-	void run() override;
-};
 
 namespace Ui {
 	class CanvasPaint;
@@ -92,7 +74,7 @@ private:
 
 #ifdef ONLINE
 	uint64_t roomID;
-	ImageReceiver* imageReceiver;
+	ImageReceiverThread* imageReceiver;
 	bool keepGoing;
 	QString username;
 #endif

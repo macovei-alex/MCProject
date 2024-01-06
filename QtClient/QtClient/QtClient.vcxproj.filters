@@ -13,6 +13,9 @@
     <ClCompile Include="MyLine.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
+    <ClCompile Include="ImageReceiverThread.cpp">
+      <Filter>Source Files\Canvas Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui_canvaspaint.h">
@@ -44,6 +47,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="canvaspaint.h">
+      <Filter>Header Files\Canvas Window</Filter>
+    </QtMoc>
+    <QtMoc Include="ImageReceiverThread.h">
       <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
   </ItemGroup>

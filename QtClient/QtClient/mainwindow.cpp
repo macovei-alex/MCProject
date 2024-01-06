@@ -48,7 +48,7 @@ void MainWindow::on_loginButton_clicked()
 		QMessageBox msgBox;
 		msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
 			" and password " + ui->passwordLineEdit->text() +
-			" exists. Do you want to create one?");
+			" exists or the someone is already connected with this account. Do you want to try to create one?");
 
 		QPushButton* yesButton{ msgBox.addButton(tr("Yes"), QMessageBox::YesRole) };
 		QPushButton* noButton{ msgBox.addButton(tr("No"), QMessageBox::NoRole) };

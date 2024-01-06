@@ -188,6 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="canvaspaint.cpp" />
+    <ClCompile Include="ImageReceiverThread.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="MyLine.cpp" />
@@ -223,6 +224,7 @@
   <ItemGroup>
     <QtMoc Include="canvaspaint.h" />
     <ClInclude Include="DrawingState.h" />
+    <QtMoc Include="ImageReceiverThread.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="MyLine.h" />
     <ClInclude Include="ui_canvaspaint.h" />
