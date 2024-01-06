@@ -50,7 +50,7 @@ private:
 	uint16_t m_port;
 	std::string m_IPAddress;
 
-	db::Database m_database;
+	std::unique_ptr<db::Database> m_database;
 	std::unique_ptr<Logger> m_logger;
 	std::map<uint64_t, Game> m_games;
 };

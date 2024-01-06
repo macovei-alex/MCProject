@@ -10,10 +10,10 @@ Server::Server() :
 	m_games{ },
 	m_port{ 0 },
 	m_IPAddress{ "127.0.0.1" },
-	m_database{ "database.sqlite" },
-	m_logger{ std::make_unique<Logger>("server.log") }
+	m_database{ },
+	m_logger{ }
 {
-	Log(m_database.ResetPlayerAccounts().reason);
+	/* empty */
 }
 
 Server& Server::AllHandlers()
@@ -196,7 +196,7 @@ Server& Server::AccountHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		db::ReturnValue returnValue{ std::move(m_database.SignIn(username, password)) };
+		db::ReturnValue returnValue{ std::move(m_database->SignIn(username, password)) };
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
@@ -240,7 +240,7 @@ Server& Server::AccountHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		db::ReturnValue returnValue{ std::move(m_database.SignUp(username, password)) };
+		db::ReturnValue returnValue{ std::move(m_database->SignUp(username, password)) };
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
@@ -282,7 +282,7 @@ Server& Server::AccountHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		db::ReturnValue returnValue{ std::move(m_database.SignOut(username)) };
+		db::ReturnValue returnValue{ std::move(m_database->SignOut(username)) };
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
@@ -476,12 +476,18 @@ void Server::Run()
 
 void Server::Log(const std::string_view& message, Logger::Level level)
 {
-	m_logger->Log(message, level);
+	if(m_logger)
+		m_logger->Log(message, level);
 }
 
 Server& Server::SetSettingsFromFile(const std::string& filePath)
 {
 	utils::NavigateToProjectDirectory();
+
+	m_logger = std::make_unique<Logger>("server.log");
+	m_database = std::make_unique<db::Database>("database.sqlite");
+
+	Log(m_database->ResetPlayerAccounts().reason);
 
 	enum ServerSetting
 	{
@@ -533,7 +539,6 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 		}
 	}
 
-	m_logger = std::make_unique<Logger>("server.log");
-	m_logger->Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
+	Log(std::format("Settings Successfuly set from the settings file < {} >", filePath));
 	return *this;
 }
