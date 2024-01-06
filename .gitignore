@@ -20,6 +20,10 @@ mono_crash.*
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
+!QtClient/QtClient/release/
+QtClient/QtClient/release/*
+!QtClient/QtClient/release/plugins
+!QtClient/QtClient/release/*.dll
 [Rr]eleases/
 x64/
 x86/
