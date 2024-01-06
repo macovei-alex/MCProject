@@ -25,4 +25,8 @@ namespace utils
 	std::string GetString(const char* message = nullptr);
 	void PrintMenu1();
 	void PrintMenu2();
+	void MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing);
+	void MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing);
+	void ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing);
+	void GameStateReceiver(uint64_t gameID, bool* keepGoing);
 }

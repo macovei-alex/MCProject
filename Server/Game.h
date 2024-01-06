@@ -6,14 +6,14 @@
 
 #include "Player.h"
 #include "Turn.h"
-#include "GameSettings.h"
 #include "Image.h"
 #include "Chat.h"
+#include "common.h"
 
 class Game
 {
 public:
-	Game() noexcept = default;
+	Game() noexcept;
 	Game(const Game& other) noexcept = default;
 	Game& operator=(const Game& other) noexcept = default;
 	Game(Game&& other) noexcept;
@@ -26,13 +26,15 @@ public:
 	void SetRoundNumber(uint8_t roundNumber);
 	uint8_t GetPlayerToDrawID();
 	void SetPlayerToDrawID(uint8_t playerToDrawID);
-	GameSettings& GetGameSettings();
+	common::game::GameSettings& GetGameSettings();
 	Turn& GetTurn();
 	Image& GetImage();
 	Chat& GetChat();
+	common::game::GameState GetGameState();
+	void SetGameState(common::game::GameState gameState);
 
 public:
-	void Start();
+	void Run();
 	void AddPlayer(const Player& player);
 	void RemovePlayer(const std::string& playerName);
 
@@ -42,7 +44,8 @@ private:
 	uint8_t m_ownerID;
 	std::vector<Player> m_players;
 	Turn m_turn;
-	GameSettings m_gameSettings;
+	common::game::GameSettings m_gameSettings;
 	Image m_image;
 	Chat m_chat;
+	common::game::GameState m_gameState;
 };

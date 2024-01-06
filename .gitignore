@@ -409,3 +409,4 @@ FodyWeavers.xsd
 /VitaminCpp/.gitignore
 /.gitignore
 /.gitignore
+/Common/GameState.cpp

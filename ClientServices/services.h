@@ -7,7 +7,6 @@
 #include <iostream>
 
 #include "common.h"
-#include "GameSettings.h"
 
 namespace services
 {
@@ -24,10 +23,8 @@ namespace services
 	void SendImageUpdates(uint64_t gameID, const std::vector<common::img::Point>& points, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 	std::vector<common::img::Point> ReceiveImageUpdates(uint64_t gameID, std::ostream& errStream = std::cerr);
 
-	void SendGameSettings(uint64_t gameID, const GameSettings& gameSettings, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
-	GameSettings ReceiveGameSettings(uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
+	std::pair<common::game::GameState, uint64_t> ReceiveGameStateAndTimer(uint64_t gameID, std::ostream& outStream = std::cout);
 
-	void MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing);
-	void MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing);
-	void ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing);
+	void SendGameSettings(uint64_t gameID, const common::game::GameSettings& gameSettings, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
+	common::game::GameSettings ReceiveGameSettings(uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 }

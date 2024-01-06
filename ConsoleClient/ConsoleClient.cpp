@@ -123,13 +123,15 @@ menu2:
 	}
 
 	bool keepGoing = true;
-	std::thread messagesSender(services::MessageSender, roomID, username, &keepGoing);
-	std::thread messagesReceiver(services::MessagesReceiver, roomID, username, &keepGoing);
-	std::thread imageUpdatesReceiver(services::ImageUpdatesReceiver, roomID, &keepGoing);
+	std::thread messagesSender(utils::MessageSender, roomID, username, &keepGoing);
+	std::thread messagesReceiver(utils::MessagesReceiver, roomID, username, &keepGoing);
+	std::thread imageUpdatesReceiver(utils::ImageUpdatesReceiver, roomID, &keepGoing);
+	std::thread gameStateReceiver(utils::GameStateReceiver, roomID, &keepGoing);
 
 	messagesSender.join();
 	messagesReceiver.join();
 	imageUpdatesReceiver.join();
+	gameStateReceiver.join();
 
 	return 0;
 }

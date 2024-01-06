@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="canvaspaint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mainwindow.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="canvaspaint.cpp">
+      <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -31,11 +31,11 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="canvaspaint.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="mainwindow.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="canvaspaint.h">
+      <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +61,12 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{1173c52f-cd3f-4edf-9e4c-5b929894c141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Canvas Window">
+      <UniqueIdentifier>{a2b7fa2a-c05a-44ce-8396-092dab7fc2fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Canvas Window">
+      <UniqueIdentifier>{cc39162c-5ea9-4550-873c-c8638808d9c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

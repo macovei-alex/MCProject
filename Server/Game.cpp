@@ -1,5 +1,19 @@
 #include "Game.h"
 
+Game::Game() noexcept :
+	m_players{},
+	m_roundNumber{ 0 },
+	m_playerToDrawID{ 0 },
+	m_ownerID{ 0 },
+	m_gameSettings{},
+	m_gameState{ common::game::GameState::NONE },
+	m_turn{},
+	m_image{},
+	m_chat{}
+{
+	/* empty */
+}
+
 Game::Game(Game&& other) noexcept :
 	m_players{ std::move(other.m_players) },
 	m_roundNumber{ other.m_roundNumber },
@@ -8,11 +22,13 @@ Game::Game(Game&& other) noexcept :
 	m_gameSettings{ std::move(other.m_gameSettings) },
 	m_turn{ std::move(other.m_turn) },
 	m_image{ std::move(other.m_image) },
-	m_chat{ std::move(other.m_chat) }
+	m_chat{ std::move(other.m_chat) },
+	m_gameState{ std::move(other.m_gameState) }
 {
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
 	other.m_ownerID = 0;
+	other.m_gameState = common::game::GameState::NONE;
 }
 
 Game& Game::operator=(Game&& other) noexcept
@@ -21,6 +37,7 @@ Game& Game::operator=(Game&& other) noexcept
 	{
 		return *this;
 	}
+
 	m_players = std::move(other.m_players);
 	m_roundNumber = std::move(other.m_roundNumber);
 	m_playerToDrawID = std::move(other.m_playerToDrawID);
@@ -29,10 +46,12 @@ Game& Game::operator=(Game&& other) noexcept
 	m_gameSettings = std::move(other.m_gameSettings);
 	m_image = std::move(other.m_image);
 	m_chat = std::move(other.m_chat);
+	m_gameState = std::move(other.m_gameState);
 
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
 	other.m_ownerID = 0;
+	other.m_gameState = common::game::GameState::NONE;
 
 	return *this;
 }
@@ -62,7 +81,7 @@ void Game::SetPlayerToDrawID(uint8_t playerToDrawID)
 	m_playerToDrawID = playerToDrawID;
 }
 
-GameSettings& Game::GetGameSettings()
+common::game::GameSettings& Game::GetGameSettings()
 {
 	return m_gameSettings;
 }
@@ -82,7 +101,17 @@ Chat& Game::GetChat()
 	return m_chat;
 }
 
-void Game::Start()
+common::game::GameState Game::GetGameState()
+{
+	return m_gameState;
+}
+
+void Game::SetGameState(common::game::GameState gameState)
+{
+	m_gameState = gameState;
+}
+
+void Game::Run()
 {
 
 }

@@ -7,7 +7,7 @@
 #include <fstream>
 
 #include "Player.h"
-#include "../Common/GameSettings.h"
+#include "common.h"
 
 class Turn
 {

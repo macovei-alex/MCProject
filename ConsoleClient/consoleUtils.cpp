@@ -3,6 +3,8 @@
 #include <iostream>
 #include <format>
 
+#include "services.h"
+
 uint64_t utils::GetInt(const char* message)
 {
 	if (message)
@@ -44,4 +46,54 @@ void utils::PrintMenu2()
 		<< '\t' << utils::Menu2Options::SIGN_OUT << ". Sign out\n"
 		<< '\t' << utils::Menu2Options::EXIT_2 << ". Exit\n";
 	std::cout << "******************************************\n\n";
+}
+
+void utils::MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing)
+{
+	while (*keepGoing)
+	{
+		std::string message;
+		std::getline(std::cin, message);
+		services::SendNewMessage(username, message, gameID);
+	}
+}
+
+void utils::MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing)
+{
+	using namespace std::literals::chrono_literals;
+
+	while (*keepGoing)
+	{
+		services::ReceiveNewMessages(username, gameID);
+		std::this_thread::sleep_for(0.5s);
+	}
+}
+
+void utils::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
+{
+	using namespace std::literals::chrono_literals;
+
+	while (*keepGoing)
+	{
+		auto points{ services::ReceiveImageUpdates(gameID) };
+		for(const auto& point : points)
+			std::cout << std::format("({},{},{})\n", point.x, point.y, point.color.ToInt32());
+
+		std::this_thread::sleep_for(0.5s);
+	}
+}
+
+void utils::GameStateReceiver(uint64_t gameID, bool* keepGoing)
+{
+	using namespace std::literals::chrono_literals;
+
+	while (*keepGoing)
+	{
+		auto gameSettingsPair{ services::ReceiveGameStateAndTimer(gameID) };
+		if (gameSettingsPair.first != common::game::GameState::NONE)
+			std::cout << static_cast<uint16_t>(gameSettingsPair.first) << ', ' << gameSettingsPair.second << '\n';
+		else
+			std::cout << "No game state received\n";
+		std::this_thread::sleep_for(0.5s);
+	}
 }

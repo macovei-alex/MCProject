@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-std::string utils::getHash(const std::string& input)
+std::string utils::GetHash(const std::string& input)
 {
 	std::string hash;
 	CryptoPP::SHA256 sha256;
@@ -24,7 +24,7 @@ void utils::NavigateToProjectDirectory()
 	DWORD length = GetCurrentDirectoryW(buffer_size, buffer);
 	std::wstring currentDirectory{ buffer, length };
 
-	std::wcout << currentDirectory << std::endl;
+	// std::wcout << currentDirectory << std::endl;
 
 	size_t x64pos;
 	if ((x64pos = currentDirectory.find(L"x64")) != std::wstring::npos)
@@ -33,5 +33,5 @@ void utils::NavigateToProjectDirectory()
 		SetCurrentDirectory((currentDirectory + L"\\Server").c_str());
 	}
 
-	std::wcout << currentDirectory << std::endl;
+	// std::wcout << currentDirectory << std::endl;
 }

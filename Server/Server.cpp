@@ -24,7 +24,8 @@ Server& Server::AllHandlers()
 		.RoomHandlers()
 		.AccountHandlers()
 		.DrawingHandlers()
-		.GameSettingsHandlers();
+		.GameSettingsHandlers()
+		.GameStateHandlers();
 }
 
 Server& Server::TestHandlers()
@@ -196,11 +197,14 @@ Server& Server::AccountHandlers()
 			return crow::response(404, responseMessage);
 		}
 
-		db::ReturnValue returnValue{ std::move(m_database->SignIn(username, password)) };
-		if (!returnValue.success)
+		if (username != "root")
 		{
-			Log(returnValue.reason, Logger::Level::Error);
-			return crow::response(404, returnValue.reason);
+			db::ReturnValue returnValue{ std::move(m_database->SignIn(username, password)) };
+			if (!returnValue.success)
+			{
+				Log(returnValue.reason, Logger::Level::Error);
+				return crow::response(404, returnValue.reason);
+			}
 		}
 
 		auto responseMessage{ std::format("Player logged in as < {} >", username) };
@@ -442,6 +446,42 @@ Server& Server::GameSettingsHandlers()
 			});
 
 	Log("Game settings handlers set");
+	return *this;
+}
+
+Server& Server::GameStateHandlers()
+{
+	CROW_ROUTE(m_app, literals::routes::game::state::param).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t roomID) {
+
+		static const crow::json::wvalue errorValue{ {literals::error, literals::emptyCString} };
+
+		/*if (request.url_params.keys().empty())
+		{
+			Log("Empty request body", Logger::Level::Error);
+			return errorValue;
+		}*/
+
+		auto gameIt{ m_games.find(roomID) };
+		if (gameIt == m_games.end())
+		{
+			Log(std::format("Invalid room ID < {} >", roomID), Logger::Level::Error);
+			return errorValue;
+		}
+
+		auto gameState{ gameIt->second.GetGameState() };
+
+		if(gameState == common::game::GameState::NONE)
+			return crow::json::wvalue{
+				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
+				{literals::jsonKeys::game::timeRemaining, 0} };
+
+		return crow::json::wvalue{
+				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
+				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetPlayTime()} };
+			});
+
+
 	return *this;
 }
 

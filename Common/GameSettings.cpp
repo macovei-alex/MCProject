@@ -1,6 +1,8 @@
-#include "GameSettings.h"
+#include "common.h"
 
 #include <algorithm>
+
+using namespace common::game;
 
 const uint16_t GameSettings::defaultChooseWordOptionCount = 3;
 const uint16_t GameSettings::defaultDrawTime = 120;

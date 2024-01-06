@@ -34,6 +34,7 @@ public:
 	Server& AccountHandlers();
 	Server& DrawingHandlers();
 	Server& GameSettingsHandlers();
+	Server& GameStateHandlers();
 
 public:
 	Server& IPAddress(const std::string& IPAddress);

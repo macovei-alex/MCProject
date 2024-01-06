@@ -294,11 +294,11 @@ std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, s
 		{
 			if (!serverErrorDetected)
 			{
+				serverErrorDetected = true;
 				if (!response.reason.empty())
 					throw std::exception(response.reason.c_str());
 				else
 					throw std::exception("Server didn't provide an explanation");
-				serverErrorDetected = true;
 			}
 		}
 		else
@@ -337,7 +337,7 @@ std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, s
 	}
 }
 
-void services::SendGameSettings(uint64_t gameID, const GameSettings& gameSettings, std::ostream& outStream, std::ostream& errStream)
+void services::SendGameSettings(uint64_t gameID, const common::game::GameSettings& gameSettings, std::ostream& outStream, std::ostream& errStream)
 {
 	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::settings::simple} + "/" };
 
@@ -367,7 +367,7 @@ void services::SendGameSettings(uint64_t gameID, const GameSettings& gameSetting
 	}
 }
 
-GameSettings services::ReceiveGameSettings(uint64_t gameID, std::ostream& outStream, std::ostream& errStream)
+common::game::GameSettings services::ReceiveGameSettings(uint64_t gameID, std::ostream& outStream, std::ostream& errStream)
 {
 	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::settings::simple} + "/" };
 
@@ -386,34 +386,45 @@ GameSettings services::ReceiveGameSettings(uint64_t gameID, std::ostream& outStr
 	}
 }
 
-void services::MessageSender(uint64_t gameID, const std::string& username, bool* keepGoing)
+std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTimer(uint64_t gameID, std::ostream& outStream)
 {
-	while (*keepGoing)
+	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::state::simple} + "/" };
+
+	static bool serverErrorDetected = false;
+
+	std::string url{ urlBlueprint + std::to_string(gameID) };
+
+	try
 	{
-		std::string message;
-		std::getline(std::cin, message);
-		services::SendNewMessage(username, message, gameID);
+		auto response = cpr::Get(cpr::Url{ url });
+
+		if (response.status_code != 200 && response.status_code != 201)
+		{
+			if (!serverErrorDetected)
+			{
+				serverErrorDetected = true;
+				if (!response.reason.empty())
+					throw std::exception(response.reason.c_str());
+				else
+					throw std::exception("Server didn't provide an explanation");
+			}
+		}
+		else
+			serverErrorDetected = false;
+
+		auto responseJson{ std::move(crow::json::load(response.text)) };
+		if (responseJson.has(literals::error))
+			throw std::exception("Json has error");
+
+		std::cout << responseJson << '\n';
+
+		return std::make_pair(
+			static_cast<common::game::GameState>(responseJson[literals::jsonKeys::game::state].u()),
+			responseJson[literals::jsonKeys::game::timeRemaining].u());
 	}
-}
-
-void services::MessagesReceiver(uint64_t gameID, const std::string& username, bool* keepGoing)
-{
-	using namespace std::literals::chrono_literals;
-
-	while (*keepGoing)
+	catch (const std::exception& exception)
 	{
-		services::ReceiveNewMessages(username, gameID);
-		std::this_thread::sleep_for(0.5s);
-	}
-}
-
-void services::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
-{
-	using namespace std::literals::chrono_literals;
-
-	while (*keepGoing)
-	{
-		services::ReceiveImageUpdates(gameID);
-		std::this_thread::sleep_for(0.5s);
+		outStream << "[Game state updater]: " << exception.what() << '\n';
+		return { common::game::GameState::NONE, 0 };
 	}
 }

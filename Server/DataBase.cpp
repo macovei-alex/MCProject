@@ -51,7 +51,7 @@ db::ReturnValue db::Database::SignUp(const std::string& playerName, const std::s
 	db::Player player;
 
 	player.playerName = playerName;
-	player.password = std::move(utils::getHash(password));
+	player.password = std::move(utils::GetHash(password));
 	player.isOnline = true;
 
 	m_storage.insert(player);
@@ -70,7 +70,7 @@ db::ReturnValue db::Database::SignIn(const std::string& playerName, const std::s
 	if (result[0].isOnline)
 		return{ false, "Player is already online!" };
 
-	if (result[0].password != utils::getHash(password))
+	if (result[0].password != utils::GetHash(password))
 		return{ false, "Wrong password!" };
 
 	result[0].isOnline = true;

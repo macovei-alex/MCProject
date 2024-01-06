@@ -7,6 +7,6 @@
 
 namespace utils
 {
-	std::string getHash(const std::string& input);
+	std::string GetHash(const std::string& input);
 	void NavigateToProjectDirectory();
 }
