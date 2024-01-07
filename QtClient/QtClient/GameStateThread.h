@@ -3,7 +3,7 @@
 #include <QThread>
 #include <QPair>
 
-#include "GameState.h"
+#include "common.h"
 
 class GameStateThread : public QThread
 {
@@ -14,7 +14,7 @@ public:
 	~GameStateThread() = default;
 
 signals:
-	void GameStateSignal(const QPair<GameState, uint64_t>& gameStatePair);
+	void GameStateSignal(const QPair<common::game::GameState, uint64_t>& gameStatePair);
 
 public:
 	uint64_t roomID;

@@ -189,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="canvaspaint.cpp" />
     <ClCompile Include="ChatThread.cpp" />
+    <ClCompile Include="OnlineData.cpp" />
     <ClCompile Include="GameStateThread.cpp" />
     <ClCompile Include="ImageThread.cpp" />
     <ClCompile Include="main.cpp" />
@@ -229,7 +230,7 @@
     <ClInclude Include="DrawingState.h" />
     <QtMoc Include="ImageThread.h" />
     <QtMoc Include="GameStateThread.h" />
-    <ClInclude Include="GameState.h" />
+    <ClInclude Include="OnlineData.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="ui_canvaspaint.h" />

@@ -10,13 +10,13 @@
 #include <QPixmap>
 
 #include "Line.h"
-#include "GameState.h"
 #include "common.h"
 
 #ifdef ONLINE
 #include "ImageThread.h"
 #include "GameStateThread.h"
 #include "ChatThread.h"
+#include "OnlineData.h"
 #endif
 
 class MainWindow;
@@ -59,7 +59,7 @@ private slots:
 	void on_messageButton_clicked();
 
 	void HandleImage(QList<Line>* newLines);
-	void HandleGameState(const QPair<GameState, uint64_t>& gameStatePair);
+	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
     void HandleChat(const QList<common::Message>& messages);
 
 signals:
@@ -73,21 +73,20 @@ private:
 	Line currentLine;
 	QPoint lastPoint;
 
-	DrawingState drawState;
+    DrawingState m_drawState;
 	Ui::CanvasPaint* ui;
 
 #ifdef ONLINE
-	uint64_t roomID;
-	ImageThread* imageThread;
-	GameStateThread* gameStateThread;
-	ChatThread* chatThread;
-	bool keepGoing;
-	QString username;
+	OnlineData m_onlineData;
+	ImageThread* m_imageThread;
+	GameStateThread* m_gameStateThread;
+	ChatThread* m_chatThread;
+	bool m_keepGoing;
 #endif
 
 private:
-	const QPen DRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::DRAWING_COLOR_INT) }, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
-	const QPen ERASING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::ERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
+	const QPen kDRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kDRAWING_COLOR_INT) }, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
+	const QPen kERASING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
 };
 
 #endif // CANVASPAINT_H

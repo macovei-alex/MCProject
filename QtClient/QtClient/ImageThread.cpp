@@ -38,7 +38,7 @@ void ImageThread::run()
 			for (size_t i = 0; i < commonPoints.size(); i++)
 			{
 				line = new Line;
-				line->drawState = (commonPoints[i].color == Line::ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
+				line->drawState = (commonPoints[i].color == Line::kERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING);
 
 				while (i < commonPoints.size() && commonPoints[i].color != Line::INVALID_COLOR_INT)
 				{

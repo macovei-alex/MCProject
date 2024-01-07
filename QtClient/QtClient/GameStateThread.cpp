@@ -23,7 +23,7 @@ void GameStateThread::run()
 		while (keepGoing)
 		{
 			auto gameStatePair{ services::ReceiveGameStateAndTimer(roomID) };
-			auto gameStateQPair{ QPair{ static_cast<GameState>(gameStatePair.first), gameStatePair.second } };
+			auto gameStateQPair{ QPair{ static_cast<common::game::GameState>(gameStatePair.first), gameStatePair.second } };
 
 			qDebug() << "Received game state and timer: "
 				<< static_cast<uint16_t>(gameStateQPair.first) << ' ' << gameStateQPair.second;

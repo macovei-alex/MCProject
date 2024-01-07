@@ -1,13 +1,13 @@
 #include "Line.h"
 
-const int32_t Line::DRAWING_COLOR_INT{ 0x000000 };
-const int32_t Line::ERASING_COLOR_INT{ 0xFFFFFF };
+const int32_t Line::kDRAWING_COLOR_INT{ 0x000000 };
+const int32_t Line::kERASING_COLOR_INT{ 0xFFFFFF };
 
 #ifdef ONLINE
 const int32_t Line::INVALID_COLOR_INT{ 0xFFFFFE };
 
 Line::Line(std::vector<common::img::Point>&& commonPoints, uint32_t color) :
-	drawState{ color == ERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING },
+	drawState{ color == kERASING_COLOR_INT ? DrawingState::ERASING : DrawingState::DRAWING },
 	points{ static_cast<qsizetype>(commonPoints.size()), QPoint() }
 {
 	size_t pos = 0;
@@ -25,7 +25,7 @@ std::vector<common::img::Point> Line::ToCommonPoints() const
 		commonPoints[pos++] = {
 			point.x(),
 			point.y(),
-			(drawState == DrawingState::DRAWING ? DRAWING_COLOR_INT : ERASING_COLOR_INT) };
+			(drawState == DrawingState::DRAWING ? kDRAWING_COLOR_INT : kERASING_COLOR_INT) };
 	}
 
 	return commonPoints;

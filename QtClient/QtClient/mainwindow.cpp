@@ -12,7 +12,7 @@
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow{ parent },
 	ui{ new Ui::MainWindow },
-	roomID{ 0 }
+	roomID{ }
 {
 	ui->setupUi(this);
 
