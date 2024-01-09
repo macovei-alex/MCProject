@@ -7,6 +7,7 @@
 #include "serverUtils.h"
 #include "Game.h"
 #include "Database.h"
+#include "constantLiterals.h"
 
 #include "MockDatabase.h"
 // temp
@@ -33,8 +34,7 @@ public:
 	Server& RoomHandlers();
 	Server& AccountHandlers();
 	Server& DrawingHandlers();
-	Server& GameSettingsHandlers();
-	Server& GameStateHandlers();
+	Server& GameHandlers();
 
 public:
 	Server& IPAddress(const std::string& IPAddress);
@@ -54,4 +54,5 @@ private:
 	std::unique_ptr<db::Database> m_database;
 	std::unique_ptr<Logger> m_logger;
 	std::map<uint64_t, Game> m_games;
+	const crow::json::wvalue m_errorValue{ { literals::error, literals::emptyCString } };
 };

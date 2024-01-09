@@ -7,7 +7,7 @@
 #include "servicesUtils.h"
 #include "constantLiterals.h"
 
-uint64_t services::CreateRoom(std::ostream& outStream, std::ostream& errStream)
+uint64_t services::CreateRoom(const std::string& username, std::ostream& outStream, std::ostream& errStream)
 {
 	try
 	{
@@ -25,6 +25,10 @@ uint64_t services::CreateRoom(std::ostream& outStream, std::ostream& errStream)
 		}
 
 		uint64_t roomID = crow::json::load(response.text)[literals::jsonKeys::game::ID].u();
+
+		if (!services::ConnectToRoom(roomID, username))
+			throw std::exception("Could not connect to the newly created room");
+
 		errStream << std::format("[Create] New room with roomID < {} > created\n", roomID);
 		return roomID;
 	}
@@ -35,17 +39,20 @@ uint64_t services::CreateRoom(std::ostream& outStream, std::ostream& errStream)
 	}
 }
 
-bool services::ConnectToRoom(uint64_t roomID, std::ostream& outStream, std::ostream& errStream)
+bool services::ConnectToRoom(uint64_t roomID, const std::string& username, std::ostream& outStream, std::ostream& errStream)
 {
 	try
 	{
 		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::game::connect << '/' << roomID;
+		url << literals::routes::baseAddress << literals::routes::game::connect::simple << '/' << roomID;
 
-		auto response = cpr::Get(cpr::Url{ url.str() });
+		auto response = cpr::Get(
+			cpr::Url{ url.str() },
+			cpr::Parameters{ {literals::jsonKeys::account::username, username} });
 
 		if (response.status_code != 200 && response.status_code != 201)
 			throw std::exception(std::format("Invalid room ID < {} >", roomID).c_str());
+
 		outStream << std::format("[Connect] Connected to room < {} >\n", roomID);
 		return true;
 	}
@@ -371,7 +378,7 @@ void services::SendGameSettings(uint64_t gameID, const common::game::GameSetting
 	}
 }
 
-common::game::GameSettings services::ReceiveGameSettings(uint64_t gameID, std::ostream& outStream, std::ostream& errStream)
+common::game::GameSettings services::ReceiveGameSettings(uint64_t gameID, std::ostream& errStream)
 {
 	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::settings::simple} + "/" };
 
@@ -386,11 +393,11 @@ common::game::GameSettings services::ReceiveGameSettings(uint64_t gameID, std::o
 	}
 	catch (const std::exception& execption)
 	{
-		outStream << "[Settings receiver]: " << execption.what() << '\n';
+		errStream << "[Settings receiver]: " << execption.what() << '\n';
 	}
 }
 
-std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTimer(uint64_t gameID, std::ostream& outStream)
+std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTime(uint64_t gameID, std::ostream& errStream)
 {
 	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::state::simple} + "/" };
 
@@ -420,15 +427,42 @@ std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTimer(
 		if (responseJson.has(literals::error))
 			throw std::exception("Json has error");
 
-		std::cout << responseJson << '\n';
-
 		return std::make_pair(
 			static_cast<common::game::GameState>(responseJson[literals::jsonKeys::game::state].u()),
 			responseJson[literals::jsonKeys::game::timeRemaining].u());
 	}
 	catch (const std::exception& exception)
 	{
-		outStream << "[Game state updater]: " << exception.what() << '\n';
+		errStream << "[Game state updater]: " << exception.what() << '\n';
 		return { common::game::GameState::NONE, 0 };
+	}
+}
+
+common::game::PlayerRole services::ReceivePlayerRole(uint64_t roomID, const std::string& username, std::ostream& errStream)
+{
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::playerRole::simple} + "/" };
+
+	std::string url{ urlBlueprint + std::to_string(roomID)};
+
+	try
+	{
+		auto response = cpr::Get(
+			cpr::Url{ url },
+			cpr::Parameters{ {literals::jsonKeys::account::username, username} });
+
+		if (response.status_code != 200 && response.status_code != 201)
+			throw std::exception(response.reason.c_str());
+
+
+		auto responseJson{ std::move(crow::json::load(response.text)) };
+		if (responseJson.has(literals::error))
+			throw std::exception("Json has error");
+
+		return static_cast<common::game::PlayerRole>(responseJson[literals::jsonKeys::player::role].u());
+	}
+	catch (const std::exception& exception)
+	{
+		errStream << "[Player role receiver]: " << exception.what() << '\n';
+		return common::game::PlayerRole::NONE;
 	}
 }

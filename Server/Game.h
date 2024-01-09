@@ -22,6 +22,7 @@ public:
 
 public:
 	const std::vector<Player>& GetPlayers();
+	const Player& GetPlayer(const std::string& name) const;
 	uint8_t GetRoundNumber();
 	void SetRoundNumber(uint8_t roundNumber);
 	uint8_t GetPlayerToDrawID();

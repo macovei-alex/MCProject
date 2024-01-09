@@ -5,7 +5,7 @@ Player::Player() noexcept :
 	m_score{ 0 },
 	m_flagGuessedCorrectWord{ false },
 	m_currentScore{ 0 },
-	m_gameRole{ Player::GameRole::guessing },
+	m_gameRole{ common::game::PlayerRole::NONE },
 	m_roomRole{ Player::RoomRole::participant }
 {
 	/*EMPTY*/
@@ -16,7 +16,7 @@ Player::Player(const std::string& name) noexcept :
 	m_score{ 0 },
 	m_flagGuessedCorrectWord{ false },
 	m_currentScore{ 0 },
-	m_gameRole{ Player::GameRole::guessing },
+	m_gameRole{ common::game::PlayerRole::NONE },
 	m_roomRole{ Player::RoomRole::participant }
 {
 	/*EMPTY*/
@@ -47,12 +47,12 @@ void Player::ResetScore() noexcept
 	m_score = 0;
 }
 
-Player::GameRole Player::GetGameRole() const noexcept
+common::game::PlayerRole Player::GetRole() const noexcept
 {
 	return m_gameRole;
 }
 
-void Player::SetGameRole(GameRole gameRole) noexcept
+void Player::SetGameRole(common::game::PlayerRole gameRole) noexcept
 {
 	m_gameRole = gameRole;
 }
@@ -74,7 +74,7 @@ void Player::AddScore()
 
 int Player::CalculateScore(uint16_t seconds, uint32_t maxSeconds, int playerCount)
 {
-	if (m_gameRole == Player::GameRole::drawing)
+	if (m_gameRole == common::game::PlayerRole::DRAWING)
 		return CalculateScoreDrawingPlayer(seconds, maxSeconds, playerCount);
 	return CalculateScoreGuessingPlayer(seconds, maxSeconds);
 }

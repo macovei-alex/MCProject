@@ -81,7 +81,7 @@ menu2:
 
 	case utils::Menu2Options::CREATE_ROOM:
 		do {
-			roomID = services::CreateRoom();
+			roomID = services::CreateRoom(username);
 			if (roomID == LONG_MAX)
 			{
 				std::cout << "Invalid room ID. Do you want to try again? [y/n]\n"
@@ -98,7 +98,7 @@ menu2:
 		do {
 			std::cout << "Enter room ID: ";
 			roomID = utils::GetInt();
-			isGoodConnection = services::ConnectToRoom(roomID);
+			isGoodConnection = services::ConnectToRoom(roomID, username);
 			if (!isGoodConnection)
 			{
 				std::cout << std::format("Do you want to try again? [y/n]\n", roomID)
@@ -123,6 +123,10 @@ menu2:
 	}
 
 	bool keepGoing = true;
+
+	common::game::PlayerRole playerRole = services::ReceivePlayerRole(roomID, username);
+	std::cout << std::format("You are a {}.\n", static_cast<uint16_t>(playerRole));
+
 	std::thread messagesSender(utils::MessageSender, roomID, username, &keepGoing);
 	std::thread messagesReceiver(utils::MessagesReceiver, roomID, username, &keepGoing);
 	std::thread imageUpdatesReceiver(utils::ImageUpdatesReceiver, roomID, &keepGoing);

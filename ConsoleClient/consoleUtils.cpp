@@ -31,9 +31,9 @@ void utils::PrintMenu1()
 {
 	std::cout << "\n******************************************\n";
 	std::cout << "Options:\n"
-		<< '\t' << utils::Menu1Options::SIGN_IN << ". Sign into an existing account\n"
-		<< '\t' << utils::Menu1Options::SIGN_UP << ". Create a new account\n"
-		<< '\t' << utils::Menu1Options::EXIT_1 << ". Exit\n";
+		<< '\t' << static_cast<uint16_t>(utils::Menu1Options::SIGN_IN) << ". Sign into an existing account\n"
+		<< '\t' << static_cast<uint16_t>(utils::Menu1Options::SIGN_UP) << ". Create a new account\n"
+		<< '\t' << static_cast<uint16_t>(utils::Menu1Options::EXIT_1) << ". Exit\n";
 	std::cout << "******************************************\n\n";
 }
 
@@ -41,10 +41,10 @@ void utils::PrintMenu2()
 {
 	std::cout << "\n******************************************\n";
 	std::cout << "Options:\n"
-		<< '\t' << utils::Menu2Options::CREATE_ROOM << ". Create a new room\n"
-		<< '\t' << utils::Menu2Options::JOIN_ROOM << ". Join an existing room\n"
-		<< '\t' << utils::Menu2Options::SIGN_OUT << ". Sign out\n"
-		<< '\t' << utils::Menu2Options::EXIT_2 << ". Exit\n";
+		<< '\t' << static_cast<uint16_t>(utils::Menu2Options::CREATE_ROOM) << ". Create a new room\n"
+		<< '\t' << static_cast<uint16_t>(utils::Menu2Options::JOIN_ROOM) << ". Join an existing room\n"
+		<< '\t' << static_cast<uint16_t>(utils::Menu2Options::SIGN_OUT) << ". Sign out\n"
+		<< '\t' << static_cast<uint16_t>(utils::Menu2Options::EXIT_2) << ". Exit\n";
 	std::cout << "******************************************\n\n";
 }
 
@@ -93,11 +93,10 @@ void utils::GameStateReceiver(uint64_t gameID, bool* keepGoing)
 
 	while (*keepGoing)
 	{
-		auto gameSettingsPair{ services::ReceiveGameStateAndTimer(gameID) };
+		auto gameSettingsPair{ services::ReceiveGameStateAndTime(gameID) };
 		if (gameSettingsPair.first != common::game::GameState::NONE)
 			std::cout << static_cast<uint16_t>(gameSettingsPair.first) << ', ' << gameSettingsPair.second << '\n';
-		else
-			std::cout << "No game state received\n";
+
 		std::this_thread::sleep_for(0.5s);
 	}
 }

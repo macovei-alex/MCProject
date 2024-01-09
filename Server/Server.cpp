@@ -3,7 +3,6 @@
 #include <format>
 #include <stack>
 
-#include "constantLiterals.h"
 #include "common.h"
 
 Server::Server() :
@@ -25,8 +24,7 @@ Server& Server::AllHandlers()
 		.RoomHandlers()
 		.AccountHandlers()
 		.DrawingHandlers()
-		.GameSettingsHandlers()
-		.GameStateHandlers();
+		.GameHandlers();
 }
 
 Server& Server::TestHandlers()
@@ -135,6 +133,7 @@ Server& Server::RoomHandlers()
 {
 	CROW_ROUTE(m_app, literals::routes::game::create).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request) {
+
 		uint64_t newGameID = 0;
 		if (!this->m_games.empty())
 			newGameID = m_games.rbegin()->first + 1;
@@ -146,7 +145,7 @@ Server& Server::RoomHandlers()
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::game::connectParam).methods(crow::HTTPMethod::Get)
+	CROW_ROUTE(m_app, literals::routes::game::connect::param).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request, uint64_t gameID) {
 
 		auto gameIt = this->m_games.find(gameID);
@@ -155,6 +154,17 @@ Server& Server::RoomHandlers()
 			auto responseMessage{ std::format("Invalid room id < {} >", gameID) };
 			Log(responseMessage);
 			return crow::response(404, responseMessage);
+		}
+
+		try
+		{
+			gameIt->second.AddPlayer(
+				Player{ request.url_params.get(literals::jsonKeys::account::username) });
+		}
+		catch (const std::exception& exception)
+		{
+			Log(exception.what(), Logger::Level::Error);
+			return crow::response(404, exception.what());
 		}
 
 		auto responseMessage{ std::format("Connection to room < {} > successful", gameID) };
@@ -385,17 +395,15 @@ Server& Server::DrawingHandlers()
 	return *this;
 }
 
-Server& Server::GameSettingsHandlers()
+Server& Server::GameHandlers()
 {
 	CROW_ROUTE(m_app, literals::routes::game::settings::param).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		static const crow::json::wvalue errorValue{ {literals::error, literals::emptyCString} };
-
 		if (m_games.find(gameID) == m_games.end())
 		{
 			Log(std::format("Invalid game ID < {} >", gameID), Logger::Level::Error);
-			return errorValue;
+			return m_errorValue;
 		}
 
 		Log(std::format("Game settings requested for game < {} >", gameID), Logger::Level::Info);
@@ -446,16 +454,9 @@ Server& Server::GameSettingsHandlers()
 		return crow::response(200);
 			});
 
-	Log("Game settings handlers set");
-	return *this;
-}
 
-Server& Server::GameStateHandlers()
-{
 	CROW_ROUTE(m_app, literals::routes::game::state::param).methods(crow::HTTPMethod::Get)
 		([this](const crow::request& request, uint64_t roomID) {
-
-		static const crow::json::wvalue errorValue{ {literals::error, literals::emptyCString} };
 
 		/*if (request.url_params.keys().empty())
 		{
@@ -467,12 +468,12 @@ Server& Server::GameStateHandlers()
 		if (gameIt == m_games.end())
 		{
 			Log(std::format("Invalid room ID < {} >", roomID), Logger::Level::Error);
-			return errorValue;
+			return m_errorValue;
 		}
 
 		auto gameState{ gameIt->second.GetGameState() };
 
-		if(gameState == common::game::GameState::NONE)
+		if (gameState == common::game::GameState::NONE)
 			return crow::json::wvalue{
 				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
 				{literals::jsonKeys::game::timeRemaining, 0} };
@@ -482,6 +483,35 @@ Server& Server::GameStateHandlers()
 				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetPlayTime()} };
 			});
 
+
+	CROW_ROUTE(m_app, literals::routes::game::playerRole::param).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t roomID) {
+
+		auto gameIt{ m_games.find(roomID) };
+		if (gameIt == m_games.end())
+		{
+			Log(std::format("Invalid room ID < {} >", roomID), Logger::Level::Error);
+			return m_errorValue;
+		}
+
+		try
+		{
+			auto playerRole{ gameIt->second
+				.GetPlayer(
+					request.url_params.get(literals::jsonKeys::account::username))
+				.GetRole() };
+
+			return crow::json::wvalue{ {literals::jsonKeys::player::role, static_cast<uint64_t>(playerRole)} };
+		}
+		catch (const std::exception& exception)
+		{
+			Log(exception.what(), Logger::Level::Error);
+			return m_errorValue;
+		}
+
+		return m_errorValue;
+
+			});
 
 	return *this;
 }
@@ -517,7 +547,7 @@ void Server::Run()
 
 void Server::Log(const std::string_view& message, Logger::Level level)
 {
-	if(m_logger)
+	if (m_logger)
 		m_logger->Log(message, level);
 }
 
@@ -547,7 +577,7 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 
 	std::ifstream file{ filePath };
 
-	if(!file.is_open())
+	if (!file.is_open())
 	{
 		Log(std::format("Failed to open settings file < {} >", filePath), Logger::Level::Error);
 		return *this;

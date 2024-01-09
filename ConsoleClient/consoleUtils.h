@@ -6,14 +6,14 @@ namespace chr = std::chrono;
 
 namespace utils
 {
-	enum Menu1Options : uint16_t
+	enum class Menu1Options: uint16_t
 	{
 		SIGN_IN = 1,
 		SIGN_UP,
 		EXIT_1
 	};
 
-	enum Menu2Options : uint16_t
+	enum class Menu2Options : uint16_t
 	{
 		CREATE_ROOM = 1,
 		JOIN_ROOM,

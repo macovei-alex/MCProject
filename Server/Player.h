@@ -3,14 +3,11 @@
 #include <cstdint>
 #include <string>
 
+#include "common.h"
+
 class Player
 {
 public:
-	enum class GameRole : uint8_t
-	{
-		drawing,
-		guessing
-	};
 
 	enum class RoomRole : uint8_t
 	{
@@ -33,8 +30,8 @@ public:
 	void ResetScore() noexcept;
 	int GetCurrentScore() const noexcept;
 	void ResetCurrentScore() noexcept;
-	GameRole GetGameRole() const noexcept;
-	void SetGameRole(GameRole gameRole) noexcept;
+	common::game::PlayerRole GetRole() const noexcept;
+	void SetGameRole(common::game::PlayerRole gameRole) noexcept;
 	RoomRole GetRoomRole() const noexcept;
 	void SetRoomRole(RoomRole roomRole) noexcept;
 
@@ -50,7 +47,7 @@ private:
 	int m_score;
 	int m_currentScore;
 	bool m_flagGuessedCorrectWord;
-	RoomRole m_roomRole : 1;
-	GameRole m_gameRole : 1;
+	RoomRole m_roomRole : 2;
+	common::game::PlayerRole m_gameRole : 1;
 };
 

@@ -61,6 +61,15 @@ const std::vector<Player>& Game::GetPlayers()
 	return m_players;
 }
 
+const Player& Game::GetPlayer(const std::string& name) const
+{
+	for (auto& player : m_players)
+		if (player.GetName() == name)
+			return player;
+
+	throw std::exception{ "Player not found" };
+}
+
 uint8_t Game::GetRoundNumber()
 {
 	return m_roundNumber;

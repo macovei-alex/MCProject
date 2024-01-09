@@ -61,6 +61,13 @@ namespace common
 			DRAW_AND_GUESS
 		};
 
+		enum class PlayerRole : uint8_t
+		{
+			DRAWING,
+			GUESSING,
+			NONE
+		};
+
 		class GameSettings
 		{
 		public:

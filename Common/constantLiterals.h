@@ -43,6 +43,11 @@ namespace literals
 			constexpr char roundCount[] = "roundCount";
 			constexpr char chooseWordOptionCount[] = "chooseWordOptionCount";
 		}
+
+		namespace player
+		{
+			constexpr char role[] = "role";
+		}
 	}
 
 	namespace routes
@@ -76,11 +81,25 @@ namespace literals
 				constexpr char param[] = "/game/state/<int>";
 			}
 
+			namespace connect
+			{
+				constexpr char simple[] = "/game/connect";
+				constexpr char param[] = "/game/connect/<int>";
+			}
+
+			namespace disconnect
+			{
+				constexpr char disconnect[] = "/game/disconnect";
+				constexpr char disconnectParam[] = "/game/disconnect/<int>";
+			}
+
+			namespace playerRole
+			{
+				constexpr char simple[] = "/game/player-role";
+				constexpr char param[] = "/game/player-role/<int>";
+			}
+
 			constexpr char create[] = "/game/create";
-			constexpr char connect[] = "/game/connect";
-			constexpr char connectParam[] = "/game/connect/<int>";
-			constexpr char disconnect[] = "/game/disconnect";
-			constexpr char disconnectParam[] = "/game/disconnect/<int>";
 		}
 
 		namespace account
