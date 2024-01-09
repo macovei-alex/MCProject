@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <mutex>
+
 Game::Game() noexcept :
 	m_players{},
 	m_roundNumber{ 0 },
@@ -9,7 +11,8 @@ Game::Game() noexcept :
 	m_gameState{ common::game::GameState::NONE },
 	m_turn{},
 	m_image{},
-	m_chat{}
+	m_chat{},
+	m_isRunning{ false }
 {
 	/* empty */
 }
@@ -23,12 +26,14 @@ Game::Game(Game&& other) noexcept :
 	m_turn{ std::move(other.m_turn) },
 	m_image{ std::move(other.m_image) },
 	m_chat{ std::move(other.m_chat) },
-	m_gameState{ std::move(other.m_gameState) }
+	m_gameState{ std::move(other.m_gameState) },
+	m_isRunning{ std::move(other.m_isRunning) }
 {
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
+	other.m_isRunning = false;
 }
 
 Game& Game::operator=(Game&& other) noexcept
@@ -47,6 +52,7 @@ Game& Game::operator=(Game&& other) noexcept
 	m_image = std::move(other.m_image);
 	m_chat = std::move(other.m_chat);
 	m_gameState = std::move(other.m_gameState);
+	m_isRunning = std::move(other.m_isRunning);
 
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
@@ -122,7 +128,35 @@ void Game::SetGameState(common::game::GameState gameState)
 
 void Game::Run()
 {
+	m_isRunning = true;
 
+	size_t roundCount = 0;
+
+	while (roundCount < 4)
+	{
+		for (Player& currentPlayer : m_players)
+		{
+			for (auto& player : m_players)
+				player.SetGameRole(common::game::PlayerRole::GUESSING);
+			currentPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
+
+			auto currentPlayerIt{ std::find(m_players.begin(), m_players.end(), currentPlayer) };
+			size_t currentPlayerIndex{ std::distance(m_players.begin(), currentPlayerIt) };
+
+			if (m_players.empty())
+			{
+				m_isRunning = false;
+				return;
+			}
+		}
+
+		std::sort(m_players.begin(), m_players.end(),[](const Player& lhs, const Player& rhs) {
+			return lhs.GetScore() > rhs.GetScore(); });
+
+		roundCount++;
+	}
+
+	m_isRunning = false;
 }
 
 void Game::AddPlayer(const Player& player)

@@ -49,4 +49,5 @@ private:
 	Image m_image;
 	Chat m_chat;
 	common::game::GameState m_gameState;
+	bool m_isRunning;
 };
