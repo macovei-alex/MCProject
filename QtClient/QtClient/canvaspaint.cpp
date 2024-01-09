@@ -249,6 +249,7 @@ void CanvasPaint::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
+#ifdef ONLINE
 void CanvasPaint::HandleImage(QList<Line>* newLines)
 {
 	QPainter painter{ &canvasPixmap };
@@ -280,3 +281,9 @@ void CanvasPaint::HandleChat(const QList<common::Message>& messages)
 		qDebug() << message.author << ' ' << message.text << ' ' << message.timestamp;
 	}
 }
+
+OnlineData& CanvasPaint::GetOnlineData()
+{
+	return m_onlineData;
+}
+#endif

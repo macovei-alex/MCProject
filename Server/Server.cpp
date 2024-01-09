@@ -173,16 +173,23 @@ Server& Server::RoomHandlers()
 			});
 
 
-	/*CROW_ROUTE(m_app, literals::routes::game::disconnectParam).methods(crow::HTTPMethod::Get)
-		([this](const crow::request& request, uint64_t) {
-		std::string name = request.url_params.get("name");
-		std::string lobbyStateParam = request.url_params.get("lobbyState");
-		if (name.empty() || lobbyStateParam.empty())
+	CROW_ROUTE(m_app, literals::routes::game::disconnect::param).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t roomID) {
+		try
 		{
-			return crow::response(404);
+			std::string username{ request.url_params.get(literals::jsonKeys::account::username) };
+
+			m_games[roomID].RemovePlayer(username);
 		}
+		catch (const std::exception& exception)
+		{
+			Log(exception.what(), Logger::Level::Error);
+			return crow::response(404, exception.what());
+		}
+
+
 		return crow::response(200, "Player left Lobby");
-		});*/
+		});
 
 	Log("Room handlers set");
 	return *this;
@@ -303,6 +310,9 @@ Server& Server::AccountHandlers()
 			Log(returnValue.reason, Logger::Level::Error);
 			return crow::response(404, returnValue.reason);
 		}
+
+		for (auto& game : m_games)
+			game.second.RemovePlayer(username);
 
 		Log(std::format("Player < {} > logged out", username), Logger::Level::Info);
 		return crow::response(200, std::format("Player < {} > logged out", username));

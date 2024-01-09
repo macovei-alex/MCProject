@@ -89,8 +89,8 @@ namespace literals
 
 			namespace disconnect
 			{
-				constexpr char disconnect[] = "/game/disconnect";
-				constexpr char disconnectParam[] = "/game/disconnect/<int>";
+				constexpr char simple[] = "/game/disconnect";
+				constexpr char param[] = "/game/disconnect/<int>";
 			}
 
 			namespace playerRole

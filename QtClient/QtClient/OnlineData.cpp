@@ -20,7 +20,7 @@ OnlineData::OnlineData(uint64_t roomID, const QString& username) :
 	/* empty */
 }
 
-OnlineData::OnlineData(uint64_t&& roomID, QString&& username) :
+OnlineData::OnlineData(uint64_t roomID, QString&& username) :
 	m_roomID{ roomID },
 	m_username{ username },
 	m_gameState{ common::game::GameState::NONE },

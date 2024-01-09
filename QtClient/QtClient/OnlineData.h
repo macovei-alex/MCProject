@@ -10,7 +10,7 @@ class OnlineData
 public:
 	OnlineData();
 	OnlineData(uint64_t roomID, const QString& username);
-	OnlineData(uint64_t&& roomID, QString&& username);
+	OnlineData(uint64_t roomID, QString&& username);
 
 	OnlineData(const OnlineData&) = default;
 	OnlineData& operator=(const OnlineData&) = default;

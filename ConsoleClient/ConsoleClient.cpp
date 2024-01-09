@@ -137,5 +137,7 @@ menu2:
 	imageUpdatesReceiver.join();
 	gameStateReceiver.join();
 
+	services::SignOut(username);
+
 	return 0;
 }
