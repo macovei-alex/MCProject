@@ -4,6 +4,7 @@
 #include <stack>
 
 #include "common.h"
+#include "..\UtilsDLL\utilsDLL.h"
 
 Server::Server() :
 	m_app{ },

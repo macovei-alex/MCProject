@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include "..\UtilsDLL\utilsDLL.h"
+
 db::Database::Database(const std::string& filename) :
 	m_storage{ db::CreateStorage(filename) }
 {
@@ -51,7 +53,7 @@ db::ReturnValue db::Database::SignUp(const std::string& playerName, const std::s
 	db::Player player;
 
 	player.playerName = playerName;
-	player.password = std::move(utils::GetHash(password));
+	player.password = std::move(utils::GetHashSHA256(password));
 	player.isOnline = true;
 
 	m_storage.insert(player);
@@ -70,7 +72,7 @@ db::ReturnValue db::Database::SignIn(const std::string& playerName, const std::s
 	if (result[0].isOnline)
 		return{ false, "Player is already online!" };
 
-	if (result[0].password != utils::GetHash(password))
+	if (result[0].password != utils::GetHashSHA256(password))
 		return{ false, "Wrong password!" };
 
 	result[0].isOnline = true;

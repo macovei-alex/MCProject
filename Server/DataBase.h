@@ -8,7 +8,6 @@
 #include <sqlite_orm/sqlite_orm.h>
 
 #include "DatabasePrerequisites.h"
-#include "serverUtils.h"
 
 namespace sql = sqlite_orm;
 

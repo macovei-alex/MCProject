@@ -141,7 +141,7 @@ void Game::Run()
 			currentPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
 
 			auto currentPlayerIt{ std::find(m_players.begin(), m_players.end(), currentPlayer) };
-			size_t currentPlayerIndex{ std::distance(m_players.begin(), currentPlayerIt) };
+			int64_t currentPlayerIndex{ std::distance(m_players.begin(), currentPlayerIt) };
 
 			if (m_players.empty())
 			{

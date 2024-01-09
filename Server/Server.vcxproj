@@ -155,7 +155,6 @@
     <ClCompile Include="MockDatabase.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Turn.cpp" />
-    <ClCompile Include="serverUtils.cpp" />
     <ClCompile Include="serverUtilsMod.cpp" />
     <ClCompile Include="serverUtilsMod.cppm" />
     <ClCompile Include="serverUtilsModTemp.cpp" />
@@ -169,7 +168,6 @@
     <ClInclude Include="Server.h" />
     <ClInclude Include="Turn.h" />
     <ClCompile Include="Game.cpp" />
-    <ClInclude Include="serverUtils.h" />
     <ClInclude Include="serverUtilsModTemp.h" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +194,9 @@
     </ProjectReference>
     <ProjectReference Include="..\TemporaryLogger\TemporaryLogger.vcxproj">
       <Project>{a9c8cb5d-f9e1-4b30-9ef3-db16e8b4dfcc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\UtilsDLL\UtilsDLL.vcxproj">
+      <Project>{4120995f-7e28-46ad-ad9b-208e80e59248}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
