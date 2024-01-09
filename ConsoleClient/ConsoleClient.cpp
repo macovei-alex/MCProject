@@ -6,6 +6,7 @@
 #include "constantLiterals.h"
 #include "common.h"
 #include "consoleUtils.h"
+#include "..\UtilsDLL\utilsDLL.h"
 
 int main()
 {
