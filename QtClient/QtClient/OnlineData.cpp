@@ -5,7 +5,8 @@
 OnlineData::OnlineData() :
 	m_roomID{},
 	m_username{},
-	m_gameState{ common::game::GameState::NONE }
+	m_gameState{ common::game::GameState::NONE },
+	m_role{ common::game::PlayerRole::NONE }
 {
 	/* empty */
 }
@@ -13,7 +14,8 @@ OnlineData::OnlineData() :
 OnlineData::OnlineData(uint64_t roomID, const QString& username) :
 	m_roomID{ roomID },
 	m_username{ username },
-	m_gameState{ common::game::GameState::NONE }
+	m_gameState{ common::game::GameState::NONE },
+	m_role{ common::game::PlayerRole::NONE }
 {
 	/* empty */
 }
@@ -21,7 +23,8 @@ OnlineData::OnlineData(uint64_t roomID, const QString& username) :
 OnlineData::OnlineData(uint64_t&& roomID, QString&& username) :
 	m_roomID{ roomID },
 	m_username{ username },
-	m_gameState{ common::game::GameState::NONE }
+	m_gameState{ common::game::GameState::NONE },
+	m_role{ common::game::PlayerRole::NONE }
 {
 	/* empty */
 }
@@ -59,5 +62,15 @@ common::game::GameState OnlineData::GetGameState() const
 void OnlineData::SetGameState(common::game::GameState gameState)
 {
 	m_gameState = gameState;
+}
+
+common::game::PlayerRole OnlineData::GetRole() const
+{
+	return m_role;
+}
+
+void OnlineData::SetRole(common::game::PlayerRole role)
+{
+	m_role = role;
 }
 #endif
