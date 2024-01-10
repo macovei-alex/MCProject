@@ -74,7 +74,7 @@ Server& Server::ChatHandlers()
 		common::Message message{
 			utils::DecodeMessage(contentIterator->second),
 			utils::DecodeMessage(authorIterator->second),
-			utils::DateTimeAsInteger(std::chrono::system_clock::now()) };
+			utils::MillisFromDateTime(std::chrono::system_clock::now()) };
 
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
 		chat.Emplace(std::move(message));
@@ -190,7 +190,7 @@ Server& Server::RoomHandlers()
 
 
 		return crow::response(200, "Player left Lobby");
-		});
+			});
 
 	Log("Room handlers set");
 	return *this;
@@ -389,7 +389,7 @@ Server& Server::DrawingHandlers()
 					std::get<int64_t>(pointMap.at(colorStrKey))
 				};
 
-				gameIt->second.GetImage().AddUpdate(common::img::Update{ point, utils::DateTimeAsInteger(std::chrono::system_clock::now()) });
+				gameIt->second.GetImage().AddUpdate(common::img::Update{ point, utils::MillisFromDateTime(std::chrono::system_clock::now()) });
 			}
 			catch (const std::exception& exception)
 			{
@@ -523,6 +523,30 @@ Server& Server::GameHandlers()
 		return m_errorValue;
 
 			});
+
+
+	CROW_ROUTE(m_app, literals::routes::game::scores::param).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t roomID) {
+
+		auto gameIt{ m_games.find(roomID) };
+		if (gameIt == m_games.end())
+		{
+			Log(std::format("Invalid room ID < {} >", roomID), Logger::Level::Error);
+			return m_errorValue;
+		}
+
+		auto& game{ gameIt->second };
+		crow::json::wvalue::list playerScoresJson;
+		for (auto& player : game.GetPlayers())
+		{
+			playerScoresJson.emplace_back(crow::json::wvalue{
+				{literals::jsonKeys::account::username, player.GetName()},
+				{literals::jsonKeys::game::score, player.GetScore()} });
+		}
+
+		return crow::json::wvalue{ playerScoresJson };
+			});
+
 
 	return *this;
 }

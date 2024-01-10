@@ -4,11 +4,6 @@
 #include <cryptopp/hex.h>
 #include <cryptopp/filters.h>
 
-int  utils::add(int a, int b)
-{
-	return a + b;
-}
-
 std::string utils::GetHashSHA256(const std::string& input)
 {
 	std::string hash;
@@ -42,9 +37,16 @@ std::pair<std::string, std::string> utils::SplitToPair(const std::string& str, c
 	return { first, second };
 }
 
-uint64_t utils::DateTimeAsInteger(std::chrono::system_clock::time_point dateTime)
+uint64_t utils::MillisFromDateTime(std::chrono::system_clock::time_point dateTime)
 {
 	return std::chrono::duration_cast
 		<std::chrono::milliseconds>
 		(dateTime.time_since_epoch()).count();
+}
+
+std::chrono::system_clock::time_point utils::DateTimeFromMillis(uint64_t millis)
+{
+	return std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>
+		(std::chrono ::duration_cast<std::chrono::seconds>
+			(std::chrono::milliseconds{ millis }));
 }

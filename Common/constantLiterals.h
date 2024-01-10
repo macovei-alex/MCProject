@@ -14,6 +14,7 @@ namespace literals
 			constexpr char ID[] = "gameID";
 			constexpr char state[] = "state";
 			constexpr char timeRemaining[] = "timer";
+			constexpr char score[] = "score";
 		}
 		namespace message
 		{
@@ -97,6 +98,12 @@ namespace literals
 			{
 				constexpr char simple[] = "/game/player-role";
 				constexpr char param[] = "/game/player-role/<int>";
+			}
+
+			namespace scores
+			{
+				constexpr char simple[] = "/game/scores";
+				constexpr char param[] = "/game/scores/<int>";
 			}
 
 			constexpr char create[] = "/game/create";

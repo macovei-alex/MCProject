@@ -18,15 +18,9 @@
     <ClCompile Include="services.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="servicesUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="services.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="servicesUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
