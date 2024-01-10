@@ -58,6 +58,16 @@ std::string Turn::GetWord() const noexcept
 	return m_word;
 }
 
+void Turn::SetWord(const std::string& word) noexcept
+{
+	m_word = word;
+}
+
+void Turn::SetWord(std::string&& word) noexcept
+{
+	m_word = std::move(word);
+}
+
 void Turn::ChoosingWordPhase(const std::vector<Player>& players)
 {
 	//std::vector<std::string> wordChoices = generateWordChoices(GameSettings::chooseWordOptionCount);

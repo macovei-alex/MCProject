@@ -33,6 +33,7 @@ public:
 	Chat& GetChat();
 	common::game::GameState GetGameState();
 	void SetGameState(common::game::GameState gameState);
+	bool IsRunning() const;
 
 public:
 	void Run();

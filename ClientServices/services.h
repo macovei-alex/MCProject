@@ -1,9 +1,13 @@
 #pragma once
 
+#include <format>
+#include <crow.h>
 #include <cstdint>
 #include <cpr/cpr.h>
 #include <iostream>
 
+#include "constantLiterals.h"
+#include "..\UtilsDLL\utilsDLL.h"
 #include "common.h"
 
 namespace services
@@ -24,7 +28,8 @@ namespace services
 	std::pair<common::game::GameState, uint64_t> ReceiveGameStateAndTime(uint64_t gameID, std::ostream& errStream = std::cerr);
 	common::game::PlayerRole ReceivePlayerRole(uint64_t roomID, const std::string& username, std::ostream& errStream = std::cerr);
 	std::vector<std::pair<std::string, int32_t>> ReceivePlayerScores(uint64_t gameID, std::ostream& errStream = std::cerr);
-
 	void SendGameSettings(uint64_t gameID, const common::game::GameSettings& gameSettings, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 	common::game::GameSettings ReceiveGameSettings(uint64_t gameID, std::ostream& errStream = std::cerr);
+	std::vector<std::string> ReceiveWordOptions(uint64_t roomID, std::ostream& errStream = std::cerr);
+	void SendGuessingWord(uint64_t roomID, const std::string& word, std::ostream& errStream = std::cerr);
 }

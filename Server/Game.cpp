@@ -126,6 +126,11 @@ void Game::SetGameState(common::game::GameState gameState)
 	m_gameState = gameState;
 }
 
+bool Game::IsRunning() const
+{
+	return m_isRunning;
+}
+
 void Game::Run()
 {
 	m_isRunning = true;

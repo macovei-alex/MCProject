@@ -139,7 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="services.cpp" />
+    <ClCompile Include="account services.cpp" />
+    <ClCompile Include="chat services.cpp" />
+    <ClCompile Include="drawing services.cpp" />
+    <ClCompile Include="game services.cpp" />
+    <ClCompile Include="room services.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="services.h" />

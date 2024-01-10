@@ -143,20 +143,33 @@ db::GameHistory db::Database::GetGameHistory(const std::string& playerName)
 	std::cout << "Total score: " << totalScore << '\n';
 }
 
-std::vector<std::string> db::Database::GetRandomWords(int number, const std::string& difficulty)
+std::vector<std::string> db::Database::GetRandomWords(uint64_t count, const std::string& difficulty)
 {
 	std::vector<std::string> randomWords;
-	randomWords.reserve(number);
+	randomWords.reserve(count);
 
 	auto words{ std::move(m_storage.get_all<db::Word>(
 		sql::where(sql::c(&db::Word::difficulty) == difficulty),
 		sql::order_by(sql::random()),
-		sql::limit(number))) };
+		sql::limit(count))) };
 
 	for (int i = 0; i < words.size(); i++)
-	{
-		randomWords.push_back(words[i].text);
-	}
+		randomWords.emplace_back(std::move(words[i].text));
+
+	return randomWords;
+}
+
+std::vector<std::string> db::Database::GetRandomWords(uint64_t count)
+{
+	std::vector<std::string> randomWords;
+	randomWords.reserve(count);
+
+	auto words{ std::move(m_storage.get_all<db::Word>(
+		sql::order_by(sql::random()),
+		sql::limit(count))) };
+
+	for (int i = 0; i < words.size(); i++)
+		randomWords.emplace_back(std::move(words[i].text));
 
 	return randomWords;
 }

@@ -15,6 +15,7 @@ namespace literals
 			constexpr char state[] = "state";
 			constexpr char timeRemaining[] = "timer";
 			constexpr char score[] = "score";
+			constexpr char word[] = "word";
 		}
 		namespace message
 		{
@@ -82,18 +83,6 @@ namespace literals
 				constexpr char param[] = "/game/state/<int>";
 			}
 
-			namespace connect
-			{
-				constexpr char simple[] = "/game/connect";
-				constexpr char param[] = "/game/connect/<int>";
-			}
-
-			namespace disconnect
-			{
-				constexpr char simple[] = "/game/disconnect";
-				constexpr char param[] = "/game/disconnect/<int>";
-			}
-
 			namespace playerRole
 			{
 				constexpr char simple[] = "/game/player-role";
@@ -104,6 +93,24 @@ namespace literals
 			{
 				constexpr char simple[] = "/game/scores";
 				constexpr char param[] = "/game/scores/<int>";
+			}
+
+			namespace words
+			{
+				constexpr char simple[] = "/game/words";
+				constexpr char param[] = "/game/words/<int>";
+			}
+
+			namespace connect
+			{
+				constexpr char simple[] = "/game/connect";
+				constexpr char param[] = "/game/connect/<int>";
+			}
+
+			namespace disconnect
+			{
+				constexpr char simple[] = "/game/disconnect";
+				constexpr char param[] = "/game/disconnect/<int>";
 			}
 
 			constexpr char create[] = "/game/create";

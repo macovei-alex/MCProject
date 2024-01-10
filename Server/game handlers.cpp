@@ -141,5 +141,56 @@ Server& Server::GameHandlers()
 			});
 
 
+	CROW_ROUTE(m_app, literals::routes::game::words::param).methods(crow::HTTPMethod::Get)
+		([this](const crow::request& request, uint64_t roomID) {
+
+		auto gameIt{ m_games.find(roomID) };
+		if (gameIt == m_games.end())
+		{
+			Log(std::format("Invalid room ID < {} >", roomID), Logger::Level::Error);
+			return m_errorValue;
+		}
+
+		crow::json::wvalue::list wordsJson;
+		auto words{ std::move(m_database->GetRandomWords(gameIt->second.GetGameSettings().GetChooseWordOptionCount())) };
+
+		for (auto& word : words)
+			wordsJson.emplace_back(crow::json::wvalue{ {literals::jsonKeys::word, std::move(word)} });
+
+		return crow::json::wvalue{ wordsJson };
+			});
+
+
+	CROW_ROUTE(m_app, literals::routes::game::words::param).methods(crow::HTTPMethod::Put)
+		([this](const crow::request& request, uint64_t roomID) {
+
+		auto gameIt{ m_games.find(roomID) };
+		if (gameIt == m_games.end())
+		{
+			auto retStr{ std::move(std::format("Invalid room ID < {} >", roomID)) };
+			Log(retStr, Logger::Level::Error);
+			return crow::response(404, retStr);
+		}
+
+		if (request.body.empty())
+		{
+			auto retStr{ std::move(std::format("Empty request body")) };
+			Log(retStr, Logger::Level::Error);
+			return crow::response(404, retStr);
+		}
+
+		auto jsonMap{ std::move(utils::ParseRequestBody(request.body)) };
+		auto wordIt{ jsonMap.find(literals::jsonKeys::word) };
+		
+		if ( wordIt == jsonMap.end())
+		{
+			auto retStr{ "Invalid request body" };
+			Log(retStr, Logger::Level::Error);
+			return crow::response(404, retStr);
+		}
+
+		return crow::response(200, "Word set successful");
+			});
+
 	return *this;
 }

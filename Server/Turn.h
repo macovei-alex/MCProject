@@ -21,6 +21,8 @@ public:
 	float_t GetChoiceTime() const noexcept;
 	float_t GetPlayTime() const noexcept;
 	std::string GetWord() const noexcept;
+	void SetWord(const std::string& word) noexcept;
+	void SetWord(std::string&& word) noexcept;
 	void ChoosingWordPhase(const std::vector<Player>& players);
 	void StartNewTurn(std::vector<Player>& players);
 	void EndTurn(std::vector<Player>& players);
