@@ -442,7 +442,7 @@ common::game::PlayerRole services::ReceivePlayerRole(uint64_t roomID, const std:
 {
 	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::playerRole::simple} + "/" };
 
-	std::string url{ urlBlueprint + std::to_string(roomID)};
+	std::string url{ urlBlueprint + std::to_string(roomID) };
 
 	try
 	{
@@ -464,5 +464,36 @@ common::game::PlayerRole services::ReceivePlayerRole(uint64_t roomID, const std:
 	{
 		errStream << "[Player role receiver]: " << exception.what() << '\n';
 		return common::game::PlayerRole::NONE;
+	}
+}
+
+std::vector<std::pair<std::string, int32_t>> services::ReceivePlayerScores(uint64_t gameID, std::ostream& errStream)
+{
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::scores::simple} + "/" };
+
+	std::string url{ urlBlueprint + std::to_string(gameID) };
+
+	try
+	{
+		auto response = cpr::Get(cpr::Url{ url });
+
+		auto responseJson{ std::move(crow::json::load(response.text)) };
+		if (responseJson.has(literals::error))
+			throw std::exception("Json has error");
+
+		std::vector<std::pair<std::string, int32_t>> scores;
+		for (auto& json : responseJson)
+		{
+			std::string name{ std::move(json[literals::jsonKeys::account::username].s()) };
+			int32_t score{ static_cast<int32_t>(json[literals::jsonKeys::game::score].i()) };
+
+			scores.emplace_back(std::move(name), score);
+		}
+
+		return scores;
+	}
+	catch (const std::exception& exception)
+	{
+		errStream << exception.what() << '\n';
 	}
 }

@@ -7,6 +7,8 @@
 #include "Game.h"
 #include "Database.h"
 #include "constantLiterals.h"
+#include "common.h"
+#include "..\UtilsDLL\utilsDLL.h"
 
 #include "MockDatabase.h"
 // temp

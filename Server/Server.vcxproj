@@ -148,12 +148,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="account handlers.cpp" />
+    <ClCompile Include="chat handlers.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="drawing handlers.cpp" />
+    <ClCompile Include="game handlers.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MockDatabase.cpp" />
+    <ClCompile Include="room handlers.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="test handlers.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="serverUtilsMod.cpp" />
     <ClCompile Include="serverUtilsMod.cppm" />
