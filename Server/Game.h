@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <mutex>
 
 #include "Player.h"
 #include "Turn.h"
@@ -33,7 +34,6 @@ public:
 	Chat& GetChat();
 	common::game::GameState GetGameState();
 	void SetGameState(common::game::GameState gameState);
-	bool IsRunning() const;
 
 public:
 	void Run();
@@ -50,5 +50,5 @@ private:
 	Image m_image;
 	Chat m_chat;
 	common::game::GameState m_gameState;
-	bool m_isRunning;
+	std::mutex m_playersMutex;
 };

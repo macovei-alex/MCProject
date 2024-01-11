@@ -11,8 +11,7 @@ Game::Game() noexcept :
 	m_gameState{ common::game::GameState::NONE },
 	m_turn{},
 	m_image{},
-	m_chat{},
-	m_isRunning{ false }
+	m_chat{}
 {
 	/* empty */
 }
@@ -26,14 +25,12 @@ Game::Game(Game&& other) noexcept :
 	m_turn{ std::move(other.m_turn) },
 	m_image{ std::move(other.m_image) },
 	m_chat{ std::move(other.m_chat) },
-	m_gameState{ std::move(other.m_gameState) },
-	m_isRunning{ std::move(other.m_isRunning) }
+	m_gameState{ std::move(other.m_gameState) }
 {
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
-	other.m_isRunning = false;
 }
 
 Game& Game::operator=(Game&& other) noexcept
@@ -52,7 +49,6 @@ Game& Game::operator=(Game&& other) noexcept
 	m_image = std::move(other.m_image);
 	m_chat = std::move(other.m_chat);
 	m_gameState = std::move(other.m_gameState);
-	m_isRunning = std::move(other.m_isRunning);
 
 	other.m_roundNumber = 0;
 	other.m_playerToDrawID = 0;
@@ -126,42 +122,49 @@ void Game::SetGameState(common::game::GameState gameState)
 	m_gameState = gameState;
 }
 
-bool Game::IsRunning() const
-{
-	return m_isRunning;
-}
-
 void Game::Run()
 {
-	m_isRunning = true;
-
-	size_t roundCount = 0;
+	decltype(m_gameSettings.GetRoundCount()) roundCount = 0;
 
 	while (roundCount < 4)
 	{
-		for (Player& currentPlayer : m_players)
+		for (size_t currentPlayerID = 0; currentPlayerID < m_players.size(); currentPlayerID++)
 		{
-			for (auto& player : m_players)
-				player.SetGameRole(common::game::PlayerRole::GUESSING);
-			currentPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
+			m_turn.Reset(m_players, currentPlayerID);
 
-			auto currentPlayerIt{ std::find(m_players.begin(), m_players.end(), currentPlayer) };
-			int64_t currentPlayerIndex{ std::distance(m_players.begin(), currentPlayerIt) };
+			m_gameState = common::game::GameState::PICK_WORD;
 
-			if (m_players.empty())
+			while (m_turn.GetWord() == "")
+				std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
+
+			m_gameState = common::game::GameState::DRAW_AND_GUESS;
+			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.GetDrawTime() });
+
 			{
-				m_isRunning = false;
-				return;
+				std::lock_guard<std::mutex> lock{ m_playersMutex };
+
+				m_players.erase(std::remove_if(m_players.begin(), m_players.end(),
+					[](const Player& player) {
+						return !player.IsConnected();
+					}), m_players.end());
+
+				if (m_players.empty())
+				{
+					m_gameState = common::game::GameState::NONE;
+					return;
+				}
+
+				std::sort(m_players.begin(), m_players.end(),
+					[](const Player& lhs, const Player& rhs) {
+						return lhs.GetScore() > rhs.GetScore(); });
 			}
 		}
-
-		std::sort(m_players.begin(), m_players.end(),[](const Player& lhs, const Player& rhs) {
-			return lhs.GetScore() > rhs.GetScore(); });
 
 		roundCount++;
 	}
 
-	m_isRunning = false;
+	m_gameState = common::game::GameState::NONE;
+
 }
 
 void Game::AddPlayer(const Player& player)

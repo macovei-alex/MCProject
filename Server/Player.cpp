@@ -3,10 +3,11 @@
 Player::Player() noexcept :
 	m_name{},
 	m_score{ 0 },
-	m_flagGuessedCorrectWord{ false },
+	m_guessedStatus{ false },
 	m_currentScore{ 0 },
 	m_gameRole{ common::game::PlayerRole::NONE },
-	m_roomRole{ Player::RoomRole::participant }
+	m_roomRole{ Player::RoomRole::participant },
+	m_isConnected{ false }
 {
 	/*EMPTY*/
 }
@@ -14,10 +15,11 @@ Player::Player() noexcept :
 Player::Player(const std::string& name) noexcept :
 	m_name{ name },
 	m_score{ 0 },
-	m_flagGuessedCorrectWord{ false },
+	m_guessedStatus{ false },
 	m_currentScore{ 0 },
 	m_gameRole{ common::game::PlayerRole::NONE },
-	m_roomRole{ Player::RoomRole::participant }
+	m_roomRole{ Player::RoomRole::participant },
+	m_isConnected{ false }
 {
 	/*EMPTY*/
 }
@@ -65,6 +67,26 @@ Player::RoomRole Player::GetRoomRole() const noexcept
 void Player::SetRoomRole(RoomRole roomRole) noexcept
 {
 	m_roomRole = roomRole;
+}
+
+void Player::SetGuessStatus(bool status) noexcept
+{
+	m_guessedStatus = status;
+}
+
+bool Player::GetGuessStatus() const noexcept
+{
+	return m_guessedStatus;
+}
+
+void Player::SetConnectionStatus(bool status) noexcept
+{
+	m_isConnected = status;
+}
+
+bool Player::IsConnected() const noexcept
+{
+	return m_isConnected;
 }
 
 void Player::AddScore()

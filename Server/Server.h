@@ -55,5 +55,6 @@ private:
 	std::unique_ptr<db::Database> m_database;
 	std::unique_ptr<Logger> m_logger;
 	std::map<uint64_t, Game> m_games;
+
 	const crow::json::wvalue m_errorValue{ { literals::error, literals::emptyCString } };
 };

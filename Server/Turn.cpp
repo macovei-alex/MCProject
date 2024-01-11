@@ -1,11 +1,14 @@
 #include "Turn.h"
 
+#include <thread>
+#include <numeric>
+#include <algorithm>
+
 Turn::Turn(uint8_t turnNumber) :
 	m_turnNumber{ turnNumber },
 	m_word{},
 	m_showLetterIDs{},
-	m_chooseWordStartTime{ clock() },
-	m_playStartTime{ std::numeric_limits<int>::max() }
+	m_playStartTime{ chr::seconds{std::numeric_limits<uint64_t>::infinity()} }
 {
 	/* empty */
 }
@@ -14,8 +17,7 @@ Turn::Turn(const Turn& other) :
 	m_turnNumber{ other.m_turnNumber },
 	m_word{ other.m_word },
 	m_showLetterIDs{ other.m_showLetterIDs },
-	m_playStartTime{ other.m_playStartTime },
-	m_chooseWordStartTime{ other.m_chooseWordStartTime }
+	m_playStartTime{ other.m_playStartTime }
 {
 	/* empty */
 }
@@ -28,14 +30,8 @@ Turn& Turn::operator=(const Turn& other)
 	m_word = other.m_word;
 	m_showLetterIDs = other.m_showLetterIDs;
 	m_playStartTime = other.m_playStartTime;
-	m_chooseWordStartTime = other.m_chooseWordStartTime;
 
 	return *this;
-}
-
-Turn::~Turn()
-{
-	/* EMPTY */
 }
 
 uint8_t Turn::GetTurnNumber() const noexcept
@@ -43,14 +39,9 @@ uint8_t Turn::GetTurnNumber() const noexcept
 	return m_turnNumber;
 }
 
-float_t Turn::GetChoiceTime() const noexcept
+chr::seconds Turn::GetTimer() const noexcept
 {
-	return float_t(clock() - m_chooseWordStartTime) / CLOCKS_PER_SEC;
-}
-
-float_t Turn::GetPlayTime() const noexcept
-{
-	return float_t(clock() - m_playStartTime) / CLOCKS_PER_SEC;
+	return chr::duration_cast<chr::seconds>(chr::system_clock::now() - m_playStartTime);
 }
 
 std::string Turn::GetWord() const noexcept
@@ -68,42 +59,55 @@ void Turn::SetWord(std::string&& word) noexcept
 	m_word = std::move(word);
 }
 
-void Turn::ChoosingWordPhase(const std::vector<Player>& players)
+void Turn::SetPlayersMutex(const std::mutex& playersMutex) noexcept
 {
-	//std::vector<std::string> wordChoices = generateWordChoices(GameSettings::chooseWordOptionCount);
-	//int i;
-	//for (i = 0; i < players.size(); i++)
-	//	if (players[i].getRole() == Player::Role::Draw)
-	//	{
-	//		sendWordChoices(players[i], wordChoices);
-	//		break;
-	//	}
-	//
-	//while (GetChooseTime() < GameSettings::chooseWordTime)
-	//	// [check] receivedWordChoice [from] player
+	m_playersMutex = std::make_shared<std::mutex>(playersMutex);
 }
 
-void Turn::StartNewTurn(std::vector<Player>& players)
+void Turn::Reset(std::vector<Player>& players, size_t drawingPlayerID)
 {
-	ChoosingWordPhase(players);
-	for (auto& player : players)
-	{
-		// player.resetCurrentScore();
-	}
-	m_playStartTime = clock();
-}
-
-void Turn::EndTurn(std::vector<Player>& players)
-{
-	for (Player& player : players)
-	{
-		player.AddScore();
-	}
-}
-
-void Turn::StartNextTurn(std::vector<Player>& players)
-{
-	EndTurn(players);
 	m_turnNumber++;
-	StartNewTurn(players);
+	m_word = "";
+
+	{
+		std::lock_guard<std::mutex> lock{ *m_playersMutex };
+
+		for (auto& player : players)
+		{
+			player.SetGuessStatus(false);
+			player.ResetCurrentScore();
+			player.SetGameRole(common::game::PlayerRole::GUESSING);
+		}
+
+		players[drawingPlayerID].SetGameRole(common::game::PlayerRole::DRAWING);
+	}
+}
+
+void Turn::Start(const std::vector<Player>& players, chr::duration<chr::seconds> drawingTime)
+{
+	m_playStartTime = chr::system_clock::now();
+	do
+	{
+		std::this_thread::sleep_for(chr::seconds{ 1 });
+
+		{
+			std::lock_guard<std::mutex> lock{ *m_playersMutex };
+
+			if (std::all_of(players.begin(), players.end(),
+				[](const Player& player) {
+					return !player.IsConnected(); }))
+				break;
+
+			size_t count{ std::accumulate(players.begin(), players.end(), 0,
+				[](size_t count, const Player& player) {
+					if (player.GetGuessStatus())
+						return count + 1;
+					return count;
+				}) };
+
+			if (count == players.size() - 1)
+				break;
+		}
+
+	} while (chr::system_clock::now() - m_playStartTime < drawingTime);
 }

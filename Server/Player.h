@@ -34,6 +34,10 @@ public:
 	void SetGameRole(common::game::PlayerRole gameRole) noexcept;
 	RoomRole GetRoomRole() const noexcept;
 	void SetRoomRole(RoomRole roomRole) noexcept;
+	void SetGuessStatus(bool guessStatus) noexcept;
+	bool GetGuessStatus() const noexcept;
+	void SetConnectionStatus(bool isConnected) noexcept;
+	bool IsConnected() const noexcept;
 
 public:
 	void AddScore();
@@ -46,8 +50,9 @@ private:
 	std::string m_name;
 	int m_score;
 	int m_currentScore;
-	bool m_flagGuessedCorrectWord;
+	bool m_guessedStatus;
 	RoomRole m_roomRole : 2;
 	common::game::PlayerRole m_gameRole : 1;
+	bool m_isConnected : 1;
 };
 
