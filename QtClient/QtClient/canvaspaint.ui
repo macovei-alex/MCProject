@@ -136,6 +136,19 @@
     <string>Undo</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>1310</x>
+     <y>830</y>
+     <width>49</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Room:</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
