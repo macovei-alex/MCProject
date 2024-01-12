@@ -63,9 +63,14 @@ const std::vector<Player>& Game::GetPlayers() const
 
 const Player& Game::GetPlayer(const std::string& name) const
 {
-	for (auto& player : m_players)
-		if (player.GetName() == name)
-			return player;
+	if (auto playerFoundIt{ std::find_if(m_players.begin(), m_players.end(),
+		[&name](const Player& player) -> bool {
+			return player.GetName() == name;
+		}) };
+		playerFoundIt != m_players.end())
+	{
+		return *playerFoundIt;
+	}
 
 	throw std::exception{ "Player not found" };
 }

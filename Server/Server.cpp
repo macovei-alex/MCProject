@@ -93,8 +93,11 @@ Server& Server::SetSettingsFromFile(const std::string& filePath)
 
 	std::getline(file, line);
 	this->IPAddress(line);
+	Log(std::format("IP Address set to < {} >", line));
+
 	std::getline(file, line);
 	this->Port(std::stoi(line));
+	Log(std::format("Port set to < {} >", line));
 
 	while (std::getline(file, line))
 	{
