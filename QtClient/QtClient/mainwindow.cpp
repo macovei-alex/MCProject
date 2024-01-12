@@ -91,10 +91,6 @@ void MainWindow::on_loginButton_clicked()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-#ifdef ONLINE
-	services::SignOut(canvasPaint->GetOnlineData().GetUsername().toStdString());
-#endif
-
 	QCoreApplication::quit();
 	event->accept();
 }
