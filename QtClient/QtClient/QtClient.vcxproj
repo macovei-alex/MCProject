@@ -229,7 +229,7 @@
   <ItemGroup>
     <QtMoc Include="canvaspaint.h" />
     <QtMoc Include="ChatThread.h" />
-    <ClInclude Include="choosewordwindow.h" />
+    <QtMoc Include="choosewordwindow.h" />
     <ClInclude Include="DrawingState.h" />
     <QtMoc Include="ImageThread.h" />
     <QtMoc Include="GameStateThread.h" />

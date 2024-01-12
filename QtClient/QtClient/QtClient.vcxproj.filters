@@ -48,9 +48,6 @@
     <ClInclude Include="OnlineData.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
-    <ClInclude Include="choosewordwindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -75,6 +72,9 @@
     </QtMoc>
     <QtMoc Include="ChatThread.h">
       <Filter>Header Files\Canvas Window</Filter>
+    </QtMoc>
+    <QtMoc Include="choosewordwindow.h">
+      <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

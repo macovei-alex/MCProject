@@ -24,6 +24,9 @@ private slots:
 
     void on_thirdWordButton_clicked();
 
+signals:
+    void Signal();
+
 private:
     Ui::choosewordwindow *ui;
     CanvasPaint *canvasPaint;
