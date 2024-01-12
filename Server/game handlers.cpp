@@ -13,9 +13,9 @@ Server& Server::GameHandlers()
 
 		Log(std::format("Game settings requested for game < {} >", gameID), Logger::Level::Info);
 		return crow::json::wvalue{
-			{literals::jsonKeys::settings::drawTime, m_games[gameID].GetGameSettings().GetDrawTime()},
-			{literals::jsonKeys::settings::roundCount, m_games[gameID].GetGameSettings().GetRoundCount()},
-			{literals::jsonKeys::settings::chooseWordOptionCount, m_games[gameID].GetGameSettings().GetChooseWordOptionCount()} };
+			{literals::jsonKeys::settings::drawTime, m_games[gameID].GetGameSettings().m_drawTime},
+			{literals::jsonKeys::settings::roundCount, m_games[gameID].GetGameSettings().m_roundCount},
+			{literals::jsonKeys::settings::chooseWordOptionCount, m_games[gameID].GetGameSettings().m_chooseWordOptionCount} };
 			});
 
 
@@ -42,13 +42,13 @@ Server& Server::GameHandlers()
 		try
 		{
 			uint16_t drawTime = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second);
-			game.GetGameSettings().SetDrawTime(drawTime);
+			game.GetGameSettings().m_drawTime = drawTime;
 
 			uint16_t roundCount = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second);
-			game.GetGameSettings().SetRoundCount(roundCount);
+			game.GetGameSettings().m_roundCount = roundCount;
 
 			uint16_t chooseWordOptionCount = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second);
-			game.GetGameSettings().SetDrawTime(chooseWordOptionCount);
+			game.GetGameSettings().m_chooseWordOptionCount = chooseWordOptionCount;
 		}
 		catch (...)
 		{
@@ -152,7 +152,7 @@ Server& Server::GameHandlers()
 		}
 
 		crow::json::wvalue::list wordsJson;
-		auto words{ std::move(m_database->GetRandomWords(gameIt->second.GetGameSettings().GetChooseWordOptionCount())) };
+		auto words{ std::move(m_database->GetRandomWords(gameIt->second.GetGameSettings().m_chooseWordOptionCount)) };
 
 		for (auto& word : words)
 			wordsJson.emplace_back(crow::json::wvalue{ {literals::jsonKeys::game::word, std::move(word)} });

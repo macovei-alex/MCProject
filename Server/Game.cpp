@@ -133,7 +133,7 @@ void Game::Run()
 			}
 	};
 
-	while (m_roundNumber < m_gameSettings.GetRoundCount())
+	while (m_roundNumber < m_gameSettings.m_roundCount)
 	{
 		for (const auto& player : m_players)
 			playersDone[player.GetName()] = false;
@@ -150,7 +150,7 @@ void Game::Run()
 				std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
 
 			m_gameState = common::game::GameState::DRAW_AND_GUESS;
-			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.GetDrawTime() });
+			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.m_drawTime });
 
 			{
 				std::lock_guard<std::mutex> lock{ *m_sharedMutex };
