@@ -39,6 +39,9 @@ public:
     QLineEdit *passwordLineEdit;
     QPushButton *loginButton;
     QLabel *backgroundLabel;
+    QPushButton *joinRoomButton;
+    QPushButton *createRoomButton;
+    QLineEdit *createRoomLineEdit;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -90,10 +93,19 @@ public:
         backgroundLabel = new QLabel(centralwidget);
         backgroundLabel->setObjectName("backgroundLabel");
         backgroundLabel->setGeometry(QRect(340, 150, 16, 16));
+        joinRoomButton = new QPushButton(centralwidget);
+        joinRoomButton->setObjectName("joinRoomButton");
+        joinRoomButton->setGeometry(QRect(390, 490, 80, 24));
+        createRoomButton = new QPushButton(centralwidget);
+        createRoomButton->setObjectName("createRoomButton");
+        createRoomButton->setGeometry(QRect(340, 550, 80, 24));
+        createRoomLineEdit = new QLineEdit(centralwidget);
+        createRoomLineEdit->setObjectName("createRoomLineEdit");
+        createRoomLineEdit->setGeometry(QRect(270, 490, 113, 24));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 737, 25));
+        menubar->setGeometry(QRect(0, 0, 737, 21));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -113,6 +125,8 @@ public:
         passwordLabel->setText(QCoreApplication::translate("MainWindow", "Password", nullptr));
         loginButton->setText(QCoreApplication::translate("MainWindow", "Login", nullptr));
         backgroundLabel->setText(QString());
+        joinRoomButton->setText(QCoreApplication::translate("MainWindow", "Join Room", nullptr));
+        createRoomButton->setText(QCoreApplication::translate("MainWindow", "Create Room", nullptr));
     } // retranslateUi
 
 };

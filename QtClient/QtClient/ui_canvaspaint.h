@@ -32,6 +32,7 @@ public:
     QPushButton *drawButton;
     QPushButton *eraseButton;
     QPushButton *undoButton;
+    QLabel *label;
 
     void setupUi(QDialog *CanvasPaint)
     {
@@ -70,6 +71,9 @@ public:
         undoButton = new QPushButton(CanvasPaint);
         undoButton->setObjectName("undoButton");
         undoButton->setGeometry(QRect(1380, 690, 80, 24));
+        label = new QLabel(CanvasPaint);
+        label->setObjectName("label");
+        label->setGeometry(QRect(1310, 830, 49, 21));
 
         retranslateUi(CanvasPaint);
 
@@ -86,6 +90,7 @@ public:
         drawButton->setText(QCoreApplication::translate("CanvasPaint", "Draw", nullptr));
         eraseButton->setText(QCoreApplication::translate("CanvasPaint", "Erase", nullptr));
         undoButton->setText(QCoreApplication::translate("CanvasPaint", "Undo", nullptr));
+        label->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
     } // retranslateUi
 
 };
