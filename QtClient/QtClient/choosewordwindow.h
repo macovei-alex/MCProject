@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+class CanvasPaint;
+
 namespace Ui {
 class choosewordwindow;
 }
@@ -15,8 +17,16 @@ public:
     explicit choosewordwindow(QWidget *parent = nullptr);
     ~choosewordwindow();
 
+private slots:
+    void on_firstWordButton_clicked();
+
+    void on_secondWordButton_clicked();
+
+    void on_thirdWordButton_clicked();
+
 private:
     Ui::choosewordwindow *ui;
+    CanvasPaint *canvasPaint;
 };
 
 #endif // CHOOSEWORDWINDOW_H
