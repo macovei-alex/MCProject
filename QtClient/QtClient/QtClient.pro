@@ -14,6 +14,7 @@ SOURCES += \
     ImageThread.cpp \
     OnlineData.cpp \
     canvaspaint.cpp \
+    choosewordwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     Line.cpp
@@ -24,6 +25,7 @@ HEADERS += \
     ImageThread.h \
     OnlineData.h \
     canvaspaint.h \
+    choosewordwindow.h \
     macro.h \
     mainwindow.h \
     ui_canvaspaint.h \
@@ -33,6 +35,7 @@ HEADERS += \
 
 FORMS += \
     canvaspaint.ui \
+    choosewordwindow.ui \
     mainwindow.ui
 	
 INCLUDEPATH += \
