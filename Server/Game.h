@@ -25,8 +25,6 @@ public:
 	const std::vector<Player>& GetPlayers();
 	const Player& GetPlayer(const std::string& name) const;
 	uint8_t GetRoundNumber();
-	void SetRoundNumber(uint8_t roundNumber);
-	uint8_t GetPlayerToDrawID();
 	void SetPlayerToDrawID(uint8_t playerToDrawID);
 	common::game::GameSettings& GetGameSettings();
 	Turn& GetTurn();
@@ -39,10 +37,11 @@ public:
 	void Run();
 	void AddPlayer(const Player& player);
 	void RemovePlayer(const std::string& playerName);
+	void RemoveDisconnectedPlayers();
+	void Reset();
 
 private:
 	uint8_t m_roundNumber;
-	uint8_t m_playerToDrawID;
 	uint8_t m_ownerID;
 	std::vector<Player> m_players;
 	Turn m_turn;

@@ -5,7 +5,6 @@
 Game::Game() noexcept :
 	m_players{},
 	m_roundNumber{ 0 },
-	m_playerToDrawID{ 0 },
 	m_ownerID{ 0 },
 	m_gameSettings{},
 	m_gameState{ common::game::GameState::NONE },
@@ -19,7 +18,6 @@ Game::Game() noexcept :
 Game::Game(Game&& other) noexcept :
 	m_players{ std::move(other.m_players) },
 	m_roundNumber{ other.m_roundNumber },
-	m_playerToDrawID{ other.m_playerToDrawID },
 	m_ownerID{ other.m_ownerID },
 	m_gameSettings{ std::move(other.m_gameSettings) },
 	m_turn{ std::move(other.m_turn) },
@@ -28,7 +26,6 @@ Game::Game(Game&& other) noexcept :
 	m_gameState{ std::move(other.m_gameState) }
 {
 	other.m_roundNumber = 0;
-	other.m_playerToDrawID = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
 }
@@ -42,7 +39,6 @@ Game& Game::operator=(Game&& other) noexcept
 
 	m_players = std::move(other.m_players);
 	m_roundNumber = std::move(other.m_roundNumber);
-	m_playerToDrawID = std::move(other.m_playerToDrawID);
 	m_ownerID = std::move(other.m_ownerID);
 	m_turn = std::move(other.m_turn);
 	m_gameSettings = std::move(other.m_gameSettings);
@@ -51,7 +47,6 @@ Game& Game::operator=(Game&& other) noexcept
 	m_gameState = std::move(other.m_gameState);
 
 	other.m_roundNumber = 0;
-	other.m_playerToDrawID = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
 
@@ -75,21 +70,6 @@ const Player& Game::GetPlayer(const std::string& name) const
 uint8_t Game::GetRoundNumber()
 {
 	return m_roundNumber;
-}
-
-void Game::SetRoundNumber(uint8_t roundNo)
-{
-	m_roundNumber = roundNo;
-}
-
-uint8_t Game::GetPlayerToDrawID()
-{
-	return m_playerToDrawID;
-}
-
-void Game::SetPlayerToDrawID(uint8_t playerToDrawID)
-{
-	m_playerToDrawID = playerToDrawID;
 }
 
 common::game::GameSettings& Game::GetGameSettings()
@@ -124,13 +104,27 @@ void Game::SetGameState(common::game::GameState gameState)
 
 void Game::Run()
 {
-	decltype(m_gameSettings.GetRoundCount()) roundCount = 0;
+	Reset();
 
-	while (roundCount < 4)
+	std::unordered_map<std::string, bool> playersDone{ m_players.size() };
+
+	const auto& findNextPlayerLambda{ [&playersDone](std::vector<Player>& m_players) {
+			return std::find_if(m_players.begin(), m_players.end(),
+				[&playersDone](const Player& player) {
+					return !playersDone.at(player.GetName()); });
+			}
+	};
+
+	while (m_roundNumber < m_gameSettings.GetRoundCount())
 	{
-		for (size_t currentPlayerID = 0; currentPlayerID < m_players.size(); currentPlayerID++)
+		for (const auto& player : m_players)
+			playersDone[player.GetName()] = false;
+
+		for (auto currPlayerIt{ m_players.begin() };
+			currPlayerIt != m_players.end();
+			currPlayerIt = findNextPlayerLambda(m_players))
 		{
-			m_turn.Reset(m_players, currentPlayerID);
+			m_turn.Reset(m_players, *currPlayerIt);
 
 			m_gameState = common::game::GameState::PICK_WORD;
 
@@ -143,10 +137,7 @@ void Game::Run()
 			{
 				std::lock_guard<std::mutex> lock{ m_playersMutex };
 
-				m_players.erase(std::remove_if(m_players.begin(), m_players.end(),
-					[](const Player& player) {
-						return !player.IsConnected();
-					}), m_players.end());
+				RemoveDisconnectedPlayers();
 
 				if (m_players.empty())
 				{
@@ -160,16 +151,33 @@ void Game::Run()
 			}
 		}
 
-		roundCount++;
+		m_roundNumber++;
 	}
 
 	m_gameState = common::game::GameState::NONE;
+}
 
+void Game::RemoveDisconnectedPlayers()
+{
+	m_players.erase(
+		std::remove_if(m_players.begin(), m_players.end(), [](const Player& player) { return !player.IsConnected(); }),
+		m_players.end());
+}
+
+void Game::Reset()
+{
+	m_gameState = common::game::GameState::NONE;
+	m_roundNumber = 0;
+
+	{
+		std::lock_guard<std::mutex> lock{ m_playersMutex };
+		RemoveDisconnectedPlayers();
+	}
 }
 
 void Game::AddPlayer(const Player& player)
 {
-	m_players.push_back(player);
+	m_players.emplace_back(player);
 }
 
 void Game::RemovePlayer(const std::string& name)

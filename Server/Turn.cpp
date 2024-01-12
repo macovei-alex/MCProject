@@ -66,6 +66,11 @@ void Turn::SetPlayersMutex(const std::mutex& playersMutex) noexcept
 
 void Turn::Reset(std::vector<Player>& players, size_t drawingPlayerID)
 {
+	Reset(players, players[drawingPlayerID]);
+}
+
+void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
+{
 	m_turnNumber++;
 	m_word = "";
 
@@ -79,7 +84,7 @@ void Turn::Reset(std::vector<Player>& players, size_t drawingPlayerID)
 			player.SetGameRole(common::game::PlayerRole::GUESSING);
 		}
 
-		players[drawingPlayerID].SetGameRole(common::game::PlayerRole::DRAWING);
+		drawingPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
 	}
 }
 
