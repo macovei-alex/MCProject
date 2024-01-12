@@ -74,24 +74,6 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 CanvasPaint::~CanvasPaint()
 {
-
-#ifdef ONLINE
-	services::SignOut(m_onlineData.GetUsername().toStdString());
-	m_keepGoing = false;
-
-	m_imageThread->quit();
-	m_gameStateThread->quit();
-	m_chatThread->quit();
-
-	m_imageThread->wait();
-	m_gameStateThread->wait();
-	m_chatThread->wait();
-
-	delete m_imageThread;
-	delete m_gameStateThread;
-	delete m_chatThread;
-#endif
-
 	delete ui;
 }
 
@@ -245,7 +227,24 @@ void CanvasPaint::on_messageButton_clicked()
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
 {
-	QCoreApplication::quit();
+#ifdef ONLINE
+	services::SignOut(m_onlineData.GetUsername().toStdString());
+	m_keepGoing = false;
+
+	m_imageThread->quit();
+	m_gameStateThread->quit();
+	m_chatThread->quit();
+
+	m_imageThread->wait();
+	m_gameStateThread->wait();
+	m_chatThread->wait();
+
+	delete m_imageThread;
+	delete m_gameStateThread;
+	delete m_chatThread;
+#endif
+
+	parentWidget()->show();
 	event->accept();
 }
 
