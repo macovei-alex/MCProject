@@ -3,6 +3,7 @@
 #include <vector>
 #include <crow.h>
 #include <map>
+#include <thread>
 
 #include "Game.h"
 #include "Database.h"

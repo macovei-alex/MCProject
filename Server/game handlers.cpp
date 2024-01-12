@@ -79,7 +79,7 @@ Server& Server::GameHandlers()
 
 		return crow::json::wvalue{
 				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
-				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetTimer().count() }};
+				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetTimer().count() } };
 			});
 
 
@@ -124,7 +124,7 @@ Server& Server::GameHandlers()
 		}
 
 		crow::json::wvalue::list playerScoresJson;
-		for (auto& player : gameIt->second.GetPlayers())
+		for (const auto& player : gameIt->second.GetPlayers())
 		{
 			playerScoresJson.emplace_back(crow::json::wvalue{
 				{literals::jsonKeys::account::username, player.GetName()},
@@ -145,6 +145,12 @@ Server& Server::GameHandlers()
 			return m_errorValue;
 		}
 
+		if (gameIt->second.GetGameState() != common::game::GameState::PICK_WORD)
+		{
+			Log("Turn is already started", Logger::Level::Error);
+			return m_errorValue;
+		}
+
 		crow::json::wvalue::list wordsJson;
 		auto words{ std::move(m_database->GetRandomWords(gameIt->second.GetGameSettings().GetChooseWordOptionCount())) };
 
@@ -161,14 +167,21 @@ Server& Server::GameHandlers()
 		auto gameIt{ m_games.find(roomID) };
 		if (gameIt == m_games.end())
 		{
-			auto retStr{ std::move(std::format("Invalid room ID < {} >", roomID)) };
+			std::string retStr{ std::move(std::format("Invalid room ID < {} >", roomID)) };
+			Log(retStr, Logger::Level::Error);
+			return crow::response{ 404, retStr };
+		}
+
+		if (gameIt->second.GetGameState() != common::game::GameState::PICK_WORD)
+		{
+			std::string retStr{ "Turn is already started" };
 			Log(retStr, Logger::Level::Error);
 			return crow::response{ 404, retStr };
 		}
 
 		if (request.body.empty())
 		{
-			auto retStr{ std::move(std::format("Empty request body")) };
+			std::string retStr{ "Empty request body" };
 			Log(retStr, Logger::Level::Error);
 			return crow::response{ 404, retStr };
 		}
@@ -178,12 +191,44 @@ Server& Server::GameHandlers()
 
 		if (wordIt == jsonMap.end())
 		{
-			auto retStr{ "Invalid request body" };
+			std::string retStr{ "Invalid request body" };
 			Log(retStr, Logger::Level::Error);
 			return crow::response{ 404, retStr };
 		}
 
 		return crow::response{ 200, "Word set successful" };
+			});
+
+
+	CROW_ROUTE(m_app, literals::routes::game::start::param).methods(crow::HTTPMethod::Post)
+		([this](const crow::request& request, uint64_t roomID) {
+
+		auto gameIt{ m_games.find(roomID) };
+		if (gameIt == m_games.end())
+		{
+			std::string retStr{ std::move(std::format("Invalid room ID < {} >", roomID)) };
+			Log(retStr, Logger::Level::Error);
+			return crow::response{ 404, retStr };
+		}
+
+		if (gameIt->second.GetGameState() != common::game::GameState::NONE)
+		{
+			std::string retStr{ "Game is already started" };
+			Log(retStr, Logger::Level::Error);
+			return crow::response{ 404, retStr };
+		}
+
+		if (gameIt->second.GetPlayers().size() < 2)
+		{
+			std::string retStr{ "Not enough players" };
+			Log(retStr, Logger::Level::Error);
+			return crow::response{ 404, retStr };
+		}
+
+		std::thread gameThread{ [&gameIt]() { gameIt->second.Run(); } };
+		gameThread.detach();
+
+		return crow::response{ 200, "Game started" };
 			});
 
 

@@ -113,6 +113,12 @@ namespace literals
 				constexpr char param[] = "/game/disconnect/<int>";
 			}
 
+			namespace start
+			{
+				constexpr char simple[] = "/game/start";
+				constexpr char param[] = "/game/start/<int>";
+			}
+
 			constexpr char create[] = "/game/create";
 		}
 
