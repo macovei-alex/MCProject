@@ -32,7 +32,7 @@ public:
 public:
 	void Reset(std::vector<Player>& players, size_t drawingPlayerID);
 	void Reset(std::vector<Player>& players, Player& drawingPlayer);
-	void Start(const std::vector<Player>& players, chr::seconds drawingTime);
+	void Start(const std::vector<Player>& players, chr::seconds drawingTime, bool& m_stopped);
 
 private:
 	uint8_t m_turnNumber;

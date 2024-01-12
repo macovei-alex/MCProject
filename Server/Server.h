@@ -23,7 +23,7 @@ public:
 	Server();
 	Server(const Server&) = delete;
 	Server& operator=(const Server&) = delete;
-	~Server() = default;
+	~Server();
 	Server& SetSettingsFromFile(const std::string& filePath = "serverSettings.txt");
 
 public:

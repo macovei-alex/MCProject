@@ -33,6 +33,7 @@ public:
 	common::game::GameState GetGameState() const;
 	void SetGameState(common::game::GameState gameState);
 	std::mutex& GetPlayersMutex();
+	bool IsRunning() const;
 
 public:
 	void Run();
@@ -40,6 +41,7 @@ public:
 	void RemovePlayer(const std::string& playerName);
 	void RemoveDisconnectedPlayers();
 	void Reset();
+	void Stop();
 
 private:
 	uint8_t m_roundNumber;
@@ -51,4 +53,5 @@ private:
 	Chat m_chat;
 	common::game::GameState m_gameState;
 	std::shared_ptr<std::mutex> m_sharedMutex;
+	bool m_stopped;
 };

@@ -11,9 +11,9 @@ void services::SendGameSettings(uint64_t gameID, const common::game::GameSetting
 		auto response = cpr::Put(
 			cpr::Url{ url },
 			cpr::Payload{
-				{literals::jsonKeys::settings::drawTime, std::to_string(gameSettings.GetDrawTime())},
-				{literals::jsonKeys::settings::roundCount, std::to_string(gameSettings.GetRoundCount())},
-				{literals::jsonKeys::settings::chooseWordOptionCount, std::to_string(gameSettings.GetChooseWordOptionCount())},
+				{literals::jsonKeys::settings::drawTime, std::to_string(gameSettings.m_drawTime)},
+				{literals::jsonKeys::settings::roundCount, std::to_string(gameSettings.m_roundCount)},
+				{literals::jsonKeys::settings::chooseWordOptionCount, std::to_string(gameSettings.m_chooseWordOptionCount)},
 			});
 
 		if (response.status_code != 200 && response.status_code != 201)
@@ -194,6 +194,22 @@ void services::SendGuessingWord(uint64_t roomID, const std::string& word, std::o
 
 		if (response.status_code != 200 && response.status_code != 201)
 			throw std::exception(response.reason.c_str());
+	}
+	catch (const std::exception& exception)
+	{
+		errStream << exception.what() << '\n';
+	}
+}
+
+void services::StartGame(uint64_t roomID, std::ostream& errStream)
+{
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::start::simple} + "/" };
+
+	std::string url{ urlBlueprint + std::to_string(roomID) };
+
+	try
+	{
+		auto response = cpr::Get(cpr::Url{ url });
 	}
 	catch (const std::exception& exception)
 	{

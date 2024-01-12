@@ -9,7 +9,8 @@ Game::Game() noexcept :
 	m_turn{},
 	m_image{},
 	m_chat{},
-	m_sharedMutex{ std::make_shared<std::mutex>() }
+	m_sharedMutex{ std::make_shared<std::mutex>() },
+m_stopped{ false }
 {
 	m_turn.SetPlayersMutex(m_sharedMutex);
 }
@@ -23,7 +24,8 @@ Game::Game(Game&& other) noexcept :
 	m_image{ std::move(other.m_image) },
 	m_chat{ std::move(other.m_chat) },
 	m_gameState{ std::move(other.m_gameState) },
-	m_sharedMutex{ std::move(other.m_sharedMutex) }
+	m_sharedMutex{ std::move(other.m_sharedMutex) },
+m_stopped{ other.m_stopped }
 {
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
@@ -47,11 +49,13 @@ Game& Game::operator=(Game&& other) noexcept
 	m_chat = std::move(other.m_chat);
 	m_gameState = std::move(other.m_gameState);
 	m_sharedMutex = std::move(other.m_sharedMutex);
+	m_stopped = other.m_stopped;
 
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
 	other.m_sharedMutex.reset();
+	other.m_stopped = true;
 
 	return *this;
 }
@@ -115,8 +119,14 @@ std::mutex& Game::GetPlayersMutex()
 	return *m_sharedMutex;
 }
 
+bool Game::IsRunning() const
+{
+	return !m_stopped;
+}
+
 void Game::Run()
 {
+	m_stopped = false;
 	Reset();
 
 	std::unordered_map<std::string, bool> playersDone{ m_players.size() };
@@ -133,7 +143,7 @@ void Game::Run()
 			}
 	};
 
-	while (m_roundNumber < m_gameSettings.m_roundCount)
+	while (!m_stopped && m_roundNumber < m_gameSettings.m_roundCount)
 	{
 		for (const auto& player : m_players)
 			playersDone[player.GetName()] = false;
@@ -146,11 +156,17 @@ void Game::Run()
 
 			m_gameState = common::game::GameState::PICK_WORD;
 
-			while (m_turn.GetWord() == "")
+			while (!m_stopped && m_turn.GetWord() == "")
 				std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
 
+			if (m_stopped)
+			{
+				m_gameState = common::game::GameState::NONE;
+				return;
+			}
+
 			m_gameState = common::game::GameState::DRAW_AND_GUESS;
-			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.m_drawTime });
+			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.m_drawTime }, m_stopped);
 
 			{
 				std::lock_guard<std::mutex> lock{ *m_sharedMutex };
@@ -173,6 +189,7 @@ void Game::Run()
 	}
 
 	m_gameState = common::game::GameState::NONE;
+	m_stopped = true;
 }
 
 void Game::RemoveDisconnectedPlayers()
@@ -192,6 +209,13 @@ void Game::Reset()
 		std::lock_guard<std::mutex> lock{ *m_sharedMutex };
 		RemoveDisconnectedPlayers();
 	}
+}
+
+void Game::Stop()
+{
+	m_stopped = true;
+	while(m_gameState != common::game::GameState::NONE)
+		std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
 }
 
 void Game::RemovePlayer(const std::string& name)

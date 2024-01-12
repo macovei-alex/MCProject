@@ -57,6 +57,19 @@ void Server::Log(const std::string_view& message, Logger::Level level)
 		m_logger->Log(message, level);
 }
 
+Server::~Server()
+{
+	std::vector<std::future<void>> gameStopActions;
+	for (auto& game : m_games)
+		gameStopActions.emplace_back(std::async(std::launch::async, [&game]() { game.second.Stop(); }));
+
+	for (auto& future : gameStopActions)
+		future.wait();
+
+	Log("Allgames stopped");
+	Log("Server stopped");
+}
+
 Server& Server::SetSettingsFromFile(const std::string& filePath)
 {
 	utils::NavigateToProjectDirectory();

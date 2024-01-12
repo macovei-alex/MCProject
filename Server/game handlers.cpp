@@ -200,7 +200,7 @@ Server& Server::GameHandlers()
 			});
 
 
-	CROW_ROUTE(m_app, literals::routes::game::start::param).methods(crow::HTTPMethod::Post)
+	CROW_ROUTE(m_app, literals::routes::game::start::param).methods(crow::HTTPMethod::Put)
 		([this](const crow::request& request, uint64_t roomID) {
 
 		auto gameIt{ m_games.find(roomID) };

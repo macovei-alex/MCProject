@@ -32,4 +32,5 @@ namespace services
 	common::game::GameSettings ReceiveGameSettings(uint64_t gameID, std::ostream& errStream = std::cerr);
 	std::vector<std::string> ReceiveWordOptions(uint64_t roomID, std::ostream& errStream = std::cerr);
 	void SendGuessingWord(uint64_t roomID, const std::string& word, std::ostream& errStream = std::cerr);
+	void StartGame(uint64_t roomID, std::ostream& errStream = std::cerr);
 }

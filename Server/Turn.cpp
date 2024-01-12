@@ -88,7 +88,7 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 	}
 }
 
-void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime)
+void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, bool& m_stopped)
 {
 	m_playStartTime = chr::system_clock::now();
 	do
@@ -111,5 +111,5 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime)
 				break;
 		}
 
-	} while (chr::system_clock::now() - m_playStartTime < drawingTime);
+	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);
 }
