@@ -22,7 +22,7 @@ public:
 
 	void SetMinimumLogLevel(Level level);
 
-	void Log(const std::string_view& message, Level level);
+	void Log(const std::string_view& message, Level level = Level::Info);
 
 private:
 	std::ostream& m_os;

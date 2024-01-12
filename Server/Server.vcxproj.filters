@@ -51,9 +51,6 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MockDatabase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test handlers.cpp">
       <Filter>Source Files\Server Handlers</Filter>
     </ClCompile>
@@ -99,9 +96,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DatabasePrerequisites.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MockDatabase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,7 +8,7 @@ Turn::Turn(uint8_t turnNumber) :
 	m_turnNumber{ turnNumber },
 	m_word{},
 	m_showLetterIDs{},
-	m_playStartTime{ chr::seconds{std::numeric_limits<uint64_t>::infinity()} }
+	m_playStartTime{ chr::system_clock::time_point::max() }
 {
 	/* empty */
 }
@@ -59,9 +59,9 @@ void Turn::SetWord(std::string&& word) noexcept
 	m_word = std::move(word);
 }
 
-void Turn::SetPlayersMutex(const std::mutex& playersMutex) noexcept
+void Turn::SetPlayersMutex(std::shared_ptr<std::mutex> playersMutex) noexcept
 {
-	m_playersMutex = std::make_shared<std::mutex>(playersMutex);
+	m_playersMutex = playersMutex;
 }
 
 void Turn::Reset(std::vector<Player>& players, size_t drawingPlayerID)
@@ -88,7 +88,7 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 	}
 }
 
-void Turn::Start(const std::vector<Player>& players, chr::duration<chr::seconds> drawingTime)
+void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime)
 {
 	m_playStartTime = chr::system_clock::now();
 	do
@@ -99,16 +99,13 @@ void Turn::Start(const std::vector<Player>& players, chr::duration<chr::seconds>
 			std::lock_guard<std::mutex> lock{ *m_playersMutex };
 
 			if (std::all_of(players.begin(), players.end(),
-				[](const Player& player) {
-					return !player.IsConnected(); }))
+				[](const Player& player) { return !player.IsConnected(); }))
 				break;
 
-			size_t count{ std::accumulate(players.begin(), players.end(), 0,
-				[](size_t count, const Player& player) {
-					if (player.GetGuessStatus())
-						return count + 1;
-					return count;
-				}) };
+			size_t count{ static_cast<size_t>(std::count_if(players.begin(), players.end(),
+				[](const Player& player) {
+					return player.GetGuessStatus();
+				})) };
 
 			if (count == players.size() - 1)
 				break;

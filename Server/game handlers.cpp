@@ -41,16 +41,16 @@ Server& Server::GameHandlers()
 
 		try
 		{
-			uint64_t drawTime = std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second);
+			uint16_t drawTime = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second);
 			game.GetGameSettings().SetDrawTime(drawTime);
 
-			int64_t roundCount = std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second);
+			uint16_t roundCount = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second);
 			game.GetGameSettings().SetRoundCount(roundCount);
 
-			int64_t chooseWordOptionCount = std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second);
+			uint16_t chooseWordOptionCount = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second);
 			game.GetGameSettings().SetDrawTime(chooseWordOptionCount);
 		}
-		catch (const std::exception& exception)
+		catch (...)
 		{
 			Log("Invalid parameter values", Logger::Level::Error);
 			return crow::response{ 404, "Invalid parameter values" };
@@ -79,7 +79,7 @@ Server& Server::GameHandlers()
 
 		return crow::json::wvalue{
 				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
-				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetPlayTime()} };
+				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetTimer().count() }};
 			});
 
 

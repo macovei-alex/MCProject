@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <mutex>
+#include <memory>
 
 #include "Player.h"
 #include "Turn.h"
@@ -22,16 +23,16 @@ public:
 	~Game() noexcept = default;
 
 public:
-	const std::vector<Player>& GetPlayers();
+	const std::vector<Player>& GetPlayers() const;
 	const Player& GetPlayer(const std::string& name) const;
-	uint8_t GetRoundNumber();
-	void SetPlayerToDrawID(uint8_t playerToDrawID);
+	uint8_t GetRoundNumber() const;
 	common::game::GameSettings& GetGameSettings();
 	Turn& GetTurn();
 	Image& GetImage();
 	Chat& GetChat();
-	common::game::GameState GetGameState();
+	common::game::GameState GetGameState() const;
 	void SetGameState(common::game::GameState gameState);
+	std::mutex& GetPlayersMutex();
 
 public:
 	void Run();
@@ -49,5 +50,5 @@ private:
 	Image m_image;
 	Chat m_chat;
 	common::game::GameState m_gameState;
-	std::mutex m_playersMutex;
+	std::shared_ptr<std::mutex> m_sharedMutex;
 };

@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include <mutex>
-
 Game::Game() noexcept :
 	m_players{},
 	m_roundNumber{ 0 },
@@ -10,9 +8,10 @@ Game::Game() noexcept :
 	m_gameState{ common::game::GameState::NONE },
 	m_turn{},
 	m_image{},
-	m_chat{}
+	m_chat{},
+	m_sharedMutex{ std::make_shared<std::mutex>() }
 {
-	/* empty */
+	m_turn.SetPlayersMutex(m_sharedMutex);
 }
 
 Game::Game(Game&& other) noexcept :
@@ -23,11 +22,13 @@ Game::Game(Game&& other) noexcept :
 	m_turn{ std::move(other.m_turn) },
 	m_image{ std::move(other.m_image) },
 	m_chat{ std::move(other.m_chat) },
-	m_gameState{ std::move(other.m_gameState) }
+	m_gameState{ std::move(other.m_gameState) },
+	m_sharedMutex{ std::move(other.m_sharedMutex) }
 {
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
+	other.m_sharedMutex.reset();
 }
 
 Game& Game::operator=(Game&& other) noexcept
@@ -45,15 +46,17 @@ Game& Game::operator=(Game&& other) noexcept
 	m_image = std::move(other.m_image);
 	m_chat = std::move(other.m_chat);
 	m_gameState = std::move(other.m_gameState);
+	m_sharedMutex = std::move(other.m_sharedMutex);
 
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
+	other.m_sharedMutex.reset();
 
 	return *this;
 }
 
-const std::vector<Player>& Game::GetPlayers()
+const std::vector<Player>& Game::GetPlayers() const
 {
 	return m_players;
 }
@@ -67,7 +70,7 @@ const Player& Game::GetPlayer(const std::string& name) const
 	throw std::exception{ "Player not found" };
 }
 
-uint8_t Game::GetRoundNumber()
+uint8_t Game::GetRoundNumber() const
 {
 	return m_roundNumber;
 }
@@ -92,7 +95,7 @@ Chat& Game::GetChat()
 	return m_chat;
 }
 
-common::game::GameState Game::GetGameState()
+common::game::GameState Game::GetGameState() const
 {
 	return m_gameState;
 }
@@ -100,6 +103,11 @@ common::game::GameState Game::GetGameState()
 void Game::SetGameState(common::game::GameState gameState)
 {
 	m_gameState = gameState;
+}
+
+std::mutex& Game::GetPlayersMutex()
+{
+	return *m_sharedMutex;
 }
 
 void Game::Run()
@@ -111,6 +119,11 @@ void Game::Run()
 	const auto& findNextPlayerLambda{ [&playersDone](std::vector<Player>& m_players) {
 			return std::find_if(m_players.begin(), m_players.end(),
 				[&playersDone](const Player& player) {
+					if (playersDone.find(player.GetName()) == playersDone.end())
+					{
+						playersDone.emplace(player.GetName(), false);
+						return true;
+					}
 					return !playersDone.at(player.GetName()); });
 			}
 	};
@@ -135,7 +148,7 @@ void Game::Run()
 			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.GetDrawTime() });
 
 			{
-				std::lock_guard<std::mutex> lock{ m_playersMutex };
+				std::lock_guard<std::mutex> lock{ *m_sharedMutex };
 
 				RemoveDisconnectedPlayers();
 
@@ -160,7 +173,8 @@ void Game::Run()
 void Game::RemoveDisconnectedPlayers()
 {
 	m_players.erase(
-		std::remove_if(m_players.begin(), m_players.end(), [](const Player& player) { return !player.IsConnected(); }),
+		std::remove_if(m_players.begin(), m_players.end(),
+			[](const Player& player) { return !player.IsConnected(); }),
 		m_players.end());
 }
 
@@ -170,14 +184,9 @@ void Game::Reset()
 	m_roundNumber = 0;
 
 	{
-		std::lock_guard<std::mutex> lock{ m_playersMutex };
+		std::lock_guard<std::mutex> lock{ *m_sharedMutex };
 		RemoveDisconnectedPlayers();
 	}
-}
-
-void Game::AddPlayer(const Player& player)
-{
-	m_players.emplace_back(player);
 }
 
 void Game::RemovePlayer(const std::string& name)
@@ -188,4 +197,9 @@ void Game::RemovePlayer(const std::string& name)
 			m_players.erase(std::remove(m_players.begin(), m_players.end(), player), m_players.end());
 			return;
 		}
+}
+
+void Game::AddPlayer(const Player& player)
+{
+	m_players.emplace_back(player);
 }
