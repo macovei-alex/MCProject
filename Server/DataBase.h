@@ -28,7 +28,7 @@ namespace db
 		db::ReturnValue SignIn(const std::string& playerName, const std::string& password);
 		db::ReturnValue SignOut(const std::string& playerName);
 		db::ReturnValue AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date);
-		db::GameHistory GetGameHistory(const std::string& playerName);
+		db::ReturnValueForHistory GetGameHistory(const std::string& playerName);
 		std::vector<std::string> GetRandomWords(uint64_t count, const std::string& difficulty);
 		std::vector<std::string> GetRandomWords(uint64_t number);
 		db::ReturnValue ResetPlayerAccounts();

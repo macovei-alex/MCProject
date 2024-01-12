@@ -13,6 +13,15 @@ namespace db
 		std::string reason;
 	};
 
+	struct ReturnValueForHistory
+	{
+		std::vector<int> scores;
+		std::vector<std::string> dates;
+		std::vector<std::string> difficulties;
+		bool success;
+		std::string reason;
+	};
+
 	struct Word
 	{
 		int id;

@@ -114,33 +114,37 @@ db::ReturnValue db::Database::AddGame(const std::string& playerName, int score, 
 	return { true, "Game succesfully added" };
 }
 
-db::GameHistory db::Database::GetGameHistory(const std::string& playerName)
+db::ReturnValueForHistory db::Database::GetGameHistory(const std::string& playerName)
 {
 	auto players{ std::move(m_storage.get_all<db::Player>(
 		sql::where(sql::c(&db::Player::playerName) == playerName))) };
+
+	std::vector<int> scores;
+	std::vector<std::string> dates;
+	std::vector<std::string> difficulties;
 
 	if (players.empty())
 	{
 		GameHistory ret;
 		ret.playerID = -1;
-		return ret;
+		return { scores, dates, difficulties, false, std::format("Player {} not found", playerName)};
 	}
 
 	auto& player{ players[0] };
 	auto result{ std::move(m_storage.get_all<db::GameHistory>(
 		sql::where(sql::c(&db::GameHistory::playerID) == player.id))) };
 
-	size_t nr{ 0 };
 	size_t numberOfGames{ result.size() };
 	auto totalScore{ m_storage.sum<int>(&db::GameHistory::score,
 		sql::where(sql::c(&db::GameHistory::playerID) == player.id)) };
 
 	for (auto& game : result)
 	{
-		nr++;
-		std::cout << nr << " " << game.score << " " << game.date << " " << game.difficulty << std::endl;
+		scores.push_back(game.score);
+		dates.push_back(game.date);
+		difficulties.push_back(game.difficulty);
 	}
-	std::cout << "Total score: " << totalScore << '\n';
+	return {scores, dates, difficulties, true, std::format("Found game history for player{}", playerName)};
 }
 
 std::vector<std::string> db::Database::GetRandomWords(uint64_t count, const std::string& difficulty)
