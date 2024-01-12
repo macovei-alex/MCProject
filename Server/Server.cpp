@@ -1,5 +1,7 @@
 #include "Server.h"
 
+#include <ranges>
+
 Server::Server() :
 	m_app{ },
 	m_games{ },
@@ -59,14 +61,19 @@ void Server::Log(const std::string_view& message, Logger::Level level)
 
 Server::~Server()
 {
-	std::vector<std::future<void>> gameStopActions;
-	for (auto& game : m_games)
-		gameStopActions.emplace_back(std::async(std::launch::async, [&game]() { game.second.Stop(); }));
+	std::vector<std::pair<uint64_t, std::future<void>>> gameStopActions;
 
-	for (auto& future : gameStopActions)
-		future.wait();
+	for (auto& [gameID, game] : std::views::all(m_games))
+		gameStopActions.emplace_back(gameID, std::async(std::launch::async, [&game]() { game.Stop(); }));
 
-	Log("Allgames stopped");
+	for (auto& [gameID, gameStopAction] : gameStopActions)
+	{
+		Log(std::format("Waiting for game < {} > to stop", gameID));
+		gameStopAction.wait();
+	}
+
+	Log("All games stopped");
+
 	Log("Server stopped");
 }
 
