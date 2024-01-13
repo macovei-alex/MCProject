@@ -73,6 +73,9 @@ signals:
 	void Signal();
 
 private:
+	void SetAllButtonsEnabled(bool enabled);
+	void SetAllThreadsPauseStatus(bool paused);
+
 	MainWindow* signInWindow;
 
 	QPixmap canvasPixmap;

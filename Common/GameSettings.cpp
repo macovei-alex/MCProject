@@ -5,7 +5,7 @@
 using namespace common::game;
 
 const uint16_t GameSettings::s_defaultChooseWordOptionCount = 3;
-const uint16_t GameSettings::s_defaultDrawTime = 120;
+const uint16_t GameSettings::s_defaultDrawTime = 30;
 const uint16_t GameSettings::s_defaultRoundCount = 4;
 
 GameSettings::GameSettings() noexcept :

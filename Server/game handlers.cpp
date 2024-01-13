@@ -70,16 +70,18 @@ Server& Server::GameHandlers()
 			return m_errorValue;
 		}
 
-		auto gameState{ gameIt->second.GetGameState() };
+		Game& game{ gameIt->second };
+		auto gameState{ game.GetGameState() };
 
 		if (gameState == common::game::GameState::NONE)
 			return crow::json::wvalue{
-				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
+				{literals::jsonKeys::game::state, static_cast<uint64_t>(game.GetGameState())},
 				{literals::jsonKeys::game::timeRemaining, 0} };
 
 		return crow::json::wvalue{
-				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameIt->second.GetGameState())},
-				{literals::jsonKeys::game::timeRemaining, gameIt->second.GetTurn().GetTimer().count() } };
+				{literals::jsonKeys::game::state, static_cast<uint64_t>(game.GetGameState())},
+				{literals::jsonKeys::game::timeRemaining, 
+				static_cast<uint64_t>(game.GetGameSettings().m_drawTime) - game.GetTurn().GetTimer().count() } };
 			});
 
 
@@ -192,6 +194,17 @@ Server& Server::GameHandlers()
 		if (wordIt == jsonMap.end())
 		{
 			std::string retStr{ "Invalid request body" };
+			Log(retStr, Logger::Level::Error);
+			return crow::response{ 404, retStr };
+		}
+
+		try
+		{
+			gameIt->second.GetTurn().SetWord(wordIt->second);
+		}
+		catch (const std::exception& exception)
+		{
+			std::string retStr{ std::move(std::format("Invalid word < {} >", wordIt->second)) };
 			Log(retStr, Logger::Level::Error);
 			return crow::response{ 404, retStr };
 		}

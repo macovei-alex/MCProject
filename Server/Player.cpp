@@ -7,7 +7,7 @@ Player::Player() noexcept :
 	m_currentScore{ 0 },
 	m_gameRole{ common::game::PlayerRole::NONE },
 	m_roomRole{ Player::RoomRole::participant },
-	m_isConnected{ false }
+	m_isConnected{ true }
 {
 	/*EMPTY*/
 }
@@ -19,7 +19,7 @@ Player::Player(const std::string& name) noexcept :
 	m_currentScore{ 0 },
 	m_gameRole{ common::game::PlayerRole::NONE },
 	m_roomRole{ Player::RoomRole::participant },
-	m_isConnected{ false }
+	m_isConnected{ true }
 {
 	/*EMPTY*/
 }

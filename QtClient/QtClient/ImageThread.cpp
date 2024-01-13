@@ -17,12 +17,11 @@ ImageThread::ImageThread(uint64_t roomID, bool& keepGoing, QWidget* parent) :
 
 void ImageThread::run()
 {
-	using std::chrono_literals::operator""s;
 	while (keepGoing)
 	{
 		if (IsPaused())
 		{
-			std::this_thread::sleep_for(0.25s);
+			QThread::msleep(500);
 			continue;
 		}
 
@@ -34,11 +33,9 @@ void ImageThread::run()
 
 				if (commonPoints.empty())
 				{
-					std::this_thread::sleep_for(0.25s);
+					QThread::msleep(500);
 					continue;
 				}
-
-				qDebug() << "Received points: " << commonPoints.size();
 
 				QList<Line>* newLines{ new QList<Line> };
 				Line* line;
@@ -58,11 +55,9 @@ void ImageThread::run()
 					i++;
 				}
 
-				qDebug() << "Received lines: " << newLines->size();
-
 				emit ImageSignal(newLines);
 
-				std::this_thread::sleep_for(0.25s);
+				QThread::msleep(500);
 			}
 		}
 		catch (const std::exception& e)

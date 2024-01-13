@@ -47,7 +47,8 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 {
 	ui->setupUi(this);
 
-	ui->roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
+	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	ui->roomLabel->update();
 	ui->gameChatLabel->setStyleSheet("border: none;");
 	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
@@ -69,14 +70,11 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 	connect(m_chatThread, &ChatThread::ChatSignal, this, &CanvasPaint::HandleChat);
 	connect(m_chatThread, &ChatThread::finished, m_chatThread, &QObject::deleteLater);
 
-
 	m_imageThread->start();
 	m_gameStateThread->start();
 	m_chatThread->start();
 
-	m_imageThread->Pause();
-	m_gameStateThread->Pause();
-	m_chatThread->Pause();
+	SetAllThreadsPauseStatus(true);
 }
 #endif
 
@@ -255,6 +253,7 @@ void CanvasPaint::on_messageButton_clicked()
 void CanvasPaint::on_startGameButton_clicked()
 {
 	services::StartGame(m_onlineData.m_roomID);
+	SetAllThreadsPauseStatus(false);
 }
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
@@ -300,44 +299,51 @@ void CanvasPaint::HandleImage(QList<Line>* newLines)
 
 void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
-	if (gameStatePair.first == m_onlineData.m_gameState)
-		return;
-
-	qDebug() << "New game state: "
-		<< static_cast<uint16_t>(gameStatePair.first) << " "
-		<< gameStatePair.second;
-
-	m_onlineData.m_gameState = gameStatePair.first;
-
-	if (m_onlineData.m_gameState == common::game::GameState::PICK_WORD)
+	if (m_onlineData.m_gameState != gameStatePair.first)
 	{
-		ui->startGameButton->setEnabled(false);
-		ui->resetCanvas->setEnabled(false);
-		ui->drawButton->setEnabled(false);
-		ui->eraseButton->setEnabled(false);
-		ui->undoButton->setEnabled(false);
-		ui->messageButton->setEnabled(false);
-		ui->messageBox->setEnabled(false);
-		ui->gameChat->setEnabled(false);
+		m_onlineData.m_gameState = gameStatePair.first;
+		qDebug() << "New game state: " << common::game::EnumToString(gameStatePair.first);
 
-		auto playerRole{ services::ReceivePlayerRole(m_onlineData.m_roomID, m_onlineData.m_username.toStdString()) };
-		if (playerRole == common::game::PlayerRole::DRAWING)
+		auto newPlayerRole{ services::ReceivePlayerRole(m_onlineData.m_roomID, m_onlineData.m_username.toStdString()) };
+		if (m_onlineData.m_role != newPlayerRole)
 		{
-			auto words{ services::ReceiveWordOptions(m_onlineData.m_roomID) };
-			for (int i = 0; i < words.size(); i++)
-				qDebug() << words[i];
+			m_onlineData.m_role = newPlayerRole;
+			qDebug() << "Player role: " << common::game::EnumToString(m_onlineData.m_role);
 		}
 	}
+	qDebug() << "Time left: " << gameStatePair.second;
+	
+	if (m_onlineData.m_gameState == common::game::GameState::PICK_WORD)
+	{
+		if (m_onlineData.m_role == common::game::PlayerRole::DRAWING)
+		{
+			auto words{ services::ReceiveWordOptions(m_onlineData.m_roomID) };
+
+			// open choosewordwindow and choose a word
+			for (int i = 0; i < words.size(); i++)
+				qDebug() << words[i];
+
+			// send the chosen word
+			services::SendGuessingWord(m_onlineData.m_roomID, words[0]);
+
+			m_imageThread->Pause();
+		}
+		else if (m_onlineData.m_role == common::game::PlayerRole::GUESSING)
+		{
+			m_imageThread->Unpause();
+		}
+	}
+
 	else if (m_onlineData.m_gameState == common::game::GameState::DRAW_AND_GUESS)
 	{
-		ui->startGameButton->setEnabled(false);
-		ui->resetCanvas->setEnabled(true);
-		ui->drawButton->setEnabled(true);
-		ui->eraseButton->setEnabled(true);
-		ui->undoButton->setEnabled(true);
-		ui->messageButton->setEnabled(true);
-		ui->messageBox->setEnabled(true);
-		ui->gameChat->setEnabled(true);
+		if (m_onlineData.m_role == common::game::PlayerRole::DRAWING)
+		{
+			m_drawState = DrawingState::DRAWING;
+		}
+		else if (m_onlineData.m_role == common::game::PlayerRole::GUESSING)
+		{
+			m_imageThread->Unpause();
+		}
 	}
 }
 
@@ -357,7 +363,33 @@ void CanvasPaint::HandleChat(const QList<common::Message>& messages)
 	}
 }
 
+void CanvasPaint::SetAllThreadsPauseStatus(bool paused)
+{
+	if (paused == true)
+	{
+		m_imageThread->Pause();
+		m_gameStateThread->Pause();
+		m_chatThread->Pause();
+	}
+	else
+	{
+		m_imageThread->Unpause();
+		m_gameStateThread->Unpause();
+		m_chatThread->Unpause();
+	}
+}
 
+void CanvasPaint::SetAllButtonsEnabled(bool enabled)
+{
+	ui->startGameButton->setEnabled(enabled);
+	ui->resetCanvas->setEnabled(enabled);
+	ui->drawButton->setEnabled(enabled);
+	ui->eraseButton->setEnabled(enabled);
+	ui->undoButton->setEnabled(enabled);
+	ui->messageButton->setEnabled(enabled);
+	ui->messageBox->setEnabled(enabled);
+	ui->gameChat->setEnabled(enabled);
+}
 
 
 OnlineData& CanvasPaint::GetOnlineData()

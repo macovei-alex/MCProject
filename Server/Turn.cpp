@@ -73,6 +73,7 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 {
 	m_turnNumber++;
 	m_word = "";
+	m_playStartTime = chr::system_clock::now();
 
 	{
 		std::lock_guard<std::mutex> lock{ *m_playersMutex };
@@ -107,8 +108,8 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 					return player.GetGuessStatus();
 				})) };
 
-			if (count == players.size() - 1)
-				break;
+			/*if (count == players.size() - 1)
+				break;*/
 		}
 
 	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);

@@ -68,6 +68,9 @@ namespace common
 			NONE
 		};
 
+		std::string EnumToString(GameState gameState);
+		std::string EnumToString(PlayerRole playerRole);
+
 		struct GameSettings
 		{
 			uint16_t m_roundCount;

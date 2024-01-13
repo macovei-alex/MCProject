@@ -59,3 +59,25 @@ common::Message::Message(std::string&& text, std::string&& author, uint64_t time
 {
 	/* empty */
 }
+
+std::string common::game::EnumToString(GameState gameState)
+{
+	if (gameState == GameState::NONE)
+		return "NONE";
+	if (gameState == GameState::PICK_WORD)
+		return "PICK_WORD";
+	if (gameState == GameState::DRAW_AND_GUESS)
+		return "DRAW_AND_GUESS";
+	return "NO_VALUE";
+}
+
+std::string common::game::EnumToString(PlayerRole gameState)
+{
+	if (gameState == PlayerRole::NONE)
+		return "NONE";
+	if (gameState == PlayerRole::DRAWING)
+		return "DRAWING";
+	if (gameState == PlayerRole::GUESSING)
+		return "GUESSING";
+	return "NO_VALUE";
+}

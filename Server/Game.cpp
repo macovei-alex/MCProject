@@ -10,7 +10,7 @@ Game::Game() noexcept :
 	m_image{},
 	m_chat{},
 	m_sharedMutex{ std::make_shared<std::mutex>() },
-m_stopped{ false }
+	m_stopped{ false }
 {
 	m_turn.SetPlayersMutex(m_sharedMutex);
 }
@@ -25,7 +25,7 @@ Game::Game(Game&& other) noexcept :
 	m_chat{ std::move(other.m_chat) },
 	m_gameState{ std::move(other.m_gameState) },
 	m_sharedMutex{ std::move(other.m_sharedMutex) },
-m_stopped{ other.m_stopped }
+	m_stopped{ other.m_stopped }
 {
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
@@ -153,7 +153,6 @@ void Game::Run()
 			currPlayerIt = findNextPlayerLambda(m_players))
 		{
 			m_turn.Reset(m_players, *currPlayerIt);
-
 			m_gameState = common::game::GameState::PICK_WORD;
 
 			while (!m_stopped && m_turn.GetWord() == "")
@@ -204,6 +203,7 @@ void Game::Reset()
 {
 	m_gameState = common::game::GameState::NONE;
 	m_roundNumber = 0;
+	m_turn.SetPlayersMutex(m_sharedMutex);
 
 	{
 		std::lock_guard<std::mutex> lock{ *m_sharedMutex };

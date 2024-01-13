@@ -132,16 +132,12 @@ void MainWindow::on_createRoomButton_clicked()
 	try
 	{
 		roomID = services::CreateRoom(ui->usernameLineEdit->text().toStdString());
+		if(roomID == MAXUINT64)
+			throw std::exception{};
 	}
 	catch (...)
 	{
 		QMessageBox::warning(this, "Create room", "Could not create a new room (1)");
-		return;
-	}
-
-	if (!services::ConnectToRoom(roomID, ui->usernameLineEdit->text().toStdString()))
-	{
-		QMessageBox::warning(this, "Join room", "Could not create a new room (2)");
 		return;
 	}
 

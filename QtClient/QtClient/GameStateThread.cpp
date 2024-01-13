@@ -17,12 +17,11 @@ GameStateThread::GameStateThread(uint64_t roomID, bool& keepGoing, QWidget* pare
 
 void GameStateThread::run()
 {
-	using std::chrono_literals::operator""s;
 	while (keepGoing)
 	{
 		if (IsPaused())
 		{
-			std::this_thread::sleep_for(1s);
+			QThread::msleep(500);
 			continue;
 		}
 
@@ -33,12 +32,9 @@ void GameStateThread::run()
 				auto gameStatePair{ services::ReceiveGameStateAndTime(roomID) };
 				auto gameStateQPair{ QPair{ static_cast<common::game::GameState>(gameStatePair.first), gameStatePair.second } };
 
-				qDebug() << "Received game state and timer: "
-					<< static_cast<uint16_t>(gameStateQPair.first) << ' ' << gameStateQPair.second;
-
 				emit GameStateSignal(gameStateQPair);
 
-				std::this_thread::sleep_for(0.25s);
+				QThread::msleep(500);
 			}
 		}
 		catch (const std::exception& e)
