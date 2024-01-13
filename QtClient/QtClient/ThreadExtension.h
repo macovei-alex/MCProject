@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QString>
+
 class ThreadExtension
 {
 public:
@@ -10,6 +12,9 @@ public:
 	void Pause();
 	void Unpause();
 	bool IsPaused() const;
+
+	void Pause(const QString& from);
+	void Unpause(const QString& from);
 
 private:
 	bool m_pause;
