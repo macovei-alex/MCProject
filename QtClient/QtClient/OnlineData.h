@@ -5,9 +5,13 @@
 
 #include "common.h"
 
-class OnlineData
+struct OnlineData
 {
-public:
+	uint64_t m_roomID;
+	QString m_username;
+	common::game::GameState m_gameState;
+	common::game::PlayerRole m_role;
+
 	OnlineData();
 	OnlineData(uint64_t roomID, const QString& username);
 	OnlineData(uint64_t roomID, QString&& username);
@@ -17,24 +21,4 @@ public:
 
 	OnlineData(OnlineData&&) = default;
 	OnlineData& operator=(OnlineData&&) = default;
-
-public:
-	uint64_t GetRoomID() const;
-	void SetRoomID(uint64_t);
-
-	QString GetUsername() const;
-	void SetUsername(const QString&);
-	void SetUsername(QString&&);
-
-	common::game::GameState GetGameState() const;
-	void SetGameState(common::game::GameState);
-
-	common::game::PlayerRole GetRole() const;
-	void SetRole(common::game::PlayerRole);
-
-private:
-	uint64_t m_roomID;
-	QString m_username;
-	common::game::GameState m_gameState;
-	common::game::PlayerRole m_role;
 };
