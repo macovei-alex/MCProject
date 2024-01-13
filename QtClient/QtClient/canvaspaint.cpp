@@ -155,7 +155,7 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 #ifdef ONLINE
 		auto commonPoints{ std::move(currentLine.ToCommonPoints()) };
 		commonPoints.emplace_back(common::img::Point{ -1, -1, Line::INVALID_COLOR_INT });
-		services::SendImageUpdates(m_onlineData.GetRoomID(), commonPoints);
+		services::SendImageUpdates(m_onlineData.m_roomID, commonPoints);
 #endif
 
 		lines.emplace_back(std::move(currentLine));
@@ -239,13 +239,13 @@ void CanvasPaint::on_messageButton_clicked()
 
 void CanvasPaint::on_startGameButton_clicked()
 {
-	services::StartGame(m_onlineData.GetRoomID());
+	services::StartGame(m_onlineData.m_roomID);
 }
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
 {
 #ifdef ONLINE
-	services::SignOut(m_onlineData.GetUsername().toStdString());
+	services::SignOut(m_onlineData.m_username.toStdString());
 	m_keepGoing = false;
 
 	m_imageThread->quit();
@@ -300,10 +300,10 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		ui->messageBox->setEnabled(false);
 		ui->gameChat->setEnabled(false);
 
-		auto playerRole{ services::ReceivePlayerRole(m_onlineData.GetRoomID(), m_onlineData.GetUsername().toStdString()) };
+		auto playerRole{ services::ReceivePlayerRole(m_onlineData.m_roomID, m_onlineData.m_username.toStdString()) };
 		if (playerRole == common::game::PlayerRole::DRAWING)
 		{
-			auto words{ services::ReceiveWordOptions(m_onlineData.GetRoomID()) };
+			auto words{ services::ReceiveWordOptions(m_onlineData.m_roomID) };
 			for (int i = 0; i < words.size(); i++)
 				qDebug() << words[i];
 		}
