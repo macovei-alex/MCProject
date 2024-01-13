@@ -65,6 +65,7 @@ private slots:
 	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
     void HandleChat(const QList<common::Message>& messages);
 
+	void SendChosenWord(const QString& word);
 
 public:
 

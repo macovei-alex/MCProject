@@ -7,11 +7,12 @@
 
 struct OnlineData
 {
-	uint64_t m_roomID;
-	uint64_t m_timeLeft;
-	QString m_username;
-	common::game::GameState m_gameState;
-	common::game::PlayerRole m_role;
+	uint64_t roomID;
+	uint64_t timeLeft;
+	QString username;
+	QString chosenWord;
+	common::game::GameState gameState;
+	common::game::PlayerRole playerRole;
 
 	OnlineData();
 	OnlineData(uint64_t roomID, const QString& username);
