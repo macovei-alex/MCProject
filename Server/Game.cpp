@@ -155,7 +155,9 @@ void Game::Run()
 			currPlayerIt != m_players.end();
 			currPlayerIt = findNextPlayerLambda(m_players))
 		{
+			playersDone[currPlayerIt->GetName()] = true;
 			m_turn.Reset(m_players, *currPlayerIt);
+
 			m_gameState = common::game::GameState::PICK_WORD;
 
 			while (!m_stopped && m_turn.GetWord() == "")

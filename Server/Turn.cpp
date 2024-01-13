@@ -93,7 +93,7 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 		drawingPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
 	}
 
-	m_playStartTime = chr::system_clock::now();
+	std::cout << "Turn reset" << std::endl;
 }
 
 void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, bool& m_stopped)
@@ -111,14 +111,10 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 			if (std::ranges::all_of(players, [](const Player& player) {
 				return player.GetGuessStatus();
 				}))
+			{
+				std::cout << "All players guessed the word" << std::endl;
 				break;
-
-			size_t count{ static_cast<size_t>(std::ranges::count_if(players, [](const Player& player) {
-				return player.GetGuessStatus();
-				})) };
-
-			if (count == players.size() - 1)
-				break;
+			}
 		}
 
 	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);
