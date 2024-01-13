@@ -24,10 +24,13 @@ protected:
 
 private slots:
 	void on_loginButton_clicked();
+	void on_joinRoomButton_clicked();
+	void on_createRoomButton_clicked();
 
 private:
 	Ui::MainWindow *ui;
 	CanvasPaint *canvasPaint;
 	uint64_t roomID;
+	bool m_isConnected;
 };
 #endif // MAINWINDOW_H

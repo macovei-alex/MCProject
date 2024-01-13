@@ -209,7 +209,7 @@ void services::StartGame(uint64_t roomID, std::ostream& errStream)
 
 	try
 	{
-		auto response = cpr::Get(cpr::Url{ url });
+		auto response = cpr::Put(cpr::Url{ url });
 	}
 	catch (const std::exception& exception)
 	{

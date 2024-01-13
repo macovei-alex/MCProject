@@ -41,7 +41,7 @@ public:
     QLabel *backgroundLabel;
     QPushButton *joinRoomButton;
     QPushButton *createRoomButton;
-    QLineEdit *createRoomLineEdit;
+    QLineEdit *joinRoomLineEdit;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -99,13 +99,13 @@ public:
         createRoomButton = new QPushButton(centralwidget);
         createRoomButton->setObjectName("createRoomButton");
         createRoomButton->setGeometry(QRect(340, 550, 80, 24));
-        createRoomLineEdit = new QLineEdit(centralwidget);
-        createRoomLineEdit->setObjectName("createRoomLineEdit");
-        createRoomLineEdit->setGeometry(QRect(270, 490, 113, 24));
+        joinRoomLineEdit = new QLineEdit(centralwidget);
+        joinRoomLineEdit->setObjectName("joinRoomLineEdit");
+        joinRoomLineEdit->setGeometry(QRect(270, 490, 113, 24));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 737, 21));
+        menubar->setGeometry(QRect(0, 0, 737, 22));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
