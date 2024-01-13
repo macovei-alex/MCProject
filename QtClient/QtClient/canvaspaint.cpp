@@ -237,6 +237,11 @@ void CanvasPaint::on_messageButton_clicked()
 	HandleChat(receivedMessages);
 }
 
+void CanvasPaint::on_startGameButton_clicked()
+{
+
+}
+
 void CanvasPaint::closeEvent(QCloseEvent* event)
 {
 #ifdef ONLINE

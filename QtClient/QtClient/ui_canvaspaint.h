@@ -32,13 +32,14 @@ public:
     QPushButton *drawButton;
     QPushButton *eraseButton;
     QPushButton *undoButton;
-    QLabel *label;
+    QLabel *roomLabel;
+    QPushButton *startGameButton;
 
     void setupUi(QDialog *CanvasPaint)
     {
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
-        CanvasPaint->resize(1854, 967);
+        CanvasPaint->resize(1856, 967);
         resetCanvas = new QPushButton(CanvasPaint);
         resetCanvas->setObjectName("resetCanvas");
         resetCanvas->setGeometry(QRect(1200, 720, 80, 24));
@@ -70,10 +71,13 @@ public:
         eraseButton->setGeometry(QRect(1290, 690, 80, 24));
         undoButton = new QPushButton(CanvasPaint);
         undoButton->setObjectName("undoButton");
-        undoButton->setGeometry(QRect(1380, 690, 80, 24));
-        label = new QLabel(CanvasPaint);
-        label->setObjectName("label");
-        label->setGeometry(QRect(1310, 830, 49, 21));
+        undoButton->setGeometry(QRect(1390, 690, 80, 24));
+        roomLabel = new QLabel(CanvasPaint);
+        roomLabel->setObjectName("roomLabel");
+        roomLabel->setGeometry(QRect(1310, 830, 49, 21));
+        startGameButton = new QPushButton(CanvasPaint);
+        startGameButton->setObjectName("startGameButton");
+        startGameButton->setGeometry(QRect(1400, 720, 75, 24));
 
         retranslateUi(CanvasPaint);
 
@@ -90,7 +94,8 @@ public:
         drawButton->setText(QCoreApplication::translate("CanvasPaint", "Draw", nullptr));
         eraseButton->setText(QCoreApplication::translate("CanvasPaint", "Erase", nullptr));
         undoButton->setText(QCoreApplication::translate("CanvasPaint", "Undo", nullptr));
-        label->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
+        roomLabel->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
+        startGameButton->setText(QCoreApplication::translate("CanvasPaint", "Start Game", nullptr));
     } // retranslateUi
    
 	
