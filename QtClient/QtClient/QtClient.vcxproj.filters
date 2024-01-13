@@ -31,6 +31,9 @@
     <ClCompile Include="ThreadExtension.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
+    <ClCompile Include="timerLabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui_canvaspaint.h">
@@ -81,6 +84,9 @@
     </QtMoc>
     <QtMoc Include="choosewordwindow.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TimerLabel.h">
+      <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

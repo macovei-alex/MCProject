@@ -197,6 +197,7 @@
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="ThreadExtension.cpp" />
+    <ClCompile Include="timerLabel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="mainwindow.h" />
@@ -238,6 +239,7 @@
     <ClInclude Include="macro.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="ThreadExtension.h" />
+    <QtMoc Include="TimerLabel.h" />
     <ClInclude Include="ui_canvaspaint.h" />
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>

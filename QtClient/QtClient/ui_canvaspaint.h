@@ -16,6 +16,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
+#include <timerLabel.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -33,6 +34,7 @@ public:
     QPushButton *undoButton;
     QLabel *roomLabel;
     QPushButton *startGameButton;
+    TimerLabel *timer;
 
     void setupUi(QDialog *CanvasPaint)
     {
@@ -74,6 +76,9 @@ public:
         startGameButton = new QPushButton(CanvasPaint);
         startGameButton->setObjectName("startGameButton");
         startGameButton->setGeometry(QRect(1400, 720, 75, 24));
+        timer = new TimerLabel(CanvasPaint);
+        timer->setObjectName("timer");
+        timer->setGeometry(QRect(1060, 760, 49, 16));
 
         retranslateUi(CanvasPaint);
 
@@ -91,6 +96,7 @@ public:
         undoButton->setText(QCoreApplication::translate("CanvasPaint", "Undo", nullptr));
         roomLabel->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
         startGameButton->setText(QCoreApplication::translate("CanvasPaint", "Start Game", nullptr));
+        timer->setText(QCoreApplication::translate("CanvasPaint", "timer", nullptr));
     } // retranslateUi
 
 };
