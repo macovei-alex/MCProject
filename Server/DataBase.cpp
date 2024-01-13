@@ -33,6 +33,11 @@ void db::Database::PopulateStorage()
 	// When we first initialize the database, we have to make sure the first word starts with a letter.
 
 	db::Word firstWord{ std::move(m_storage.get<db::Word>(1)) };
+	/*std::ranges::for_each(firstWord.text, [&firstWord](char& c) {
+		while (!std::isalpha(c) && !firstWord.text.empty()) {
+			c = firstWord.text.erase(0, 1)[0];
+		}
+		});*/ //The code above seems too complicated
 	for (uint8_t c{ (uint8_t)firstWord.text[0] }; !std::isalpha(c); c = firstWord.text.erase(0, 1)[0]);
 	m_storage.update(firstWord);
 }
@@ -138,12 +143,18 @@ db::ReturnValueForHistory db::Database::GetGameHistory(const std::string& player
 	auto totalScore{ m_storage.sum<int>(&db::GameHistory::score,
 		sql::where(sql::c(&db::GameHistory::playerID) == player.id)) };
 
-	for (auto& game : result)
+	std::ranges::for_each(result, [&scores, &dates, &difficulties](const db::GameHistory& game) {
+		scores.push_back(game.score);
+		dates.push_back(game.date);
+		difficulties.push_back(game.difficulty);
+		});
+
+	/*for (auto& game : result)
 	{
 		scores.push_back(game.score);
 		dates.push_back(game.date);
 		difficulties.push_back(game.difficulty);
-	}
+	}*/
 	return {scores, dates, difficulties, true, std::format("Found game history for player{}", playerName)};
 }
 
@@ -157,8 +168,12 @@ std::vector<std::string> db::Database::GetRandomWords(uint64_t count, const std:
 		sql::order_by(sql::random()),
 		sql::limit(count))) };
 
-	for (int i = 0; i < words.size(); i++)
-		randomWords.emplace_back(std::move(words[i].text));
+	std::ranges::for_each(words, [&randomWords](const db::Word& word) {
+		randomWords.emplace_back(word.text);
+		});
+
+	/*for (int i = 0; i < words.size(); i++)
+		randomWords.emplace_back(std::move(words[i].text));*/
 
 	return randomWords;
 }
@@ -172,8 +187,9 @@ std::vector<std::string> db::Database::GetRandomWords(uint64_t count)
 		sql::order_by(sql::random()),
 		sql::limit(count))) };
 
-	for (int i = 0; i < words.size(); i++)
-		randomWords.emplace_back(std::move(words[i].text));
+	std::ranges::for_each(words, [&randomWords](const db::Word& word) {
+		randomWords.emplace_back(word.text);
+		});
 
 	return randomWords;
 }
@@ -182,14 +198,21 @@ db::ReturnValue db::Database::ResetPlayerAccounts()
 {
 	auto players{ std::move(m_storage.get_all<db::Player>()) };
 
-	for (auto& player : players)
+	std::ranges::for_each(players, [this](db::Player& player) {
+		if (player.isOnline) {
+			player.isOnline = false;
+			m_storage.update(player);
+		}
+		});
+
+	/*for (auto& player : players)
 	{
 		if (player.isOnline)
 		{
 			player.isOnline = false;
 			m_storage.update(player);
 		}
-	}
+	}*/
 
 	return { true, "All accounts have been reset" };
 }

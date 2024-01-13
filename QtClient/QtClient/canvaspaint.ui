@@ -149,7 +149,27 @@
     <string>Start Game</string>
    </property>
   </widget>
+  <widget class="TimerLabel" name="timer">
+   <property name="geometry">
+    <rect>
+     <x>1060</x>
+     <y>760</y>
+     <width>49</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>timer</string>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimerLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">timerLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
