@@ -33,20 +33,18 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	ui->setupUi(this);
+	//ui->setupUi(this);
 
 	roomLabel = new QLabel(this);
 	roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
-	roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-
-
+	//roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }
 void CanvasPaint::setRoomID(uint64_t roomID)
 {
 	this->roomID = roomID;
 	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
-	roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+	//roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }
 
 
@@ -208,6 +206,7 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 {
 	QPixmap newPixmap{ event->size().width() * 3 / 4, event->size().height() };
 	newPixmap.fill(Qt::white);
+
 	QPainter painter(&newPixmap);
 	painter.drawPixmap(QRect{ 0, 0, event->size().width() * 3 / 4, event->size().height() }, canvasPixmap);
 	canvasPixmap = std::move(newPixmap);
@@ -260,15 +259,13 @@ void CanvasPaint::on_undoButton_clicked()
 
 void CanvasPaint::on_messageButton_clicked()
 {
-	QString messageText = ui->messageBox->text();
-	ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + messageText);
+	QString formattedMessage{ "[" + m_onlineData.m_username + "]: " + ui->messageBox->text() };
+	ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
+
+	services::SendNewMessage(m_onlineData.m_username.toStdString(),
+		ui->messageBox->text().toStdString(), m_onlineData.m_roomID);
+
 	ui->messageBox->clear();
-	QList<common::Message> receivedMessages;
-	common::Message sampleMessage;
-	sampleMessage.author = "Sender";
-	sampleMessage.text = messageText.toStdString();
-	receivedMessages.append(sampleMessage);
-	HandleChat(receivedMessages);
 }
 
 void CanvasPaint::on_startGameButton_clicked()
@@ -333,7 +330,7 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		}
 	}
 	qDebug() << "Time left: " << gameStatePair.second;
-	
+
 	if (m_onlineData.m_gameState == common::game::GameState::PICK_WORD)
 	{
 		if (m_onlineData.m_role == common::game::PlayerRole::DRAWING)
@@ -344,19 +341,19 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 			for (int i = 0; i < words.size(); i++)
 			{
 				qDebug() << words[i];
-				QString wordList =QString::fromStdString(words[i]);
+				/*QString wordList =QString::fromStdString(words[i]);
 				QStringList wordListSplit = wordList.split(" ");
 				if (wordListSplit.size() == 2)
 				{
 					QString playerName= wordListSplit[0].trimmed();
 					QString word = wordListSplit[1].trimmed();
 					ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + playerName + " " + word);
-				}
-				// send the chosen word
-				services::SendGuessingWord(m_onlineData.m_roomID, words[0]);
-
-				m_imageThread->Pause();
+				}*/
 			}
+
+			// send the chosen word
+			services::SendGuessingWord(m_onlineData.m_roomID, words[0]);
+			m_imageThread->Pause();
 		}
 		else if (m_onlineData.m_role == common::game::PlayerRole::GUESSING)
 		{

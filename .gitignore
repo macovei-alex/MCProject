@@ -28,6 +28,7 @@ mono_crash.*
 QtClient/QtClient/release/*
 !QtClient/QtClient/release/plugins
 !QtClient/QtClient/release/*.dll
+!QtClient/QtClient/release/*.pdb
 
 ##############################################################
 
