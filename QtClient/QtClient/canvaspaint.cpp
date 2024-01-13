@@ -12,6 +12,7 @@
 #include "services.h"
 #endif
 
+
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog{ parent },
 	ui{ new Ui::CanvasPaint },
@@ -65,6 +66,8 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 	connect(m_chatThread, &ChatThread::ChatSignal, this, &CanvasPaint::HandleChat);
 	connect(m_chatThread, &ChatThread::finished, m_chatThread, &QObject::deleteLater);
+	connect( ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
+
 
 	m_imageThread->start();
 	m_gameStateThread->start();
@@ -220,9 +223,18 @@ void CanvasPaint::on_undoButton_clicked()
 	}
 }
 
+
 void CanvasPaint::on_messageButton_clicked()
 {
+	QString messageText = ui->messageBox->text();
+	ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + messageText);
 	ui->messageBox->clear();
+	QList<common::Message> receivedMessages;
+	common::Message sampleMessage;
+	sampleMessage.author = "Sender";
+	sampleMessage.text = messageText.toStdString();
+	receivedMessages.append(sampleMessage);
+	HandleChat(receivedMessages);
 }
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
@@ -277,9 +289,19 @@ void CanvasPaint::HandleChat(const QList<common::Message>& messages)
 {
 	for (const auto& message : messages)
 	{
-		qDebug() << message.author << ' ' << message.text << ' ' << message.timestamp;
+		qDebug() << "Received message: "
+			<< QString::fromStdString(message.author) << " "
+			<< QString::fromStdString(message.text);
+	}
+	for (const auto& message : messages)
+	{
+		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" +
+			QString::fromStdString(message.author) +
+			": " + QString::fromStdString(message.text));
 	}
 }
+
+
 
 OnlineData& CanvasPaint::GetOnlineData()
 {

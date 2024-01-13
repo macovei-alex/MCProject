@@ -92,6 +92,8 @@ public:
         undoButton->setText(QCoreApplication::translate("CanvasPaint", "Undo", nullptr));
         label->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
     } // retranslateUi
+   
+	
 
 };
 
