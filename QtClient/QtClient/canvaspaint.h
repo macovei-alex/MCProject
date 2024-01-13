@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QThread>
 #include <QPixmap>
+#include <QLabel>
 
 #include "Line.h"
 #include "common.h"
