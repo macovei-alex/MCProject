@@ -47,10 +47,10 @@ public:
         gameChat->setGeometry(QRect(1200, 30, 301, 641));
         gameChatLabel = new QLabel(gameChat);
         gameChatLabel->setObjectName("gameChatLabel");
-        gameChatLabel->setGeometry(QRect(110, 10, 81, 21));
+        gameChatLabel->setGeometry(QRect(20, 10, 251, 521));
         chatMessages = new QWidget(gameChat);
         chatMessages->setObjectName("chatMessages");
-        chatMessages->setGeometry(QRect(-20, -130, 381, 781));
+        chatMessages->setGeometry(QRect(-20, -130, 341, 781));
         messageButton = new QPushButton(chatMessages);
         messageButton->setObjectName("messageButton");
         messageButton->setGeometry(QRect(220, 730, 80, 24));
@@ -70,7 +70,7 @@ public:
         undoButton->setGeometry(QRect(1400, 690, 80, 24));
         roomLabel = new QLabel(CanvasPaint);
         roomLabel->setObjectName("roomLabel");
-        roomLabel->setGeometry(QRect(1320, 750, 49, 21));
+        roomLabel->setGeometry(QRect(1060, 710, 101, 31));
         startGameButton = new QPushButton(CanvasPaint);
         startGameButton->setObjectName("startGameButton");
         startGameButton->setGeometry(QRect(1400, 720, 75, 24));

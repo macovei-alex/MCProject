@@ -32,13 +32,29 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 	canvasPixmap.fill(Qt::white);
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+
+	ui->setupUi(this);
+
+	roomLabel = new QLabel(this);
+	roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+
+}
+void CanvasPaint::setRoomID(uint64_t roomID)
+{
+	this->roomID = roomID;
+	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	ui->roomLabel->update();
+	roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }
 
-//CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, const QString& word, QWidget* parent)
-//	: QMainWindow(parent), ui(new Ui::CanvasPaint), roomID(roomID), username(username), word(word)
-//{
-//	ui->setupUi(this);
-//}
+
+void CanvasPaint::setChosenWord(const QString& word)
+{
+	chosenWord = word;
+}
+
 #ifdef ONLINE
 CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent) :
 	QDialog{ parent },
