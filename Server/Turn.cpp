@@ -3,6 +3,7 @@
 #include <thread>
 #include <numeric>
 #include <algorithm>
+#include <iostream>
 
 Turn::Turn(uint8_t turnNumber) :
 	m_turnNumber{ turnNumber },
@@ -78,7 +79,6 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 {
 	m_turnNumber++;
 	m_word = "";
-	m_playStartTime = chr::system_clock::now();
 
 	{
 		std::lock_guard<std::mutex> lock{ *m_playersMutex };
@@ -89,12 +89,17 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 			player.SetGameRole(common::game::PlayerRole::GUESSING);
 			});
 
+		drawingPlayer.SetGuessStatus(true);
 		drawingPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
 	}
+
+	m_playStartTime = chr::system_clock::now();
 }
 
 void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, bool& m_stopped)
 {
+	std::cout << "Turn started" << std::endl;
+
 	m_playStartTime = chr::system_clock::now();
 	do
 	{
@@ -117,4 +122,6 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 		}
 
 	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);
+
+	std::cout << "Turn over" << std::endl;
 }

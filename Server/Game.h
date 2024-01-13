@@ -37,11 +37,13 @@ public:
 
 public:
 	void Run();
-	void AddPlayer(const Player& player);
 	void RemovePlayer(const std::string& playerName);
 	void RemoveDisconnectedPlayers();
 	void Reset();
 	void Stop();
+
+	void AddPlayer(const Player& player);
+	void AddPlayer(Player&& player);
 
 private:
 	uint8_t m_roundNumber;

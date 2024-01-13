@@ -239,3 +239,8 @@ void Game::AddPlayer(const Player& player)
 {
 	m_players.emplace_back(player);
 }
+
+void Game::AddPlayer(Player&& player)
+{
+	m_players.emplace_back(std::move(player));
+}

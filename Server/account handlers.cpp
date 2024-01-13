@@ -8,7 +8,7 @@ Server& Server::AccountHandlers()
 		const char* usernameChar = request.url_params.get(literals::jsonKeys::account::username);
 		const char* passwordChar = request.url_params.get(literals::jsonKeys::account::password);
 		if (!usernameChar || !passwordChar)
-			return crow::response(404, "Invalid parameter keys");
+			return crow::response{ 404, "Invalid parameter keys" };
 
 		std::string username{ usernameChar };
 		std::string password{ passwordChar };
@@ -17,7 +17,7 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ std::format("Invalid username < {} > or password < {} >", username, password) };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		if (username != "root")
@@ -26,13 +26,13 @@ Server& Server::AccountHandlers()
 			if (!returnValue.success)
 			{
 				Log(returnValue.reason, Logger::Level::Error);
-				return crow::response(404, returnValue.reason);
+				return crow::response{ 404, returnValue.reason };
 			}
 		}
 
 		auto responseMessage{ std::format("Player logged in as < {} >", username) };
 		Log(responseMessage, Logger::Level::Info);
-		return crow::response(200, responseMessage);
+		return crow::response{ 200, responseMessage };
 			});
 
 
@@ -43,7 +43,7 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ "Empty request body" };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, "Empty request body");
+			return crow::response{ 404, "Empty request body" };
 		}
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
@@ -54,7 +54,7 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ "Invalid parameter keys" };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		std::string username{ std::move(usernameIterator->second) };
@@ -64,7 +64,7 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ std::format("Invalid username < {} > or password < {} >", username, password) };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{404, responseMessage);
 		}
 
 		db::ReturnValue returnValue{ std::move(m_database->SignUp(username, password)) };
@@ -87,17 +87,17 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ "Empty request body" };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
-		auto usernameIterator = jsonMap.find(literals::jsonKeys::account::username);
+		auto usernameIterator{ jsonMap.find(literals::jsonKeys::account::username) };
 		if (usernameIterator == jsonMap.end())
 		{
 			auto responseMessage{ "Invalid parameter keys" };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		std::string username{ std::move(usernameIterator->second) };
@@ -106,21 +106,21 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ std::format("Invalid username < {} >", username) };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		db::ReturnValue returnValue{ std::move(m_database->SignOut(username)) };
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
-			return crow::response(404, returnValue.reason);
+			return crow::response{ 404, returnValue.reason };
 		}
 
 		for (auto& game : m_games)
 			game.second.RemovePlayer(username);
 
 		Log(std::format("Player < {} > logged out", username), Logger::Level::Info);
-		return crow::response(200, std::format("Player < {} > logged out", username));
+		return crow::response{ 200, std::format("Player < {} > logged out", username) };
 			});
 
 	Log("Account handlers set");

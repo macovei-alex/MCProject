@@ -28,26 +28,27 @@ Server& Server::GameHandlers()
 			return crow::response{ 404, "Empty request body" };
 		}
 
-		if (m_games.find(gameID) == m_games.end())
+		auto gameIt{ m_games.find(gameID) };
+
+		if (gameIt == m_games.end())
 		{
 			std::string errorString{ std::format("Invalid game ID < {} >", gameID) };
 			Log(errorString, Logger::Level::Error);
 			return crow::response{ 404, errorString };
 		}
 
-		auto& game = m_games[gameID];
-
-		auto jsonMap{ utils::ParseRequestBody(request.body) };
+		Game& game{ gameIt->second };
+		auto jsonMap{ std::move(utils::ParseRequestBody(request.body)) };
 
 		try
 		{
-			uint16_t drawTime = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second);
+			uint16_t drawTime{ (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second) };
 			game.GetGameSettings().m_drawTime = drawTime;
 
-			uint16_t roundCount = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second);
+			uint16_t roundCount{ (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second) };
 			game.GetGameSettings().m_roundCount = roundCount;
 
-			uint16_t chooseWordOptionCount = (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second);
+			uint16_t chooseWordOptionCount{ (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second) };
 			game.GetGameSettings().m_chooseWordOptionCount = chooseWordOptionCount;
 		}
 		catch (...)
@@ -75,13 +76,13 @@ Server& Server::GameHandlers()
 
 		if (gameState == common::game::GameState::NONE)
 			return crow::json::wvalue{
-				{literals::jsonKeys::game::state, static_cast<uint64_t>(game.GetGameState())},
+				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameState)},
 				{literals::jsonKeys::game::timeRemaining, 0} };
 
 		return crow::json::wvalue{
-				{literals::jsonKeys::game::state, static_cast<uint64_t>(game.GetGameState())},
-				{literals::jsonKeys::game::timeRemaining, 
-				static_cast<uint64_t>(game.GetGameSettings().m_drawTime) - game.GetTurn().GetTimer().count() } };
+				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameState)},
+				{literals::jsonKeys::game::timeRemaining, static_cast<uint64_t>(
+					game.GetGameSettings().m_drawTime) - game.GetTurn().GetTimer().count()} };
 			});
 
 
@@ -98,8 +99,7 @@ Server& Server::GameHandlers()
 		try
 		{
 			auto playerRole{ gameIt->second
-				.GetPlayer(
-					request.url_params.get(literals::jsonKeys::account::username))
+				.GetPlayer(request.url_params.get(literals::jsonKeys::account::username))
 				.GetRole() };
 
 			return crow::json::wvalue{ {literals::jsonKeys::player::role, static_cast<uint64_t>(playerRole)} };
@@ -147,14 +147,16 @@ Server& Server::GameHandlers()
 			return m_errorValue;
 		}
 
-		if (gameIt->second.GetGameState() != common::game::GameState::PICK_WORD)
+		Game& game{ gameIt->second };
+
+		if (game.GetGameState() != common::game::GameState::PICK_WORD)
 		{
 			Log("Turn is already started", Logger::Level::Error);
 			return m_errorValue;
 		}
 
 		crow::json::wvalue::list wordsJson;
-		auto words{ std::move(m_database->GetRandomWords(gameIt->second.GetGameSettings().m_chooseWordOptionCount)) };
+		auto words{ std::move(m_database->GetRandomWords(game.GetGameSettings().m_chooseWordOptionCount)) };
 
 		for (auto& word : words)
 			wordsJson.emplace_back(crow::json::wvalue{ {literals::jsonKeys::game::word, std::move(word)} });
@@ -174,7 +176,9 @@ Server& Server::GameHandlers()
 			return crow::response{ 404, retStr };
 		}
 
-		if (gameIt->second.GetGameState() != common::game::GameState::PICK_WORD)
+		Game& game{ gameIt->second };
+
+		if (game.GetGameState() != common::game::GameState::PICK_WORD)
 		{
 			std::string retStr{ "Turn is already started" };
 			Log(retStr, Logger::Level::Error);
@@ -200,7 +204,7 @@ Server& Server::GameHandlers()
 
 		try
 		{
-			gameIt->second.GetTurn().SetWord(wordIt->second);
+			game.GetTurn().SetWord(wordIt->second);
 		}
 		catch (const std::exception& exception)
 		{
@@ -238,7 +242,7 @@ Server& Server::GameHandlers()
 			return crow::response{ 404, retStr };
 		}*/
 
-		Game& game = gameIt->second;
+		Game& game{ gameIt->second };
 		std::thread gameThread{ [&game]() { game.Run(); } };
 		gameThread.detach();
 

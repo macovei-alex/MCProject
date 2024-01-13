@@ -11,20 +11,19 @@ Server& Server::DrawingHandlers()
 
 		try
 		{
-			if (char* timestampChar = request.url_params.get(literals::jsonKeys::draw::timestamp);
+			if (char* timestampChar{ request.url_params.get(literals::jsonKeys::draw::timestamp) };
 				timestampChar != nullptr)
 				timestamp = std::stoull(timestampChar);
 			else
-				throw std::exception("Timestamp key not found");
+				throw std::exception{ "Timestamp key not found" };
 		}
 		catch (const std::exception& ex)
 		{
 			Log(ex.what(), Logger::Level::Error);
-			std::cerr << ex.what() << '\n';
 			return errorValue;
 		}
 
-		auto updates = m_games[gameID].GetImage().GetUpdatesJsonAfter(timestamp);
+		auto updates{ std::move(m_games[gameID].GetImage().GetUpdatesJsonAfter(timestamp)) };
 		return updates;
 			});
 
@@ -37,11 +36,11 @@ Server& Server::DrawingHandlers()
 		const static std::string colorStrKey{ literals::jsonKeys::draw::color };
 
 		if (request.body.empty())
-			return crow::response(404, "empty request body");
+			return crow::response{ 404, "empty request body" };
 
-		auto gameIt = m_games.find(gameID);
+		auto gameIt{ m_games.find(gameID) };
 		if (gameIt == m_games.end())
-			return crow::response(404, std::format("Invalid game ID < {} >", gameID));
+			return crow::response{ 404, std::format("Invalid game ID < {} >", gameID) };
 
 		auto jsonMap{ utils::ParseRequestBody(utils::DecodeMessage(request.body)) };
 		auto jsonVector{ utils::ListOfMapsFromJsonListStr(jsonMap[literals::jsonKeys::draw::points]) };
@@ -71,12 +70,12 @@ Server& Server::DrawingHandlers()
 			catch (const std::exception& exception)
 			{
 				Log(exception.what(), Logger::Level::Error);
-				std::cerr << exception.what() << '\n';
+				return crow::response{ 404, exception.what() };
 			}
 		}
 
 		Log("new updates added", Logger::Level::Info);
-		return crow::response(200);
+		return crow::response{ 200 };
 			});
 
 	Log("Draw handlers set");

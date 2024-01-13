@@ -10,14 +10,14 @@ Server& Server::ChatHandlers()
 		{
 			auto responseMessage{ std::format("Invalid room ID < {} >", gameID) };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		if (request.body.empty())
 		{
 			auto responseMessage{ "Empty request body" };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		auto& chat = gameIt->second.GetChat();
@@ -30,7 +30,7 @@ Server& Server::ChatHandlers()
 		{
 			auto responseMessage{ "Invalid parameter keys" };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		common::Message message{
@@ -41,7 +41,7 @@ Server& Server::ChatHandlers()
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
 		chat.Emplace(std::move(message));
 
-		return crow::response(200);
+		return crow::response{ 200 };
 			});
 
 
@@ -57,7 +57,7 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		const auto& chat = gameIt->second.GetChat();
+		const auto& chat{ gameIt->second.GetChat() };
 
 		if (chat.Empty())
 			return crow::json::wvalue{ crow::json::wvalue::list{} };
@@ -66,22 +66,25 @@ Server& Server::ChatHandlers()
 		std::string author;
 		try
 		{
-			if (char* startChar = request.url_params.get(literals::jsonKeys::message::timestamp);
+			if (char* startChar{ request.url_params.get(literals::jsonKeys::message::timestamp) };
 				startChar != nullptr)
+			{
 				start = std::stoull(startChar);
+			}
 			else
 				throw std::exception("Timestamp key not found");
 
-			if (char* authorChar = request.url_params.get(literals::jsonKeys::message::author);
+			if (char* authorChar{ request.url_params.get(literals::jsonKeys::message::author) };
 				authorChar != nullptr)
+			{
 				author = std::string{ authorChar };
+			}
 			else
-				throw std::exception("Author key not found");
+				throw std::exception{ "Author key not found" };
 		}
 		catch (const std::exception& ex)
 		{
 			Log(ex.what(), Logger::Level::Error);
-			std::cerr << ex.what() << '\n';
 			return errorValue;
 		}
 
