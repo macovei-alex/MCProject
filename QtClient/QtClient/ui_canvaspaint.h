@@ -97,6 +97,8 @@ public:
         roomLabel->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
         startGameButton->setText(QCoreApplication::translate("CanvasPaint", "Start Game", nullptr));
     } // retranslateUi
+   
+	
 
 };
 
