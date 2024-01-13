@@ -216,3 +216,4 @@ void services::StartGame(uint64_t roomID, std::ostream& errStream)
 		errStream << exception.what() << '\n';
 	}
 }
+

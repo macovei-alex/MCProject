@@ -39,16 +39,21 @@ void choosewordwindow::LoadWords()
 void choosewordwindow::reloadWords()
 {
 }
-
-void choosewordwindow::on_firstWordButton_clicked()
+void  choosewordwindow::openCanvasPaintWithWord(const QString& chosenWord)
 {
-    reject();
-
-    if(!canvasPaint)
+    accept();
+    if (!canvasPaint)
     {
         canvasPaint = new CanvasPaint(this);
     }
+    //canvasPaint->setChosenWord(chosenWord);
     canvasPaint->show();
+}
+
+void choosewordwindow::on_firstWordButton_clicked()
+{
+    QString chosenWord = ui->firstWordButton->text();
+    
 }
 
 
