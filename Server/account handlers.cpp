@@ -64,7 +64,7 @@ Server& Server::AccountHandlers()
 		{
 			auto responseMessage{ std::format("Invalid username < {} > or password < {} >", username, password) };
 			Log(responseMessage, Logger::Level::Error);
-			return crow::response{404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		db::ReturnValue returnValue{ std::move(m_database->SignUp(username, password)) };
