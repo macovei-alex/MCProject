@@ -27,13 +27,14 @@ Server& Server::RoomHandlers()
 			return crow::response{ 404, responseMessage };
 		}
 
-		Game& game{ gameIt->second };
 		try
 		{
+			Game& game{ gameIt->second };
 			if (true) // TODO: Check game state
 			{
-				std::lock_guard<std::mutex> lock{ game.GetPlayersMutex() };
+				game.GetPlayersMutex().lock();
 				game.AddPlayer(Player{ request.url_params.get(literals::jsonKeys::account::username) });
+				game.GetPlayersMutex().unlock();
 			}
 		}
 		catch (const std::exception& exception)
@@ -61,8 +62,12 @@ Server& Server::RoomHandlers()
 
 		try
 		{
+			Game& game{ gameIt->second };
 			std::string username{ request.url_params.get(literals::jsonKeys::account::username) };
-			gameIt->second.RemovePlayer(username);
+
+			game.GetPlayersMutex().lock();
+			game.RemovePlayer(username);
+			game.GetPlayersMutex().unlock();
 		}
 		catch (const std::exception& exception)
 		{

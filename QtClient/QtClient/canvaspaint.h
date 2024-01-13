@@ -33,19 +33,20 @@ class CanvasPaint : public QDialog
 
 public:
 	CanvasPaint(QWidget* parent = nullptr);
- 
-	CanvasPaint(uint64_t roomID, const QString& username,const QString& word, QWidget* parent = nullptr);
-	void setChosenWord(const QString& word);
+
 #ifdef ONLINE
 	CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
 #endif
 
 	~CanvasPaint();
 
+public:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void resizeEvent(QResizeEvent* event) override;
+
+public:
 	void setRoomID(uint64_t roomID);
 	void ClearCanvas();
 
@@ -63,9 +64,9 @@ private slots:
 
 	void HandleImage(QList<Line>* newLines);
 	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
-    void HandleChat(const QList<common::Message>& messages);
+	void HandleChat(const QList<common::Message>& messages);
 
-	void SendChosenWord(const QString& word);
+	void SetChosenWord(const QString& word);
 
 public:
 
@@ -89,7 +90,7 @@ private:
 	QLabel* roomLabel;
 
 
-    DrawingState m_drawState;
+	DrawingState m_drawState;
 	Ui::CanvasPaint* ui;
 	QString chosenWord;
 	uint64_t roomID;

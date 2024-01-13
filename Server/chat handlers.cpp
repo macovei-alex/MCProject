@@ -39,7 +39,10 @@ Server& Server::ChatHandlers()
 			utils::MillisFromDateTime(std::chrono::system_clock::now()) };
 
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
+
+		chat.GetMutex().lock();
 		chat.Emplace(std::move(message));
+		chat.GetMutex().unlock();
 
 		return crow::response{ 200 };
 			});

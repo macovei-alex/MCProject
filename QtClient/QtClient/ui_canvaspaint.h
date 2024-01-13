@@ -16,7 +16,6 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
-#include <timerLabel.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -34,13 +33,13 @@ public:
     QPushButton *undoButton;
     QLabel *roomLabel;
     QPushButton *startGameButton;
-    TimerLabel *timer;
+    QLabel *timerLabel;
 
     void setupUi(QDialog *CanvasPaint)
     {
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
-        CanvasPaint->resize(1856, 967);
+        CanvasPaint->resize(1852, 967);
         resetCanvas = new QPushButton(CanvasPaint);
         resetCanvas->setObjectName("resetCanvas");
         resetCanvas->setGeometry(QRect(1200, 720, 80, 24));
@@ -49,10 +48,10 @@ public:
         gameChat->setGeometry(QRect(1200, 30, 301, 641));
         gameChatLabel = new QLabel(gameChat);
         gameChatLabel->setObjectName("gameChatLabel");
-        gameChatLabel->setGeometry(QRect(20, 10, 251, 521));
+        gameChatLabel->setGeometry(QRect(110, 10, 81, 21));
         chatMessages = new QWidget(gameChat);
         chatMessages->setObjectName("chatMessages");
-        chatMessages->setGeometry(QRect(-20, -130, 341, 781));
+        chatMessages->setGeometry(QRect(-20, -130, 381, 781));
         messageButton = new QPushButton(chatMessages);
         messageButton->setObjectName("messageButton");
         messageButton->setGeometry(QRect(220, 730, 80, 24));
@@ -72,13 +71,13 @@ public:
         undoButton->setGeometry(QRect(1400, 690, 80, 24));
         roomLabel = new QLabel(CanvasPaint);
         roomLabel->setObjectName("roomLabel");
-        roomLabel->setGeometry(QRect(1060, 710, 101, 31));
+        roomLabel->setGeometry(QRect(1320, 750, 49, 21));
         startGameButton = new QPushButton(CanvasPaint);
         startGameButton->setObjectName("startGameButton");
         startGameButton->setGeometry(QRect(1400, 720, 75, 24));
-        timer = new TimerLabel(CanvasPaint);
-        timer->setObjectName("timer");
-        timer->setGeometry(QRect(1060, 760, 49, 16));
+        timerLabel = new QLabel(CanvasPaint);
+        timerLabel->setObjectName("timerLabel");
+        timerLabel->setGeometry(QRect(1220, 750, 49, 16));
 
         retranslateUi(CanvasPaint);
 
@@ -96,7 +95,7 @@ public:
         undoButton->setText(QCoreApplication::translate("CanvasPaint", "Undo", nullptr));
         roomLabel->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
         startGameButton->setText(QCoreApplication::translate("CanvasPaint", "Start Game", nullptr));
-        timer->setText(QCoreApplication::translate("CanvasPaint", "timer", nullptr));
+        timerLabel->setText(QString());
     } // retranslateUi
 
 };

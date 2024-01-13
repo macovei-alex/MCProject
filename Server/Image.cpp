@@ -2,6 +2,13 @@
 
 #include "constantLiterals.h"
 
+Image::Image() noexcept:
+	m_updates{},
+	m_sharedMutex{ std::make_shared<std::mutex>() }
+{
+	/* empty */
+}
+
 void Image::AddUpdate(const common::img::Update& update)
 {
 	this->m_updates.push_back(update);
@@ -10,6 +17,11 @@ void Image::AddUpdate(const common::img::Update& update)
 void Image::AddUpdate(common::img::Update&& update)
 {
 	this->m_updates.push_back(std::move(update));
+}
+
+void Image::Clear()
+{
+	m_updates.clear();
 }
 
 std::vector<common::img::Update> Image::GetUpdatesAfter(uint64_t timestamp)
@@ -24,6 +36,11 @@ std::vector<common::img::Update> Image::GetUpdatesAfter(uint64_t timestamp)
 crow::json::wvalue Image::GetUpdatesJsonAfter(uint64_t timestamp)
 {
 	return UpdatesToJson(GetUpdatesAfter(timestamp));
+}
+
+std::mutex& Image::GetMutex()
+{
+	return *m_sharedMutex;
 }
 
 crow::json::wvalue Image::UpdatesToJson(const std::vector<common::img::Update>& updates)

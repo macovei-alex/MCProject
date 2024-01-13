@@ -106,7 +106,7 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 		std::this_thread::sleep_for(chr::seconds{ 1 });
 
 		{
-			std::lock_guard<std::mutex> lock{ *m_playersMutex };
+			/*std::lock_guard<std::mutex> lock{*m_playersMutex};
 
 			if (std::ranges::all_of(players, [](const Player& player) {
 				return player.GetGuessStatus();
@@ -114,7 +114,7 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 			{
 				std::cout << "All players guessed the word" << std::endl;
 				break;
-			}
+			}*/
 		}
 
 	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);

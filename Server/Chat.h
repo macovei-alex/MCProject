@@ -9,7 +9,7 @@
 class Chat
 {
 public:
-	Chat() noexcept = default;
+	Chat() noexcept;
 	Chat(const Chat& other) noexcept = default;
 	Chat& operator=(const Chat& other) noexcept = default;
 	Chat(Chat&& other) noexcept = default;
@@ -19,12 +19,15 @@ public:
 public:
 	void Add(const common::Message& message);
 	void Emplace(common::Message&& message);
+	void Clear();
 	std::vector<common::Message> GetMessagesOrdered(uint64_t start, const std::string& skipAuthor) const;
 	std::vector<crow::json::wvalue> GetMessagesOrderedJsonList(uint64_t start, const std::string& skipAuthor) const;
 	size_t Size() const noexcept;
 	bool Empty() const noexcept;
 	common::Message& operator[](size_t index);
+	std::mutex& GetMutex();
 
 private:
 	std::vector<common::Message> m_messages;
+	std::shared_ptr<std::mutex> m_sharedMutex;
 };
