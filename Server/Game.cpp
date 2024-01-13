@@ -67,8 +67,8 @@ const std::vector<Player>& Game::GetPlayers() const
 
 const Player& Game::GetPlayer(const std::string& name) const
 {
-	if (auto playerFoundIt{ std::find_if(m_players.begin(), m_players.end(),
-		[&name](const Player& player) -> bool {
+	if (const auto playerFoundIt{ std::ranges::find_if(m_players,
+				[&name](const Player& player) -> bool {
 			return player.GetName() == name;
 		}) };
 		playerFoundIt != m_players.end())
@@ -76,6 +76,14 @@ const Player& Game::GetPlayer(const std::string& name) const
 		return *playerFoundIt;
 	}
 
+	/*if (auto playerFoundIt{ std::find_if(m_players.begin(), m_players.end(),
+		[&name](const Player& player) -> bool {
+			return player.GetName() == name;
+		}) };
+		playerFoundIt != m_players.end())
+	{
+		return *playerFoundIt;
+	}*/
 	throw std::exception{ "Player not found" };
 }
 
