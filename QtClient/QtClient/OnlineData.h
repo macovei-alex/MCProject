@@ -8,6 +8,7 @@
 struct OnlineData
 {
 	uint64_t m_roomID;
+	uint64_t m_timeLeft;
 	QString m_username;
 	common::game::GameState m_gameState;
 	common::game::PlayerRole m_role;

@@ -2,9 +2,10 @@
 
 #include <QThread>
 
+#include "ThreadExtension.h"
 #include "common.h"
 
-class ChatThread : public QThread
+class ChatThread : public QThread, public ThreadExtension
 {
 	Q_OBJECT
 

@@ -28,6 +28,9 @@
     <ClCompile Include="choosewordwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadExtension.cpp">
+      <Filter>Source Files\Canvas Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui_canvaspaint.h">
@@ -46,6 +49,9 @@
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
     <ClInclude Include="OnlineData.h">
+      <Filter>Header Files\Canvas Window</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadExtension.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
   </ItemGroup>

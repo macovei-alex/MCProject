@@ -18,19 +18,29 @@ ChatThread::ChatThread(uint64_t roomID, bool& keepGoing, QWidget* parent) :
 void ChatThread::run()
 {
 	using std::chrono_literals::operator""s;
-	try
+
+	while (keepGoing)
 	{
-		while (keepGoing)
+		if (IsPaused())
 		{
-
-			emit ChatSignal(QList<common::Message>());
-
-			std::this_thread::sleep_for(0.25s);
+			std::this_thread::sleep_for(1s);
+			continue;
 		}
-	}
-	catch (const std::exception& e)
-	{
-		qDebug() << e.what() << '\n';
+
+		try
+		{
+			while (!IsPaused() && keepGoing)
+			{
+
+				emit ChatSignal(QList<common::Message>());
+
+				std::this_thread::sleep_for(0.25s);
+			}
+		}
+		catch (const std::exception& e)
+		{
+			qDebug() << e.what() << '\n';
+		}
 	}
 }
 #endif

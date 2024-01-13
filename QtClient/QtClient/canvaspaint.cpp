@@ -66,12 +66,15 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 	connect(m_chatThread, &ChatThread::ChatSignal, this, &CanvasPaint::HandleChat);
 	connect(m_chatThread, &ChatThread::finished, m_chatThread, &QObject::deleteLater);
-	connect( ui->messageButton, &QPushButton::clicked, this, &CanvasPaint::on_messageButton_clicked);
 
 
 	m_imageThread->start();
 	m_gameStateThread->start();
 	m_chatThread->start();
+
+	m_imageThread->Pause();
+	m_gameStateThread->Pause();
+	m_chatThread->Pause();
 }
 #endif
 
@@ -94,6 +97,12 @@ void CanvasPaint::paintEvent(QPaintEvent* event)
 
 void CanvasPaint::mousePressEvent(QMouseEvent* event)
 {
+
+#ifdef ONLINE
+	if (m_onlineData.m_role != common::game::PlayerRole::DRAWING)
+		return;
+#endif
+
 	if (event->button() == Qt::LeftButton)
 	{
 		if (canvasPixmap.rect().contains(event->pos()))
@@ -105,49 +114,61 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 
 void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 {
-	if (canvasPixmap.rect().contains(event->pos()))
+
+#ifdef ONLINE
+	if (m_onlineData.m_role != common::game::PlayerRole::DRAWING)
+		return;
+#endif
+
+	if (!canvasPixmap.rect().contains(event->pos()))
+		return;
+
+	QPoint currentPos{ event->pos() };
+
+	if (m_drawState == DrawingState::DRAWING)
 	{
-		QPoint currentPos{ event->pos() };
+		QPainter painter{ &canvasPixmap };
+		painter.setPen(kDRAWING_PEN);
 
-		if (m_drawState == DrawingState::DRAWING)
+		currentLine.points.emplace_back(currentPos);
+
+		if (currentLine.points.size() > 1)
 		{
-			QPainter painter{ &canvasPixmap };
-			painter.setPen(kDRAWING_PEN);
-
-			currentLine.points.emplace_back(currentPos);
-
-			if (currentLine.points.size() > 1)
-			{
-				painter.drawLine(
-					currentLine.points[currentLine.points.size() - 2],
-					currentLine.points[currentLine.points.size() - 1]);
-			}
-
-			update();
+			painter.drawLine(
+				currentLine.points[currentLine.points.size() - 2],
+				currentLine.points[currentLine.points.size() - 1]);
 		}
 
-		else if (m_drawState == DrawingState::ERASING)
+		update();
+	}
+
+	else if (m_drawState == DrawingState::ERASING)
+	{
+		QPainter painter{ &canvasPixmap };
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		painter.setPen(kERASING_PEN);
+
+		currentLine.points.emplace_back(currentPos);
+
+		if (currentLine.points.size() > 1)
 		{
-			QPainter painter{ &canvasPixmap };
-			painter.setCompositionMode(QPainter::CompositionMode_Source);
-			painter.setPen(kERASING_PEN);
-
-			currentLine.points.emplace_back(currentPos);
-
-			if (currentLine.points.size() > 1)
-			{
-				painter.drawLine(
-					currentLine.points[currentLine.points.size() - 2],
-					currentLine.points[currentLine.points.size() - 1]);
-			}
-
-			update();
+			painter.drawLine(
+				currentLine.points[currentLine.points.size() - 2],
+				currentLine.points[currentLine.points.size() - 1]);
 		}
+
+		update();
 	}
 }
 
 void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 {
+
+#ifdef ONLINE
+	if (m_onlineData.m_role != common::game::PlayerRole::DRAWING)
+		return;
+#endif
+
 	if (event->button() == Qt::LeftButton)
 	{
 		currentLine.drawState = m_drawState;
@@ -180,17 +201,10 @@ void CanvasPaint::ClearCanvas()
 	update();
 }
 
-void CanvasPaint::on_leaveServerButton_clicked()
-{
-	hide();
-	signInWindow = new MainWindow(this);
-	signInWindow->show();
-}
-
 void CanvasPaint::on_resetCanvas_clicked()
 {
-	ClearCanvas();
-	m_drawState = DrawingState::DRAWING;
+	/*ClearCanvas();
+	m_drawState = DrawingState::DRAWING;*/
 }
 
 void CanvasPaint::on_drawButton_clicked()
@@ -205,7 +219,7 @@ void CanvasPaint::on_eraseButton_clicked()
 
 void CanvasPaint::on_undoButton_clicked()
 {
-	if (!lines.isEmpty())
+	/*if (!lines.isEmpty())
 	{
 		canvasPixmap.fill(Qt::white);
 		QPainter painter{ &canvasPixmap };
@@ -220,7 +234,7 @@ void CanvasPaint::on_undoButton_clicked()
 		}
 
 		update();
-	}
+	}*/
 }
 
 
@@ -285,11 +299,16 @@ void CanvasPaint::HandleImage(QList<Line>* newLines)
 
 void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
-	qDebug() << "Received game state: "
+	if (gameStatePair.first == m_onlineData.m_gameState)
+		return;
+
+	qDebug() << "New game state: "
 		<< static_cast<uint16_t>(gameStatePair.first) << " "
 		<< gameStatePair.second;
 
-	if (gameStatePair.first == common::game::GameState::PICK_WORD)
+	m_onlineData.m_gameState = gameStatePair.first;
+
+	if (m_onlineData.m_gameState == common::game::GameState::PICK_WORD)
 	{
 		ui->startGameButton->setEnabled(false);
 		ui->resetCanvas->setEnabled(false);
@@ -308,7 +327,7 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 				qDebug() << words[i];
 		}
 	}
-	else if (gameStatePair.first == common::game::GameState::DRAW_AND_GUESS)
+	else if (m_onlineData.m_gameState == common::game::GameState::DRAW_AND_GUESS)
 	{
 		ui->startGameButton->setEnabled(false);
 		ui->resetCanvas->setEnabled(true);

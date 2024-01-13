@@ -3,8 +3,9 @@
 #include <QThread>
 
 #include "Line.h"
+#include "ThreadExtension.h"
 
-class ImageThread : public QThread
+class ImageThread : public QThread, public ThreadExtension
 {
 	Q_OBJECT
 

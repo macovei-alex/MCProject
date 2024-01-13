@@ -26,19 +26,6 @@
     <string>ResetCanvas</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="leaveServerButton">
-   <property name="geometry">
-    <rect>
-     <x>1290</x>
-     <y>720</y>
-     <width>91</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Leave Server</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="gameChat" native="true">
    <property name="geometry">
     <rect>
@@ -113,7 +100,7 @@
   <widget class="QPushButton" name="eraseButton">
    <property name="geometry">
     <rect>
-     <x>1290</x>
+     <x>1300</x>
      <y>690</y>
      <width>80</width>
      <height>24</height>
@@ -126,7 +113,7 @@
   <widget class="QPushButton" name="undoButton">
    <property name="geometry">
     <rect>
-     <x>1390</x>
+     <x>1400</x>
      <y>690</y>
      <width>80</width>
      <height>24</height>
@@ -139,8 +126,8 @@
   <widget class="QLabel" name="roomLabel">
    <property name="geometry">
     <rect>
-     <x>1310</x>
-     <y>830</y>
+     <x>1320</x>
+     <y>750</y>
      <width>49</width>
      <height>21</height>
     </rect>

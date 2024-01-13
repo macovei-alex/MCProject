@@ -4,8 +4,9 @@
 #include <QPair>
 
 #include "common.h"
+#include "ThreadExtension.h"
 
-class GameStateThread : public QThread
+class GameStateThread : public QThread, public ThreadExtension
 {
 	Q_OBJECT
 

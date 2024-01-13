@@ -51,7 +51,6 @@ protected:
 	void closeEvent(QCloseEvent* event) override;
 
 private slots:
-	void on_leaveServerButton_clicked();
 	void on_resetCanvas_clicked();
 	void on_drawButton_clicked();
 	void on_eraseButton_clicked();

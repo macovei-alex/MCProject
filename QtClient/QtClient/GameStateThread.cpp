@@ -18,24 +18,33 @@ GameStateThread::GameStateThread(uint64_t roomID, bool& keepGoing, QWidget* pare
 void GameStateThread::run()
 {
 	using std::chrono_literals::operator""s;
-	try
+	while (keepGoing)
 	{
-		while (keepGoing)
+		if (IsPaused())
 		{
-			auto gameStatePair{ services::ReceiveGameStateAndTime(roomID) };
-			auto gameStateQPair{ QPair{ static_cast<common::game::GameState>(gameStatePair.first), gameStatePair.second } };
-
-			qDebug() << "Received game state and timer: "
-				<< static_cast<uint16_t>(gameStateQPair.first) << ' ' << gameStateQPair.second;
-
-			emit GameStateSignal(gameStateQPair);
-
-			std::this_thread::sleep_for(0.25s);
+			std::this_thread::sleep_for(1s);
+			continue;
 		}
-	}
-	catch (const std::exception& e)
-	{
-		qDebug() << e.what() << '\n';
+
+		try
+		{
+			while (!IsPaused() && keepGoing)
+			{
+				auto gameStatePair{ services::ReceiveGameStateAndTime(roomID) };
+				auto gameStateQPair{ QPair{ static_cast<common::game::GameState>(gameStatePair.first), gameStatePair.second } };
+
+				qDebug() << "Received game state and timer: "
+					<< static_cast<uint16_t>(gameStateQPair.first) << ' ' << gameStateQPair.second;
+
+				emit GameStateSignal(gameStateQPair);
+
+				std::this_thread::sleep_for(0.25s);
+			}
+		}
+		catch (const std::exception& e)
+		{
+			qDebug() << e.what() << '\n';
+		}
 	}
 }
 #endif
