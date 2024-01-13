@@ -24,9 +24,9 @@ Server& Server::ChatHandlers()
 
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
-		auto contentIterator = jsonMap.find(literals::jsonKeys::message::text);
-		auto authorIterator = jsonMap.find(literals::jsonKeys::message::author);
-		if (contentIterator == jsonMap.end() || authorIterator == jsonMap.end())
+		auto contentIt{ jsonMap.find(literals::jsonKeys::message::text) };
+		auto authorIt{ jsonMap.find(literals::jsonKeys::message::author) };
+		if (contentIt == jsonMap.end() || authorIt == jsonMap.end())
 		{
 			auto responseMessage{ "Invalid parameter keys" };
 			Log(responseMessage, Logger::Level::Error);
@@ -34,8 +34,8 @@ Server& Server::ChatHandlers()
 		}
 
 		common::Message message{
-			utils::DecodeMessage(contentIterator->second),
-			utils::DecodeMessage(authorIterator->second),
+			utils::DecodeMessage(contentIt->second),
+			utils::DecodeMessage(authorIt->second),
 			utils::MillisFromDateTime(std::chrono::system_clock::now()) };
 
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
