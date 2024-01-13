@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1856</width>
+    <width>1852</width>
     <height>967</height>
    </rect>
   </property>
@@ -38,10 +38,10 @@
    <widget class="QLabel" name="gameChatLabel">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>110</x>
       <y>10</y>
-      <width>251</width>
-      <height>521</height>
+      <width>81</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -53,7 +53,7 @@
      <rect>
       <x>-20</x>
       <y>-130</y>
-      <width>341</width>
+      <width>381</width>
       <height>781</height>
      </rect>
     </property>
@@ -126,10 +126,10 @@
   <widget class="QLabel" name="roomLabel">
    <property name="geometry">
     <rect>
-     <x>1060</x>
-     <y>710</y>
-     <width>101</width>
-     <height>31</height>
+     <x>1320</x>
+     <y>750</y>
+     <width>49</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
@@ -149,27 +149,20 @@
     <string>Start Game</string>
    </property>
   </widget>
-  <widget class="TimerLabel" name="timer">
+  <widget class="QLabel" name="timerLabel">
    <property name="geometry">
     <rect>
-     <x>1060</x>
-     <y>760</y>
+     <x>1220</x>
+     <y>750</y>
      <width>49</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>timer</string>
+    <string/>
    </property>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>TimerLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">timerLabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -24,11 +24,6 @@ MainWindow::MainWindow(QWidget* parent) :
 	QPixmap humanFigure{ ":Resource Files/Images/login_icon.png" };
 	ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
 	ui->humanFigureLabel->raise();
-
-	/* QQuickWidget *qmlWidget = new QQuickWidget();
-	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
-	 ui->centralwidget->layout()->addWidget(qmlWidget);
-	 QObject:: connect(qmlWidget->rootObject(), SIGNAL(qmlSignal()), this, SLOT(handelQmlSignal()));*/
 }
 
 

@@ -55,6 +55,9 @@ Server& Server::DrawingHandlers()
 			std::cout << "\n\n";
 		}*/
 
+		Image& image{ gameIt->second.GetImage() };
+
+		image.GetMutex().lock();
 		for (const auto& pointMap : jsonVector)
 		{
 			try
@@ -65,7 +68,7 @@ Server& Server::DrawingHandlers()
 					std::get<int64_t>(pointMap.at(colorStrKey))
 				};
 
-				gameIt->second.GetImage().AddUpdate(common::img::Update{ point, utils::MillisFromDateTime(std::chrono::system_clock::now()) });
+				image.AddUpdate(common::img::Update{ point, utils::MillisFromDateTime(std::chrono::system_clock::now()) });
 			}
 			catch (const std::exception& exception)
 			{
@@ -73,6 +76,7 @@ Server& Server::DrawingHandlers()
 				return crow::response{ 404, exception.what() };
 			}
 		}
+		image.GetMutex().unlock();
 
 		Log("new updates added", Logger::Level::Info);
 		return crow::response{ 200 };

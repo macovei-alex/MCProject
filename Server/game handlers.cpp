@@ -126,12 +126,15 @@ Server& Server::GameHandlers()
 		}
 
 		crow::json::wvalue::list playerScoresJson;
+
+		gameIt->second.GetPlayersMutex().lock();
 		for (const auto& player : gameIt->second.GetPlayers())
 		{
 			playerScoresJson.emplace_back(crow::json::wvalue{
 				{literals::jsonKeys::account::username, player.GetName()},
 				{literals::jsonKeys::game::score, player.GetScore()} });
 		}
+		gameIt->second.GetPlayersMutex().unlock();
 
 		return crow::json::wvalue{ playerScoresJson };
 			});

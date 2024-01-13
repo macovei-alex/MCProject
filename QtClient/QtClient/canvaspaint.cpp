@@ -33,24 +33,15 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	//ui->setupUi(this);
-
 	roomLabel = new QLabel(this);
 	roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
-	//roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }
+
 void CanvasPaint::setRoomID(uint64_t roomID)
 {
 	this->roomID = roomID;
 	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
-	//roomLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-}
-
-
-void CanvasPaint::setChosenWord(const QString& word)
-{
-	chosenWord = word;
 }
 
 #ifdef ONLINE
@@ -283,6 +274,7 @@ void CanvasPaint::on_startGameButton_clicked()
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
 {
+
 #ifdef ONLINE
 	services::SignOut(m_onlineData.username.toStdString());
 	m_keepGoing = false;
@@ -336,7 +328,11 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 			qDebug() << "Player role: " << common::game::EnumToString(m_onlineData.playerRole);
 		}
 	}
-	qDebug() << "Time left: " << gameStatePair.second;
+
+	if (gameStatePair.second < UINT64_MAX)
+		ui->timerLabel->setText(QString::number(gameStatePair.second));
+	else
+		ui->timerLabel->setText("");
 
 	if (m_onlineData.gameState == common::game::GameState::PICK_WORD)
 	{
@@ -422,7 +418,7 @@ OnlineData& CanvasPaint::GetOnlineData()
 	return m_onlineData;
 }
 
-void CanvasPaint::SendChosenWord(const QString& word)
+void CanvasPaint::SetChosenWord(const QString& word)
 {
 	m_onlineData.chosenWord = word;
 }

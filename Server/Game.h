@@ -54,6 +54,6 @@ private:
 	Image m_image;
 	Chat m_chat;
 	common::game::GameState m_gameState;
-	std::shared_ptr<std::mutex> m_sharedMutex;
+	std::shared_ptr<std::mutex> m_playersSharedMutex;
 	bool m_stopped;
 };
