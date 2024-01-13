@@ -32,7 +32,7 @@ class CanvasPaint : public QDialog
 
 public:
 	CanvasPaint(QWidget* parent = nullptr);
-
+	CanvasPaint(uint64_t roomID, const QString& username,const QString& word, QWidget* parent = nullptr);
 #ifdef ONLINE
 	CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
 #endif

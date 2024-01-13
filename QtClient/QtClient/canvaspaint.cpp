@@ -34,6 +34,11 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 }
 
+//CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, const QString& word, QWidget* parent)
+//	: QMainWindow(parent), ui(new Ui::CanvasPaint), roomID(roomID), username(username), word(word)
+//{
+//	ui->setupUi(this);
+//}
 #ifdef ONLINE
 CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent) :
 	QDialog{ parent },
@@ -321,12 +326,21 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 
 			// open choosewordwindow and choose a word
 			for (int i = 0; i < words.size(); i++)
+			{
 				qDebug() << words[i];
+				QString wordList =QString::fromStdString(words[i]);
+				QStringList wordListSplit = wordList.split(" ");
+				if (wordListSplit.size() == 2)
+				{
+					QString playerName= wordListSplit[0].trimmed();
+					QString word = wordListSplit[1].trimmed();
+					ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + playerName + " " + word);
+				}
+				// send the chosen word
+				services::SendGuessingWord(m_onlineData.m_roomID, words[0]);
 
-			// send the chosen word
-			services::SendGuessingWord(m_onlineData.m_roomID, words[0]);
-
-			m_imageThread->Pause();
+				m_imageThread->Pause();
+			}
 		}
 		else if (m_onlineData.m_role == common::game::PlayerRole::GUESSING)
 		{

@@ -36,6 +36,7 @@ private:
     QStringList loadRandomWords(int count);
     void LoadWords();
     void reloadWords();
+    void openCanvasPaintWithWord(const QString& chosenWord);
    
 };
 

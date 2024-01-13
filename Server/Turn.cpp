@@ -78,12 +78,11 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 	{
 		std::lock_guard<std::mutex> lock{ *m_playersMutex };
 
-		for (auto& player : players)
-		{
+		std::ranges::for_each(players, [](Player& player) {
 			player.SetGuessStatus(false);
 			player.ResetCurrentScore();
 			player.SetGameRole(common::game::PlayerRole::GUESSING);
-		}
+			});
 
 		drawingPlayer.SetGameRole(common::game::PlayerRole::DRAWING);
 	}
@@ -99,13 +98,13 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 		{
 			std::lock_guard<std::mutex> lock{ *m_playersMutex };
 
-			if (std::all_of(players.begin(), players.end(),
-				[](const Player& player) { return !player.IsConnected(); }))
+			if (std::ranges::all_of(players, [](const Player& player) {
+				return player.GetGuessStatus();
+				}))
 				break;
 
-			size_t count{ static_cast<size_t>(std::count_if(players.begin(), players.end(),
-				[](const Player& player) {
-					return player.GetGuessStatus();
+			size_t count{ static_cast<size_t>(std::ranges::count_if(players, [](const Player& player) {
+				return player.GetGuessStatus();
 				})) };
 
 			/*if (count == players.size() - 1)

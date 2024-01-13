@@ -117,6 +117,7 @@ void MainWindow::on_joinRoomButton_clicked()
 #endif
 
 	hide();
+	
 	canvasPaint->show();
 }
 
@@ -143,6 +144,7 @@ void MainWindow::on_createRoomButton_clicked()
 
 	hide();
 	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
+		
 #else
 	canvasPaint = new CanvasPaint(this);
 #endif
