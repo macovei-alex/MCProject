@@ -23,6 +23,7 @@ public:
 	Turn& operator=(const Turn& turn);
 	~Turn() = default;
 	uint8_t GetTurnNumber() const noexcept;
+	void SetTurnNumber(uint8_t) noexcept;
 	chr::seconds GetTimer() const noexcept;
 	std::string GetWord() const noexcept;
 	void SetWord(const std::string& word) noexcept;

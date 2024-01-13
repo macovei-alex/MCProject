@@ -39,6 +39,11 @@ uint8_t Turn::GetTurnNumber() const noexcept
 	return m_turnNumber;
 }
 
+void Turn::SetTurnNumber(uint8_t turnNumber) noexcept
+{
+	m_turnNumber = turnNumber;
+}
+
 chr::seconds Turn::GetTimer() const noexcept
 {
 	return chr::duration_cast<chr::seconds>(chr::system_clock::now() - m_playStartTime);

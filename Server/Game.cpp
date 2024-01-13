@@ -149,6 +149,8 @@ void Game::Run()
 			playersDone[player.GetName()] = false;
 			});
 
+		m_turn.SetTurnNumber(0);
+
 		for (auto currPlayerIt{ m_players.begin() };
 			currPlayerIt != m_players.end();
 			currPlayerIt = findNextPlayerLambda(m_players))
@@ -176,6 +178,7 @@ void Game::Run()
 				if (m_players.empty())
 				{
 					m_gameState = common::game::GameState::NONE;
+					m_stopped = true;
 					return;
 				}
 
