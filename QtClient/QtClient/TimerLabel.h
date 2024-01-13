@@ -18,7 +18,7 @@ private slots:
 
 private:
     QTimer* timer;
-    int remainingTime;
+    uint64_t remainingTime;
 };
 #endif 
 

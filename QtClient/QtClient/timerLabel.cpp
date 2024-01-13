@@ -7,14 +7,21 @@ TimerLabel::TimerLabel(QWidget* parent) : QLabel(parent), timer(new QTimer(this)
 }
 void TimerLabel::stopTimer()
 {
-    //EMPTY
+    timer->stop();
 }
 void TimerLabel::startTimer()
 {
-    //EMPTY
+    remainingTime = 60;
+    updateTimer();
+    timer->start(1000);
 }
 void TimerLabel::updateTimer()
 {
-	//EMPTY
+    setText(QString::number(remainingTime) + "s");
+	remainingTime--;
+	if(remainingTime < 0)
+	{
+        stopTimer();
+	}
 }
 
