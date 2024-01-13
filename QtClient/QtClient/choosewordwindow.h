@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+
 class CanvasPaint;
 
 namespace Ui {
@@ -16,6 +17,8 @@ class choosewordwindow : public QDialog
 public:
     explicit choosewordwindow(QWidget *parent = nullptr);
     ~choosewordwindow();
+    void HandleCloseChoosingWindow();
+    void LoadWords();
 
 private slots:
     void on_firstWordButton_clicked();
@@ -30,6 +33,11 @@ signals:
 private:
     Ui::choosewordwindow *ui;
     CanvasPaint *canvasPaint;
+    QStringList readWordsFromFile(const QString& filePath);
+    QStringList loadRandomWords(int count);
+    void LoadWords();
+    void reloadWords();
+   
 };
 
 #endif // CHOOSEWORDWINDOW_H
