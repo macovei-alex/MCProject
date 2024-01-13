@@ -57,6 +57,7 @@ private slots:
 	void on_eraseButton_clicked();
 	void on_undoButton_clicked();
 	void on_messageButton_clicked();
+	void on_startGameButton_clicked();
 
 	void HandleImage(QList<Line>* newLines);
 	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
