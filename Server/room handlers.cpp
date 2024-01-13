@@ -9,7 +9,7 @@ Server& Server::RoomHandlers()
 		if (!this->m_games.empty())
 			newGameID = m_games.rbegin()->first + 1;
 
-		m_games.emplace(newGameID, Game());
+		m_games.emplace(newGameID, Game{});
 
 		Log(std::format("New room created with ID < {} >", newGameID), Logger::Level::Info);
 		return crow::json::wvalue{ {literals::jsonKeys::game::ID, newGameID } };
@@ -24,7 +24,7 @@ Server& Server::RoomHandlers()
 		{
 			auto responseMessage{ std::format("Invalid room id < {} >", gameID) };
 			Log(responseMessage);
-			return crow::response(404, responseMessage);
+			return crow::response{ 404, responseMessage };
 		}
 
 		Game& game = gameIt->second;
@@ -39,7 +39,7 @@ Server& Server::RoomHandlers()
 		catch (const std::exception& exception)
 		{
 			Log(exception.what(), Logger::Level::Error);
-			return crow::response(404, exception.what());
+			return crow::response{ 404, exception.what() };
 		}
 
 		auto responseMessage{ std::format("Connection to room < {} > successful", gameID) };

@@ -218,14 +218,15 @@ Server& Server::GameHandlers()
 			return crow::response{ 404, retStr };
 		}
 
-		if (gameIt->second.GetPlayers().size() < 2)
+		/*if (gameIt->second.GetPlayers().size() < 2)
 		{
 			std::string retStr{ "Not enough players" };
 			Log(retStr, Logger::Level::Error);
 			return crow::response{ 404, retStr };
-		}
+		}*/
 
-		std::thread gameThread{ [&gameIt]() { gameIt->second.Run(); } };
+		Game& game = gameIt->second;
+		std::thread gameThread{ [&game]() { game.Run(); } };
 		gameThread.detach();
 
 		return crow::response{ 200, "Game started" };

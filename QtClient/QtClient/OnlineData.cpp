@@ -28,49 +28,4 @@ OnlineData::OnlineData(uint64_t roomID, QString&& username) :
 {
 	/* empty */
 }
-
-uint64_t OnlineData::GetRoomID() const
-{
-	return m_roomID;
-}
-
-void OnlineData::SetRoomID(uint64_t roomID)
-{
-	this->m_roomID = roomID;
-}
-
-QString OnlineData::GetUsername() const
-{
-	return m_username;
-}
-
-void OnlineData::SetUsername(const QString& username)
-{
-	this->m_username = username;
-}
-
-void OnlineData::SetUsername(QString&& username)
-{
-	this->m_username = username;
-}
-
-common::game::GameState OnlineData::GetGameState() const
-{
-	return m_gameState;
-}
-
-void OnlineData::SetGameState(common::game::GameState gameState)
-{
-	m_gameState = gameState;
-}
-
-common::game::PlayerRole OnlineData::GetRole() const
-{
-	return m_role;
-}
-
-void OnlineData::SetRole(common::game::PlayerRole role)
-{
-	m_role = role;
-}
 #endif

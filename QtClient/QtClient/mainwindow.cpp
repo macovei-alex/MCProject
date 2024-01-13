@@ -12,7 +12,8 @@
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow{ parent },
 	ui{ new Ui::MainWindow },
-	roomID{ }
+	roomID{ },
+	m_isConnected{ false }
 {
 	ui->setupUi(this);
 
@@ -21,8 +22,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui->backgroundLabel->raise();
 
 	QPixmap humanFigure{ ":Resource Files/Images/login_icon.png" };
-    ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
-    ui->humanFigureLabel->raise();
+	ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
+	ui->humanFigureLabel->raise();
 
 	/* QQuickWidget *qmlWidget = new QQuickWidget();
 	 qmlWidget->setSource(QUrl("qrc:/Canvas.qml"));
@@ -45,47 +46,110 @@ void MainWindow::on_loginButton_clicked()
 	}
 
 #ifdef ONLINE
-	if (!services::SignIn(
+	if (services::SignIn(
 		ui->usernameLineEdit->text().toStdString(),
 		ui->passwordLineEdit->text().toStdString()))
 	{
-		QMessageBox msgBox;
-		msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
-			" and password " + ui->passwordLineEdit->text() +
-			" exists or the someone is already connected with this account. " +
-			"Do you want to try to create one ? ");
-
-		QPushButton* yesButton{ msgBox.addButton(tr("Yes"), QMessageBox::YesRole) };
-		QPushButton* noButton{ msgBox.addButton(tr("No"), QMessageBox::NoRole) };
-		msgBox.setDefaultButton(noButton);
-
-		msgBox.exec();
-
-		if (msgBox.clickedButton() == yesButton)
-		{
-			if (!services::SignUp(
-				ui->usernameLineEdit->text().toStdString(),
-				ui->passwordLineEdit->text().toStdString()))
-			{
-				QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
-				return;
-			}
-		}
-		else
-		{
-			return;
-		}
+		m_isConnected = true;
+		return;
 	}
 
-	hide();
-	// roomID = services::CreateRoom();
-	roomID = 0;
+	QMessageBox msgBox;
+	msgBox.setText("No account with username " + ui->usernameLineEdit->text() +
+		" and password " + ui->passwordLineEdit->text() +
+		" exists or the someone is already connected with this account. " +
+		"Do you want to try to create one ? ");
+
+	QPushButton* yesButton{ msgBox.addButton(tr("Yes"), QMessageBox::YesRole) };
+	QPushButton* noButton{ msgBox.addButton(tr("No"), QMessageBox::NoRole) };
+	msgBox.setDefaultButton(noButton);
+
+	msgBox.exec();
+
+	if (msgBox.clickedButton() != yesButton)
+		return;
+
+	if (services::SignUp(
+		ui->usernameLineEdit->text().toStdString(),
+		ui->passwordLineEdit->text().toStdString()))
+	{
+		m_isConnected = true;
+		return;
+	}
+
+	QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
+#endif
+}
+
+void MainWindow::on_joinRoomButton_clicked()
+{
+#ifdef ONLINE
+	if (!m_isConnected)
+	{
+		QMessageBox::warning(this, "Join room", "You are not connected");
+		return;
+	}
+
+	try
+	{
+		QString numberStr{ ui->joinRoomLineEdit->text() };
+
+		if(numberStr.isEmpty())
+			throw std::exception{};
+
+		roomID = static_cast<uint64_t>(numberStr.toULongLong());
+	}
+	catch (...)
+	{
+		QMessageBox::warning(this, "Join room", "The text cannot be converted to a number");
+		return;
+	}
+
+	if (!services::ConnectToRoom(roomID, ui->usernameLineEdit->text().toStdString()))
+	{
+		QMessageBox::warning(this, "Join room", "Could not connect to the room");
+		return;
+	}
 
 	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
 #else
 	canvasPaint = new CanvasPaint(this);
 #endif
 
+	hide();
+	canvasPaint->show();
+}
+
+void MainWindow::on_createRoomButton_clicked()
+{
+#ifdef ONLINE
+	if (!m_isConnected)
+	{
+		QMessageBox::warning(this, "Create room", "You are not connected");
+		return;
+	}
+
+	try
+	{
+		roomID = services::CreateRoom(ui->usernameLineEdit->text().toStdString());
+	}
+	catch (...)
+	{
+		QMessageBox::warning(this, "Create room", "Could not create a new room (1)");
+		return;
+	}
+
+	if (!services::ConnectToRoom(roomID, ui->usernameLineEdit->text().toStdString()))
+	{
+		QMessageBox::warning(this, "Join room", "Could not create a new room (2)");
+		return;
+	}
+
+	hide();
+	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
+#else
+	canvasPaint = new CanvasPaint(this);
+#endif
 	canvasPaint->show();
 }
 

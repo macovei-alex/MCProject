@@ -155,7 +155,7 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 #ifdef ONLINE
 		auto commonPoints{ std::move(currentLine.ToCommonPoints()) };
 		commonPoints.emplace_back(common::img::Point{ -1, -1, Line::INVALID_COLOR_INT });
-		services::SendImageUpdates(m_onlineData.GetRoomID(), commonPoints);
+		services::SendImageUpdates(m_onlineData.m_roomID, commonPoints);
 #endif
 
 		lines.emplace_back(std::move(currentLine));
@@ -239,13 +239,13 @@ void CanvasPaint::on_messageButton_clicked()
 
 void CanvasPaint::on_startGameButton_clicked()
 {
-
+	services::StartGame(m_onlineData.m_roomID);
 }
 
 void CanvasPaint::closeEvent(QCloseEvent* event)
 {
 #ifdef ONLINE
-	services::SignOut(m_onlineData.GetUsername().toStdString());
+	services::SignOut(m_onlineData.m_username.toStdString());
 	m_keepGoing = false;
 
 	m_imageThread->quit();
@@ -288,6 +288,37 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 	qDebug() << "Received game state: "
 		<< static_cast<uint16_t>(gameStatePair.first) << " "
 		<< gameStatePair.second;
+
+	if (gameStatePair.first == common::game::GameState::PICK_WORD)
+	{
+		ui->startGameButton->setEnabled(false);
+		ui->resetCanvas->setEnabled(false);
+		ui->drawButton->setEnabled(false);
+		ui->eraseButton->setEnabled(false);
+		ui->undoButton->setEnabled(false);
+		ui->messageButton->setEnabled(false);
+		ui->messageBox->setEnabled(false);
+		ui->gameChat->setEnabled(false);
+
+		auto playerRole{ services::ReceivePlayerRole(m_onlineData.m_roomID, m_onlineData.m_username.toStdString()) };
+		if (playerRole == common::game::PlayerRole::DRAWING)
+		{
+			auto words{ services::ReceiveWordOptions(m_onlineData.m_roomID) };
+			for (int i = 0; i < words.size(); i++)
+				qDebug() << words[i];
+		}
+	}
+	else if (gameStatePair.first == common::game::GameState::DRAW_AND_GUESS)
+	{
+		ui->startGameButton->setEnabled(false);
+		ui->resetCanvas->setEnabled(true);
+		ui->drawButton->setEnabled(true);
+		ui->eraseButton->setEnabled(true);
+		ui->undoButton->setEnabled(true);
+		ui->messageButton->setEnabled(true);
+		ui->messageBox->setEnabled(true);
+		ui->gameChat->setEnabled(true);
+	}
 }
 
 void CanvasPaint::HandleChat(const QList<common::Message>& messages)
