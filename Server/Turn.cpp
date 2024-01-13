@@ -107,8 +107,8 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 				return player.GetGuessStatus();
 				})) };
 
-			/*if (count == players.size() - 1)
-				break;*/
+			if (count == players.size() - 1)
+				break;
 		}
 
 	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);

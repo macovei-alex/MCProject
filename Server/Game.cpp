@@ -76,14 +76,6 @@ const Player& Game::GetPlayer(const std::string& name) const
 		return *playerFoundIt;
 	}
 
-	/*if (auto playerFoundIt{ std::find_if(m_players.begin(), m_players.end(),
-		[&name](const Player& player) -> bool {
-			return player.GetName() == name;
-		}) };
-		playerFoundIt != m_players.end())
-	{
-		return *playerFoundIt;
-	}*/
 	throw std::exception{ "Player not found" };
 }
 
@@ -140,7 +132,7 @@ void Game::Run()
 	std::unordered_map<std::string, bool> playersDone{ m_players.size() };
 
 	const auto& findNextPlayerLambda{ [&playersDone](std::vector<Player>& m_players) {
-			return std::find_if(m_players.begin(), m_players.end(),
+			return std::ranges::find_if(m_players,
 				[&playersDone](const Player& player) {
 					if (playersDone.find(player.GetName()) == playersDone.end())
 					{
@@ -153,8 +145,9 @@ void Game::Run()
 
 	while (!m_stopped && m_roundNumber < m_gameSettings.m_roundCount)
 	{
-		for (const auto& player : m_players)
+		std::ranges::for_each(m_players, [&playersDone](const Player& player) {
 			playersDone[player.GetName()] = false;
+			});
 
 		for (auto currPlayerIt{ m_players.begin() };
 			currPlayerIt != m_players.end();
@@ -186,9 +179,7 @@ void Game::Run()
 					return;
 				}
 
-				std::sort(m_players.begin(), m_players.end(),
-					[](const Player& lhs, const Player& rhs) {
-						return lhs.GetScore() > rhs.GetScore(); });
+				std::ranges::sort(m_players, std::greater<>{}, & Player::GetScore);
 			}
 		}
 
@@ -228,12 +219,17 @@ void Game::Stop()
 
 void Game::RemovePlayer(const std::string& name)
 {
-	for (auto& player : m_players)
+	/*for (auto& player : m_players)
 		if (player.GetName() == name)
 		{
 			m_players.erase(std::remove(m_players.begin(), m_players.end(), player), m_players.end());
 			return;
-		}
+		}*/
+
+	m_players.erase(std::remove_if(m_players.begin(), m_players.end(),
+    [&name](const Player& player) {
+        return player.GetName() == name;
+    }), m_players.end());
 }
 
 void Game::AddPlayer(const Player& player)
