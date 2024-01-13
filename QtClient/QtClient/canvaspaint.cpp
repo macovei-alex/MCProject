@@ -20,6 +20,7 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 {
 	ui->setupUi(this);
 
+	ui->roomLabel->setText("Room ID: none");
 	ui->gameChatLabel->setStyleSheet("border: none;");
 	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
@@ -46,6 +47,7 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 {
 	ui->setupUi(this);
 
+	ui->roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
 	ui->gameChatLabel->setStyleSheet("border: none;");
 	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
@@ -236,7 +238,6 @@ void CanvasPaint::on_undoButton_clicked()
 		update();
 	}*/
 }
-
 
 void CanvasPaint::on_messageButton_clicked()
 {

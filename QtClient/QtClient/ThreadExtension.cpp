@@ -1,5 +1,7 @@
 #include "ThreadExtension.h"
 
+#include <QDebug>
+
 ThreadExtension::ThreadExtension() :
 	m_pause{ false }
 {

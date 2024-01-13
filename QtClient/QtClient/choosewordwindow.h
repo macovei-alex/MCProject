@@ -18,7 +18,6 @@ public:
     explicit choosewordwindow(QWidget *parent = nullptr);
     ~choosewordwindow();
     void HandleCloseChoosingWindow();
-    void LoadWords();
 
 private slots:
     void on_firstWordButton_clicked();
