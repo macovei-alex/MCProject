@@ -62,6 +62,7 @@ private slots:
 	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
     void HandleChat(const QList<common::Message>& messages);
 
+
 public:
 
 #ifdef ONLINE

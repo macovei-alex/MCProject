@@ -358,6 +358,7 @@ void CanvasPaint::HandleChat(const QList<common::Message>& messages)
 
 
 
+
 OnlineData& CanvasPaint::GetOnlineData()
 {
 	return m_onlineData;
