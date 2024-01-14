@@ -340,6 +340,14 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 					ui->playerScore->setText("Score: " + QString::number(score));
 					break;
 				}
+
+			if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
+			{
+				m_onlineData.chosenWord = "";
+				ui->chosedWord->setText("");
+				ui->chosedWord->update();
+				return;
+			}
 		}
 
 		if (m_onlineData.playerRole != common::game::PlayerRole::DRAWING
@@ -353,8 +361,10 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		chooseWordWindow->setButtonNames(words);
 
 		if (chooseWordWindow->exec() == QDialog::Accepted)
-		{ 
+		{
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
+			ui->chosedWord->setText("Chosen Word: " + m_onlineData.chosenWord);
+			ui->chosedWord->update();
 			m_chatThread->Unpause();
 		}
 	}
@@ -363,12 +373,17 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 	{
 		if (m_onlineData.playerRole == common::game::PlayerRole::DRAWING)
 		{
-			m_drawState = DrawingState::DRAWING;
+			/*m_imageThread->Pause();*/
 		}
 		else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
 		{
-			m_onlineData.chosenWord = "";
-			m_chatThread->Unpause();
+			if (lastGameState != common::game::GameState::DRAW_AND_GUESS)
+			{
+				/*m_onlineData.chosenWord = "";
+				ui->chosedWord->setText("");
+				ui->chosedWord->update();*/
+				m_chatThread->Unpause();
+			}
 		}
 	}
 
