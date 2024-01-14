@@ -18,7 +18,7 @@ public:
     explicit choosewordwindow(QWidget *parent = nullptr);
     ~choosewordwindow();
     void setButtonNames(const std::vector<std::string>& words);
-   // void HandleCloseChoosingWindow();
+    QString getChosenWord() const;
 
 private slots:
     void on_firstWordButton_clicked();
@@ -33,6 +33,8 @@ signals:
 private:
     Ui::choosewordwindow *ui;
     CanvasPaint *canvasPaint;
+    QString chosenWord;
+
 
    
 };

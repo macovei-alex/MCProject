@@ -31,6 +31,11 @@ void choosewordwindow::setButtonNames(const std::vector<std::string>& words)
     }
 }
 
+QString choosewordwindow::getChosenWord() const
+{
+    return chosenWord;
+}
+
 
 //void  choosewordwindow::openCanvasPaintWithWord(const QString& chosenWord)
 //{

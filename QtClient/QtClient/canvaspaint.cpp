@@ -320,13 +320,10 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 	if (m_onlineData.gameState != gameStatePair.first)
 	{
 		m_onlineData.gameState = gameStatePair.first;
-		qDebug() << "New game state: " << common::game::EnumToString(gameStatePair.first);
-
 		auto newPlayerRole{ services::ReceivePlayerRole(m_onlineData.roomID, m_onlineData.username.toStdString()) };
 		if (m_onlineData.playerRole != newPlayerRole)
 		{
 			m_onlineData.playerRole = newPlayerRole;
-			qDebug() << "Player role: " << common::game::EnumToString(m_onlineData.playerRole);
 		}
 	}
 
@@ -337,27 +334,24 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 
 	if (m_onlineData.gameState == common::game::GameState::PICK_WORD)
 	{
-		if (m_onlineData.playerRole == common::game::PlayerRole::DRAWING)
-		{
-			auto words{ services::ReceiveWordOptions(m_onlineData.roomID) };
-			choosewordwindow*chooseWordWindow=new choosewordwindow(this);
-			chooseWordWindow->setButtonNames(words);
-			chooseWordWindow->show();
-			
-			delete chooseWordWindow;
+		auto words = services::ReceiveWordOptions(m_onlineData.roomID);
+		choosewordwindow* chooseWordWindow = new choosewordwindow(this);
+		chooseWordWindow->setButtonNames(words);
 
-			// open choosewordwindow and choose a word
-			
-			// send the chosen word
-			//services::SendGuessingWord(m_onlineData.roomID, chosenWord);
+		if (chooseWordWindow->exec() == QDialog::Accepted)
+		{
+			QString chosenWord = chooseWordWindow->getChosenWord();
+			std::string chosenWordStdString = chosenWord.toStdString();
+			services::SendGuessingWord(m_onlineData.roomID, chosenWordStdString);
 			m_imageThread->Pause();
 		}
-		else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
-		{
-			m_imageThread->Unpause();
-		}
-	}
 
+		delete chooseWordWindow;
+	}
+	else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
+	{
+		m_imageThread->Unpause();
+	}
 	else if (m_onlineData.gameState == common::game::GameState::DRAW_AND_GUESS)
 	{
 		if (m_onlineData.playerRole == common::game::PlayerRole::DRAWING)
@@ -370,6 +364,7 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		}
 	}
 }
+
 
 void CanvasPaint::HandleChat(const QList<common::Message>& messages)
 {
