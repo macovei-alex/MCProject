@@ -54,11 +54,17 @@ std::vector<std::unordered_map<std::string, std::variant<int64_t, std::string>>>
 {
 	std::string cleanedStr;
 	cleanedStr.reserve(jsonListStr.size());
-	for (size_t i = 1; i < jsonListStr.size() - 1; i++)
+
+	std::ranges::for_each(jsonListStr, [&cleanedStr](const char& c) {
+		if (!std::isspace(c))
+			cleanedStr += c;
+		});
+
+	/*for (size_t i = 1; i < jsonListStr.size() - 1; i++)
 	{
 		if (!std::isspace(jsonListStr[i]))
 			cleanedStr += jsonListStr[i];
-	}
+	}*/
 
 	std::vector<std::unordered_map<std::string, std::variant<int64_t, std::string>>> resultVector;
 	std::unordered_map<std::string, std::variant<int64_t, std::string>> objectMap;

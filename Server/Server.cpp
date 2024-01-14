@@ -66,11 +66,16 @@ Server::~Server()
 	for (auto& [gameID, game] : std::views::all(m_games))
 		gameStopActions.emplace_back(gameID, std::async(std::launch::async, [&game]() { game.Stop(); }));
 
-	for (auto& [gameID, gameStopAction] : gameStopActions)
+	std::ranges::for_each(gameStopActions, [this](auto& gameStopAction) { 
+		Log(std::format("Waiting for game < {} > to stop", gameStopAction.first));
+		gameStopAction.second.wait(); 
+		});
+
+	/*for (auto& [gameID, gameStopAction] : gameStopActions)
 	{
 		Log(std::format("Waiting for game < {} > to stop", gameID));
 		gameStopAction.wait();
-	}
+	}*/
 
 	Log("All games stopped");
 

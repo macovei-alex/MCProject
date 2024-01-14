@@ -149,12 +149,6 @@ db::ReturnValueForHistory db::Database::GetGameHistory(const std::string& player
 		difficulties.push_back(game.difficulty);
 		});
 
-	/*for (auto& game : result)
-	{
-		scores.push_back(game.score);
-		dates.push_back(game.date);
-		difficulties.push_back(game.difficulty);
-	}*/
 	return {scores, dates, difficulties, true, std::format("Found game history for player{}", playerName)};
 }
 
@@ -171,9 +165,6 @@ std::vector<std::string> db::Database::GetRandomWords(uint64_t count, const std:
 	std::ranges::for_each(words, [&randomWords](const db::Word& word) {
 		randomWords.emplace_back(word.text);
 		});
-
-	/*for (int i = 0; i < words.size(); i++)
-		randomWords.emplace_back(std::move(words[i].text));*/
 
 	return randomWords;
 }
@@ -204,15 +195,6 @@ db::ReturnValue db::Database::ResetPlayerAccounts()
 			m_storage.update(player);
 		}
 		});
-
-	/*for (auto& player : players)
-	{
-		if (player.isOnline)
-		{
-			player.isOnline = false;
-			m_storage.update(player);
-		}
-	}*/
 
 	return { true, "All accounts have been reset" };
 }
