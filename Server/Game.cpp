@@ -201,7 +201,7 @@ void Game::Run()
 			RemoveDisconnectedPlayers();
 
 			{
-				std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+				LOCK(m_players.GetMutex());
 
 				if (m_players.GetRef().empty())
 				{
@@ -223,19 +223,18 @@ void Game::Run()
 
 bool Game::ChatEmpty()
 {
-	std::lock_guard<std::mutex> lock{ m_chat.GetMutex() };
+	LOCK(m_chat.GetMutex());
 	return m_chat.GetRef().Empty();
 }
 
 crow::json::wvalue Game::GetMessagesOrderedJsonList(uint64_t start, const std::string& author)
 {
-	std::lock_guard<std::mutex> lock{ m_chat.GetMutex() };
+	LOCK(m_chat.GetMutex());
 	return m_chat.GetRef().GetMessagesOrderedJsonList(start, author);
 }
 
 void Game::RemoveDisconnectedPlayers()
 {
-	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
 	m_players.GetRef().erase(
 		std::remove_if(m_players.GetRef().begin(), m_players.GetRef().end(),
 			[](const Player& player) { return !player.IsConnected(); }),
@@ -247,6 +246,7 @@ void Game::Reset()
 	m_gameState.store(common::game::GameState::NONE);
 	m_roundNumber = 0;
 
+	LOCK(m_players.GetMutex());
 	RemoveDisconnectedPlayers();
 }
 
@@ -274,7 +274,7 @@ void Game::AppendImageUpdates(const std::vector<std::unordered_map<std::string, 
 				std::get<int64_t>(pointMap.at(colorStrKey))
 			};
 
-			m_image.GetRef().AddUpdate(common::img::Update{point, utils::MillisFromDateTime(std::chrono::system_clock::now())});
+			m_image.GetRef().AddUpdate(common::img::Update{ point, utils::MillisFromDateTime(std::chrono::system_clock::now()) });
 		}
 		catch (const std::exception& exception)
 		{
@@ -285,7 +285,7 @@ void Game::AppendImageUpdates(const std::vector<std::unordered_map<std::string, 
 
 void Game::RemovePlayer(const std::string& name)
 {
-	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	LOCK(m_players.GetMutex());
 	m_players.GetRef().erase(std::remove_if(m_players.GetRef().begin(), m_players.GetRef().end(),
 		[&name](const Player& player) {
 			return player.GetName() == name;
@@ -294,12 +294,12 @@ void Game::RemovePlayer(const std::string& name)
 
 void Game::AddPlayer(const Player& player)
 {
-	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	LOCK(m_players.GetMutex());
 	m_players.GetRef().emplace_back(player);
 }
 
 void Game::AddPlayer(Player&& player)
 {
-	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	LOCK(m_players.GetMutex());
 	m_players.GetRef().emplace_back(std::move(player));
 }

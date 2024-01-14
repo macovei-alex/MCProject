@@ -76,7 +76,7 @@ void Turn::Reset(utils::ThreadSafe<std::vector<Player>>& players, Player& drawin
 	m_word.Set("");
 
 	{
-		std::lock_guard<std::mutex> lock{ players.GetMutex() };
+		LOCK(players.GetMutex());
 
 		std::ranges::for_each(players.GetRef(), [](Player& player) {
 			player.SetGuessStatus(false);

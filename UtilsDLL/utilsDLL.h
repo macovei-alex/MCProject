@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <mutex>
 
-#define LOCK(mutex) std::lock_guard<std::mutex> lock(mutex)
+#define LOCK(mtx) std::lock_guard<std::mutex> lock{ mtx }
 #define LOCK_2(mutex1, mutex2) \
-	std::lock_guard<std::mutex> lock1(mutex1); \
-	std::lock_guard<std::mutex> lock2(mutex2)
+	std::lock_guard<std::mutex> lock1{ mutex1 }; \
+	std::lock_guard<std::mutex> lock2{ mutex2 }
 
 namespace utils
 {
@@ -105,5 +105,3 @@ namespace utils
 		mutable std::mutex mutex;
 	};
 }
-
-#undef LOCK

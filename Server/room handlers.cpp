@@ -32,9 +32,7 @@ Server& Server::RoomHandlers()
 			Game& game{ gameIt->second };
 			if (true) // TODO: Check game state
 			{
-				game.GetPlayersMutex().lock();
 				game.AddPlayer(Player{ request.url_params.get(literals::jsonKeys::account::username) });
-				game.GetPlayersMutex().unlock();
 			}
 		}
 		catch (const std::exception& exception)
