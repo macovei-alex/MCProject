@@ -130,9 +130,8 @@ crow::json::wvalue Game::GetUpdatesJsonAfter(uint64_t timestamp)
 
 void Game::ChatEmplace(common::Message&& message)
 {
-	m_chat.GetMutex().lock();
+	LOCK(m_chat.GetMutex());
 	m_chat.GetRef().Emplace(std::move(message));
-	m_chat.GetMutex().unlock();
 }
 
 bool Game::IsRunning() const

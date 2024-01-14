@@ -23,7 +23,6 @@ CanvasWindow::CanvasWindow(QWidget* parent) :
 
 	ui->roomLabel->setText("Room ID: none");
 	ui->gameChatLabel->setStyleSheet("border: none;");
-	//ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
 	QSize screenSize{ QGuiApplication::primaryScreen()->geometry().size() };
 	setGeometry(0, 0, screenSize.width(), screenSize.height());

@@ -10,12 +10,8 @@
 #include "constantLiterals.h"
 #include "common.h"
 #include "..\UtilsDLL\utilsDLL.h"
-
 #include "serverUtilsModTemp.h"
-//import serverUtilsMod;
-
-#include "../TemporaryLogger/logger.h"
-//import logger;
+#include "..\TemporaryLogger\logger.h"
 
 class Server
 {
