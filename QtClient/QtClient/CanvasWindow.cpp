@@ -349,7 +349,7 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		}
 
 		auto words{ services::ReceiveWordOptions(m_onlineData.roomID) };
-		ChooseWordWindow* chooseWordWindow{ new ChooseWordWindow(this) };
+		std::unique_ptr<ChooseWordWindow> chooseWordWindow{ std::make_unique<ChooseWordWindow>(this) };
 		chooseWordWindow->setButtonNames(words);
 
 		if (chooseWordWindow->exec() == QDialog::Accepted)
@@ -357,8 +357,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
 			m_chatThread->Unpause();
 		}
-
-		delete chooseWordWindow;
 	}
 
 	else if (m_onlineData.gameState == common::game::GameState::DRAW_AND_GUESS)
