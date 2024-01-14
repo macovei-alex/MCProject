@@ -80,10 +80,11 @@ signals:
 	void Signal();
 
 private:
+	void updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores);
 	void SetAllButtonsEnabled(bool enabled);
 	void SetAllThreadsPauseStatus(bool paused);
 	void updateChosenWordLabel(const QString& word);
-
+	
 	MainWindow* signInWindow;
 
 	QPixmap canvasPixmap;

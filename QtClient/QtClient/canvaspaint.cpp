@@ -373,6 +373,9 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 	else if (m_onlineData.gameState == common::game::GameState::NONE)
 	{
 		m_onlineData.chosenWord = "";
+		auto playerScores = services::ReceivePlayerScores(m_onlineData.roomID, std::cerr);
+		updatePlayerScoreLabel(playerScores);
+
 		m_imageThread->Pause();
 		m_chatThread->Pause();
 	}
@@ -416,6 +419,16 @@ void CanvasPaint::updateChosenWordLabel(const QString& word)
 	ui->chosedWord->setText("Chosen Word: " + word);
 }
 
+void CanvasPaint::updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores)
+{
+	QString labelText;
+	for (const auto& playerScore : scores)
+	{
+		labelText += QString("%1: %2\n").arg(playerScore.first.c_str()).arg(playerScore.second);
+	}
+
+	ui->playerScore->setText("Score: " + labelText);
+}
 void CanvasPaint::SetAllButtonsEnabled(bool enabled)
 {
 	ui->startGameButton->setEnabled(enabled);
