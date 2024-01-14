@@ -60,7 +60,7 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 	m_onlineData{ roomID, username },
 	m_imageThread{ new ImageThread(roomID, m_keepGoing, this) },
 	m_gameStateThread{ new GameStateThread(roomID, m_keepGoing, this) },
-	m_chatThread{ new ChatThread(roomID, m_keepGoing, this) }
+	m_chatThread{ new ChatThread(roomID, username, m_keepGoing, this) }
 {
 	ui->setupUi(this);
 

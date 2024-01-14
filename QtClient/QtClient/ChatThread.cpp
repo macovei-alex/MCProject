@@ -7,10 +7,11 @@
 
 #include "services.h"
 
-ChatThread::ChatThread(uint64_t roomID, bool& keepGoing, QWidget* parent) :
+ChatThread::ChatThread(uint64_t roomID, const QString& username, bool& keepGoing, QWidget* parent) :
 	QThread{ parent },
 	keepGoing{ keepGoing },
-	roomID{ roomID }
+	roomID{ roomID },
+	username{ username }
 {
 	/* empty */
 }
@@ -30,8 +31,13 @@ void ChatThread::run()
 		{
 			while (!IsPaused() && keepGoing)
 			{
+				QList<common::Message> messagesQList;
 
-				emit ChatSignal(QList<common::Message>());
+				auto messagesVector{ services::ReceiveNewMessages(username.toStdString(), roomID) };
+				for(auto& message : messagesVector)
+					messagesQList.emplace_back(std::move(message));
+
+				emit ChatSignal(messagesQList);
 
 				QThread::msleep(1000);
 			}

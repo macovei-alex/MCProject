@@ -10,15 +10,16 @@ class ChatThread : public QThread, public ThreadExtension
 	Q_OBJECT
 
 public:
-	ChatThread(uint64_t roomID, bool& keepGoing, QWidget* parent = nullptr);
+	ChatThread(uint64_t roomID, const QString& username, bool& keepGoing, QWidget* parent = nullptr);
 	~ChatThread() = default;
 
 signals:
-	void ChatSignal(QList<common::Message>);
+	void ChatSignal(const QList<common::Message>&);
 
 public:
 	uint64_t roomID;
 	bool& keepGoing;
+	QString username;
 
 public:
 	void run() override;
