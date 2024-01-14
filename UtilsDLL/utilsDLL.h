@@ -64,7 +64,6 @@ namespace utils
 		*/
 		T& GetRef() noexcept
 		{
-			LOCK(mutex);
 			return obj;
 		}
 

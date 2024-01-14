@@ -20,8 +20,6 @@ Server& Server::ChatHandlers()
 			return crow::response{ 404, responseMessage };
 		}
 
-		auto& chat = gameIt->second.GetChat();
-
 		auto jsonMap{ utils::ParseRequestBody(request.body) };
 
 		auto contentIt{ jsonMap.find(literals::jsonKeys::message::text) };
@@ -39,11 +37,7 @@ Server& Server::ChatHandlers()
 			utils::MillisFromDateTime(std::chrono::system_clock::now()) };
 
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
-
-		chat.GetMutex().lock();
-		chat.Emplace(std::move(message));
-		chat.GetMutex().unlock();
-
+		gameIt->second.ChatEmplace(std::move(message));
 		return crow::response{ 200 };
 			});
 
@@ -60,9 +54,9 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		const auto& chat{ gameIt->second.GetChat() };
+		Game& game{ gameIt->second };
 
-		if (chat.Empty())
+		if (game.ChatEmpty())
 			return crow::json::wvalue{ crow::json::wvalue::list{} };
 
 		uint64_t start;
@@ -75,7 +69,7 @@ Server& Server::ChatHandlers()
 				start = std::stoull(startChar);
 			}
 			else
-				throw std::exception("Timestamp key not found");
+				throw std::exception{ "Timestamp key not found" };
 
 			if (char* authorChar{ request.url_params.get(literals::jsonKeys::message::author) };
 				authorChar != nullptr)
@@ -91,7 +85,7 @@ Server& Server::ChatHandlers()
 			return errorValue;
 		}
 
-		return crow::json::wvalue{ chat.GetMessagesOrderedJsonList(start, author) };
+		return crow::json::wvalue{ game.GetMessagesOrderedJsonList(start, author) };
 			});
 
 	Log("Chat handlers set");

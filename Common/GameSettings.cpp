@@ -16,7 +16,7 @@ GameSettings::GameSettings() noexcept :
 	/* empty */
 }
 
-GameSettings::GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount) noexcept :
+GameSettings::GameSettings(uint16_t roundCount, uint16_t drawTime, uint16_t chooseWordOtionCount) noexcept :
 	m_roundCount{ roundCount },
 	m_drawTime{ drawTime },
 	m_chooseWordOptionCount{ chooseWordOtionCount }

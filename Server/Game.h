@@ -23,17 +23,23 @@ public:
 	~Game() noexcept = default;
 
 public:
-	const std::vector<Player>& GetPlayers() const;
-	const Player& GetPlayer(const std::string& name) const;
+	const std::vector<Player>& GetPlayers();
+	const Player& GetPlayer(const std::string& name);
 	uint8_t GetRoundNumber() const;
-	common::game::GameSettings& GetGameSettings();
-	Turn& GetTurn();
-	Image& GetImage();
-	Chat& GetChat();
+	common::game::GameSettings GetGameSettings();
+	void SetGameSettings(common::game::GameSettings gameSettings);
+	const Turn& GetTurn() const;
 	common::game::GameState GetGameState() const;
 	void SetGameState(common::game::GameState gameState);
 	std::mutex& GetPlayersMutex();
 	bool IsRunning() const;
+	void ChatEmplace(common::Message&&);
+	void SetTurnWord(std::string&&);
+	void SetTurnWord(const std::string&);
+	void AppendImageUpdates(const std::vector<std::unordered_map<std::string, std::variant<int64_t, std::string>>>& jsonVector);
+	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp);
+	bool ChatEmpty();
+	crow::json::wvalue GetMessagesOrderedJsonList(uint64_t start, const std::string& author);
 
 public:
 	void Run();
@@ -48,12 +54,11 @@ public:
 private:
 	uint8_t m_roundNumber;
 	uint8_t m_ownerID;
-	std::vector<Player> m_players;
+	utils::ThreadSafe<std::vector<Player>> m_players;
 	Turn m_turn;
 	common::game::GameSettings m_gameSettings;
-	Image m_image;
-	Chat m_chat;
-	common::game::GameState m_gameState;
-	std::shared_ptr<std::mutex> m_playersSharedMutex;
+	utils::ThreadSafe<Image> m_image;
+	utils::ThreadSafe<Chat> m_chat;
+	std::atomic<common::game::GameState> m_gameState;
 	bool m_stopped;
 };

@@ -25,9 +25,7 @@ public:
 	size_t Size() const noexcept;
 	bool Empty() const noexcept;
 	common::Message& operator[](size_t index);
-	std::mutex& GetMutex();
 
 private:
 	std::vector<common::Message> m_messages;
-	std::shared_ptr<std::mutex> m_sharedMutex;
 };

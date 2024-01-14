@@ -15,10 +15,10 @@ Turn::Turn(uint8_t turnNumber) :
 }
 
 Turn::Turn(const Turn& other) :
-	m_turnNumber{ other.m_turnNumber },
-	m_word{ other.m_word },
-	m_showLetterIDs{ other.m_showLetterIDs },
-	m_playStartTime{ other.m_playStartTime }
+	m_turnNumber{ other.m_turnNumber.load() },
+	m_word{ other.m_word.Get() },
+	m_showLetterIDs{ std::move(other.m_showLetterIDs.Get()) },
+	m_playStartTime{ other.m_playStartTime.Get() }
 {
 	/* empty */
 }
@@ -27,10 +27,10 @@ Turn& Turn::operator=(const Turn& other)
 {
 	if (this == &other)
 		return *this;
-	m_turnNumber = other.m_turnNumber;
-	m_word = other.m_word;
-	m_showLetterIDs = other.m_showLetterIDs;
-	m_playStartTime = other.m_playStartTime;
+	m_turnNumber = other.m_turnNumber.load();
+	m_word = other.m_word.Get();
+	m_showLetterIDs = std::move(other.m_showLetterIDs.Get());
+	m_playStartTime = other.m_playStartTime.Get();
 
 	return *this;
 }
@@ -47,12 +47,12 @@ void Turn::SetTurnNumber(uint8_t turnNumber) noexcept
 
 chr::seconds Turn::GetTimer() const noexcept
 {
-	return chr::duration_cast<chr::seconds>(chr::system_clock::now() - m_playStartTime);
+	return chr::duration_cast<chr::seconds>(chr::system_clock::now() - m_playStartTime.Get());
 }
 
 std::string Turn::GetWord() const noexcept
 {
-	return m_word;
+	return m_word.Get();
 }
 
 void Turn::SetWord(const std::string& word) noexcept
@@ -65,25 +65,20 @@ void Turn::SetWord(std::string&& word) noexcept
 	m_word = std::move(word);
 }
 
-void Turn::SetPlayersMutex(std::shared_ptr<std::mutex> playersMutex) noexcept
+void Turn::Reset(utils::ThreadSafe<std::vector<Player>>& players, size_t drawingPlayerID)
 {
-	m_playersMutex = playersMutex;
+	Reset(players, players.GetRef()[drawingPlayerID]);
 }
 
-void Turn::Reset(std::vector<Player>& players, size_t drawingPlayerID)
-{
-	Reset(players, players[drawingPlayerID]);
-}
-
-void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
+void Turn::Reset(utils::ThreadSafe<std::vector<Player>>& players, Player& drawingPlayer)
 {
 	m_turnNumber++;
-	m_word = "";
+	m_word.Set("");
 
 	{
-		std::lock_guard<std::mutex> lock{ *m_playersMutex };
+		std::lock_guard<std::mutex> lock{ players.GetMutex() };
 
-		std::ranges::for_each(players, [](Player& player) {
+		std::ranges::for_each(players.GetRef(), [](Player& player) {
 			player.SetGuessStatus(false);
 			player.ResetCurrentScore();
 			player.SetGameRole(common::game::PlayerRole::GUESSING);
@@ -96,7 +91,7 @@ void Turn::Reset(std::vector<Player>& players, Player& drawingPlayer)
 	std::cout << "Turn reset" << std::endl;
 }
 
-void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, bool& m_stopped)
+void Turn::Start(const utils::ThreadSafe<std::vector<Player>>& players, chr::seconds drawingTime, bool& m_stopped)
 {
 	std::cout << "Turn started" << std::endl;
 
@@ -106,9 +101,9 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 		std::this_thread::sleep_for(chr::seconds{ 1 });
 
 		{
-			/*std::lock_guard<std::mutex> lock{*m_playersMutex};
+			/*std::lock_guard<std::mutex> lock{ players.GetMutex() };
 
-			if (std::ranges::all_of(players, [](const Player& player) {
+			if (std::ranges::all_of(players.GetRef(), [](const Player& player) {
 				return player.GetGuessStatus();
 				}))
 			{
@@ -117,7 +112,7 @@ void Turn::Start(const std::vector<Player>& players, chr::seconds drawingTime, b
 			}*/
 		}
 
-	} while (!m_stopped && chr::system_clock::now() - m_playStartTime < drawingTime);
+	} while (!m_stopped && chr::system_clock::now() - m_playStartTime.Get() < drawingTime);
 
 	std::cout << "Turn over" << std::endl;
 }

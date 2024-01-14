@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include "constantLiterals.h"
+
 Game::Game() noexcept :
 	m_players{},
 	m_roundNumber{ 0 },
@@ -9,10 +11,9 @@ Game::Game() noexcept :
 	m_turn{},
 	m_image{},
 	m_chat{},
-	m_playersSharedMutex{ std::make_shared<std::mutex>() },
 	m_stopped{ false }
 {
-	m_turn.SetPlayersMutex(m_playersSharedMutex);
+	/* empty */
 }
 
 Game::Game(Game&& other) noexcept :
@@ -23,14 +24,12 @@ Game::Game(Game&& other) noexcept :
 	m_turn{ std::move(other.m_turn) },
 	m_image{ std::move(other.m_image) },
 	m_chat{ std::move(other.m_chat) },
-	m_gameState{ std::move(other.m_gameState) },
-	m_playersSharedMutex{ std::move(other.m_playersSharedMutex) },
+	m_gameState{ std::move(other.m_gameState.load()) },
 	m_stopped{ other.m_stopped }
 {
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
-	other.m_playersSharedMutex.reset();
 }
 
 Game& Game::operator=(Game&& other) noexcept
@@ -47,31 +46,30 @@ Game& Game::operator=(Game&& other) noexcept
 	m_gameSettings = std::move(other.m_gameSettings);
 	m_image = std::move(other.m_image);
 	m_chat = std::move(other.m_chat);
-	m_gameState = std::move(other.m_gameState);
-	m_playersSharedMutex = std::move(other.m_playersSharedMutex);
+	m_gameState = other.m_gameState.load();
 	m_stopped = other.m_stopped;
 
 	other.m_roundNumber = 0;
 	other.m_ownerID = 0;
 	other.m_gameState = common::game::GameState::NONE;
-	other.m_playersSharedMutex.reset();
 	other.m_stopped = true;
 
 	return *this;
 }
 
-const std::vector<Player>& Game::GetPlayers() const
+const std::vector<Player>& Game::GetPlayers()
 {
-	return m_players;
+	return std::as_const(m_players.GetRef());
 }
 
-const Player& Game::GetPlayer(const std::string& name) const
+const Player& Game::GetPlayer(const std::string& name)
 {
-	if (const auto playerFoundIt{ std::ranges::find_if(m_players,
+	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	if (const auto playerFoundIt{ std::ranges::find_if(m_players.GetRef(),
 				[&name](const Player& player) -> bool {
 			return player.GetName() == name;
 		}) };
-		playerFoundIt != m_players.end())
+		playerFoundIt != m_players.GetRef().end())
 	{
 		return *playerFoundIt;
 	}
@@ -84,29 +82,24 @@ uint8_t Game::GetRoundNumber() const
 	return m_roundNumber;
 }
 
-common::game::GameSettings& Game::GetGameSettings()
+common::game::GameSettings Game::GetGameSettings()
 {
 	return m_gameSettings;
 }
 
-Turn& Game::GetTurn()
+void Game::SetGameSettings(common::game::GameSettings gameSettings)
+{
+	m_gameSettings = gameSettings;
+}
+
+const Turn& Game::GetTurn() const
 {
 	return m_turn;
 }
 
-Image& Game::GetImage()
-{
-	return m_image;
-}
-
-Chat& Game::GetChat()
-{
-	return m_chat;
-}
-
 common::game::GameState Game::GetGameState() const
 {
-	return m_gameState;
+	return m_gameState.load();
 }
 
 void Game::SetGameState(common::game::GameState gameState)
@@ -116,7 +109,30 @@ void Game::SetGameState(common::game::GameState gameState)
 
 std::mutex& Game::GetPlayersMutex()
 {
-	return *m_playersSharedMutex;
+	return m_players.GetMutex();
+}
+
+void Game::SetTurnWord(std::string&&)
+{
+	m_turn.SetWord(std::move(m_turn.GetWord()));
+}
+
+void Game::SetTurnWord(const std::string& word)
+{
+	m_turn.SetWord(word);
+}
+
+crow::json::wvalue Game::GetUpdatesJsonAfter(uint64_t timestamp)
+{
+	std::lock_guard<std::mutex> lock{ m_image.GetMutex() };
+	return Image::UpdatesToJson(m_image.GetRef().GetUpdatesAfter(timestamp));
+}
+
+void Game::ChatEmplace(common::Message&& message)
+{
+	m_chat.GetMutex().lock();
+	m_chat.GetRef().Emplace(std::move(message));
+	m_chat.GetMutex().unlock();
 }
 
 bool Game::IsRunning() const
@@ -129,7 +145,7 @@ void Game::Run()
 	m_stopped = false;
 	Reset();
 
-	std::unordered_map<std::string, bool> playersDone{ m_players.size() };
+	std::unordered_map<std::string, bool> playersDone{ m_players.GetRef().size() };
 
 	const auto& findNextPlayerLambda{ [&playersDone](std::vector<Player>& m_players) {
 			return std::ranges::find_if(m_players,
@@ -145,23 +161,25 @@ void Game::Run()
 
 	while (!m_stopped && m_roundNumber < m_gameSettings.m_roundCount)
 	{
-		std::ranges::for_each(m_players, [&playersDone](const Player& player) {
+		m_players.GetMutex().lock();
+		std::ranges::for_each(m_players.GetRef(), [&playersDone](const Player& player) {
 			playersDone[player.GetName()] = false;
 			});
+		m_players.GetMutex().unlock();
 
 		m_turn.SetTurnNumber(0);
 
 		m_image.GetMutex().lock();
-		m_image.Clear();
+		m_image.GetRef().Clear();
 		m_image.GetMutex().unlock();
 
 		m_chat.GetMutex().lock();
-		m_chat.Clear();
+		m_chat.GetRef().Clear();
 		m_chat.GetMutex().unlock();
 
-		for (auto currPlayerIt{ m_players.begin() };
-			currPlayerIt != m_players.end();
-			currPlayerIt = findNextPlayerLambda(m_players))
+		for (auto currPlayerIt{ m_players.GetRef().begin() };
+			currPlayerIt != m_players.GetRef().end();
+			currPlayerIt = findNextPlayerLambda(m_players.GetRef()))
 		{
 			playersDone[currPlayerIt->GetName()] = true;
 			m_turn.Reset(m_players, *currPlayerIt);
@@ -180,19 +198,19 @@ void Game::Run()
 			m_gameState = common::game::GameState::DRAW_AND_GUESS;
 			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.m_drawTime }, m_stopped);
 
+			RemoveDisconnectedPlayers();
+
 			{
-				std::lock_guard<std::mutex> lock{ *m_playersSharedMutex };
+				std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
 
-				RemoveDisconnectedPlayers();
-
-				if (m_players.empty())
+				if (m_players.GetRef().empty())
 				{
 					m_gameState = common::game::GameState::NONE;
 					m_stopped = true;
 					return;
 				}
 
-				std::ranges::sort(m_players, std::greater<>{}, & Player::GetScore);
+				std::ranges::sort(m_players.GetRef(), std::greater<>{}, & Player::GetScore);
 			}
 		}
 
@@ -203,23 +221,33 @@ void Game::Run()
 	m_stopped = true;
 }
 
+bool Game::ChatEmpty()
+{
+	std::lock_guard<std::mutex> lock{ m_chat.GetMutex() };
+	return m_chat.GetRef().Empty();
+}
+
+crow::json::wvalue Game::GetMessagesOrderedJsonList(uint64_t start, const std::string& author)
+{
+	std::lock_guard<std::mutex> lock{ m_chat.GetMutex() };
+	return m_chat.GetRef().GetMessagesOrderedJsonList(start, author);
+}
+
 void Game::RemoveDisconnectedPlayers()
 {
-	m_players.erase(
-		std::remove_if(m_players.begin(), m_players.end(),
+	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	m_players.GetRef().erase(
+		std::remove_if(m_players.GetRef().begin(), m_players.GetRef().end(),
 			[](const Player& player) { return !player.IsConnected(); }),
-		m_players.end());
+		m_players.GetRef().end());
 }
 
 void Game::Reset()
 {
-	m_gameState = common::game::GameState::NONE;
+	m_gameState.store(common::game::GameState::NONE);
 	m_roundNumber = 0;
-	m_turn.SetPlayersMutex(m_playersSharedMutex);
 
-	m_playersSharedMutex->lock();
 	RemoveDisconnectedPlayers();
-	m_playersSharedMutex->unlock();
 }
 
 void Game::Stop()
@@ -229,27 +257,49 @@ void Game::Stop()
 		std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
 }
 
+void Game::AppendImageUpdates(const std::vector<std::unordered_map<std::string, std::variant<int64_t, std::string>>>& jsonVector)
+{
+	const static std::string pointXStrKey{ literals::jsonKeys::draw::pointX };
+	const static std::string pointYStrKey{ literals::jsonKeys::draw::pointY };
+	const static std::string colorStrKey{ literals::jsonKeys::draw::color };
+
+	std::lock_guard<std::mutex> lock{ m_image.GetMutex() };
+	for (const auto& pointMap : jsonVector)
+	{
+		try
+		{
+			common::img::Point point{
+				std::get<int64_t>(pointMap.at(pointXStrKey)),
+				std::get<int64_t>(pointMap.at(pointYStrKey)),
+				std::get<int64_t>(pointMap.at(colorStrKey))
+			};
+
+			m_image.GetRef().AddUpdate(common::img::Update{point, utils::MillisFromDateTime(std::chrono::system_clock::now())});
+		}
+		catch (const std::exception& exception)
+		{
+			throw exception;
+		}
+	}
+}
+
 void Game::RemovePlayer(const std::string& name)
 {
-	/*for (auto& player : m_players)
-		if (player.GetName() == name)
-		{
-			m_players.erase(std::remove(m_players.begin(), m_players.end(), player), m_players.end());
-			return;
-		}*/
-
-	m_players.erase(std::remove_if(m_players.begin(), m_players.end(),
+	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	m_players.GetRef().erase(std::remove_if(m_players.GetRef().begin(), m_players.GetRef().end(),
 		[&name](const Player& player) {
 			return player.GetName() == name;
-		}), m_players.end());
+		}), m_players.GetRef().end());
 }
 
 void Game::AddPlayer(const Player& player)
 {
-	m_players.emplace_back(player);
+	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	m_players.GetRef().emplace_back(player);
 }
 
 void Game::AddPlayer(Player&& player)
 {
-	m_players.emplace_back(std::move(player));
+	std::lock_guard<std::mutex> lock{ m_players.GetMutex() };
+	m_players.GetRef().emplace_back(std::move(player));
 }

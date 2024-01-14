@@ -78,7 +78,7 @@ namespace common
 			uint16_t m_chooseWordOptionCount;
 
 			GameSettings() noexcept;
-			GameSettings(uint8_t roundCount, uint8_t drawTime, uint8_t chooseWordOtionCount) noexcept;
+			GameSettings(uint16_t roundCount, uint16_t drawTime, uint16_t chooseWordOtionCount) noexcept;
 
 			GameSettings(const GameSettings& other) noexcept = default;
 			GameSettings& operator=(const GameSettings& other) noexcept = default;
