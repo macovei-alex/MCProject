@@ -81,8 +81,8 @@ std::vector<common::Message> services::ReceiveNewMessages(const std::string& use
 
 		std::ranges::for_each(messagesJsonList, [&messages](const auto& messageJson) {
 			messages.emplace_back(common::Message{
-				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
 				std::string{ std::move(messageJson[literals::jsonKeys::message::text].s()) },
+				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
 				messageJson[literals::jsonKeys::message::timestamp].u() });
 		});
 

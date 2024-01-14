@@ -34,8 +34,10 @@ void ChatThread::run()
 				QList<common::Message> messagesQList;
 
 				auto messagesVector{ services::ReceiveNewMessages(username.toStdString(), roomID) };
-				for(const auto& message : messagesVector)
-					messagesQList.push_back(common::Message{ message.text, message.author });
+				for (auto& message : messagesVector)
+				{
+					messagesQList.emplace_back(message);
+				}
 
 				emit ChatSignal(messagesQList);
 
