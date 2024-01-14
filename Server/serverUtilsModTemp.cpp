@@ -1,6 +1,5 @@
 #include "serverUtilsModTemp.h";
 
-#include <unordered_map>
 #include <regex>
 #include <windows.h>
 #include "..\UtilsDLL\utilsDLL.h"

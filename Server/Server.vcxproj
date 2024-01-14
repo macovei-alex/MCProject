@@ -160,8 +160,6 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="test handlers.cpp" />
     <ClCompile Include="Turn.cpp" />
-    <ClCompile Include="serverUtilsMod.cpp" />
-    <ClCompile Include="serverUtilsMod.cppm" />
     <ClCompile Include="serverUtilsModTemp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -192,9 +190,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{a608b73c-5d6c-49ee-8f27-02e9cbee3670}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Logger\Logger.vcxproj">
-      <Project>{da4eecc0-5d97-4535-971b-8adbea611fdf}</Project>
     </ProjectReference>
     <ProjectReference Include="..\TemporaryLogger\TemporaryLogger.vcxproj">
       <Project>{a9c8cb5d-f9e1-4b30-9ef3-db16e8b4dfcc}</Project>

@@ -30,12 +30,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="serverUtilsMod.cppm">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="serverUtilsMod.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Database.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

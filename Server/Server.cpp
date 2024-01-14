@@ -71,12 +71,6 @@ Server::~Server()
 		gameStopAction.second.wait(); 
 		});
 
-	/*for (auto& [gameID, gameStopAction] : gameStopActions)
-	{
-		Log(std::format("Waiting for game < {} > to stop", gameID));
-		gameStopAction.wait();
-	}*/
-
 	Log("All games stopped");
 
 	Log("Server stopped");
