@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QPixmap>
 #include <QLabel>
+#include <memory>
 
 #include "Line.h"
 #include "common.h"

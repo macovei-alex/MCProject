@@ -352,7 +352,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		{ 
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
 			updateChosenWordLabel(m_onlineData.chosenWord);
-			m_imageThread->Pause();
 			m_chatThread->Unpause();
 		}
 
@@ -368,7 +367,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
 		{
 			m_onlineData.chosenWord = "";
-			m_imageThread->Unpause();
 			m_chatThread->Unpause();
 		}
 	}
@@ -376,11 +374,8 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 	else if (m_onlineData.gameState == common::game::GameState::NONE)
 	{
 		m_onlineData.chosenWord = "";
-		auto playerScores = services::ReceivePlayerScores(m_onlineData.roomID, std::cerr);
-		updatePlayerScoreLabel(playerScores);
-
-		m_imageThread->Pause();
 		m_chatThread->Pause();
+		m_imageThread->Pause();
 	}
 }
 

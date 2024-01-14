@@ -26,7 +26,7 @@ uint64_t services::CreateRoom(const std::string& username, std::ostream& outStre
 	catch (const std::exception& exception)
 	{
 		errStream << std::format("[Create room]: {}\n", exception.what());
-		return MAXUINT64;
+		return UINT64_MAX;
 	}
 }
 

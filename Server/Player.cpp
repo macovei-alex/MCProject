@@ -118,15 +118,15 @@ int Player::CalculateScoreGuessingPlayer(uint16_t seconds, uint32_t maxSeconds)
 {
 	if (seconds < maxSeconds / 2)
 	{
-		m_currentScore += 100;
+		m_currentScore = 100;
 	}
 	else if (seconds < maxSeconds)
 	{
-		m_currentScore += ((maxSeconds - seconds) * 100) / maxSeconds;
+		m_currentScore = ((maxSeconds - seconds) * 100) / maxSeconds;
 	}
 	else
 	{
-		m_currentScore += -50;
+		m_currentScore = -50;
 	}
 
 	return m_currentScore;

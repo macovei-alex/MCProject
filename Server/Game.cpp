@@ -169,14 +169,6 @@ void Game::Run()
 
 		m_turn.SetTurnNumber(0);
 
-		m_image.GetMutex().lock();
-		m_image.GetRef().Clear();
-		m_image.GetMutex().unlock();
-
-		m_chat.GetMutex().lock();
-		m_chat.GetRef().Clear();
-		m_chat.GetMutex().unlock();
-
 		for (auto currPlayerIt{ m_players.GetRef().begin() };
 			currPlayerIt != m_players.GetRef().end();
 			currPlayerIt = findNextPlayerLambda(m_players.GetRef()))
@@ -184,21 +176,29 @@ void Game::Run()
 			playersDone[currPlayerIt->GetName()] = true;
 			m_turn.Reset(m_players, *currPlayerIt);
 
-			m_gameState = common::game::GameState::PICK_WORD;
+			m_gameState.store(common::game::GameState::PICK_WORD);
 
 			while (!m_stopped && m_turn.GetWord() == "")
 				std::this_thread::sleep_for(std::chrono::milliseconds{ 500 });
 
 			if (m_stopped)
 			{
-				m_gameState = common::game::GameState::NONE;
+				m_gameState.store(common::game::GameState::NONE);
 				return;
 			}
 
-			m_gameState = common::game::GameState::DRAW_AND_GUESS;
+			m_gameState.store(common::game::GameState::DRAW_AND_GUESS);
 			m_turn.Start(m_players, std::chrono::seconds{ m_gameSettings.m_drawTime }, m_stopped);
 
 			RemoveDisconnectedPlayers();
+
+			m_image.GetMutex().lock();
+			m_image.GetRef().Clear();
+			m_image.GetMutex().unlock();
+
+			m_chat.GetMutex().lock();
+			m_chat.GetRef().Clear();
+			m_chat.GetMutex().unlock();
 
 			{
 				LOCK(m_players.GetMutex());

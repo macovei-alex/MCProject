@@ -5,7 +5,7 @@ Server& Server::ChatHandlers()
 	CROW_ROUTE(m_app, literals::routes::game::chat::param).methods(crow::HTTPMethod::Put)
 		([this](const crow::request& request, uint64_t gameID) {
 
-		auto gameIt = this->m_games.find(gameID);
+		auto gameIt{ this->m_games.find(gameID) };
 		if (gameIt == this->m_games.end())
 		{
 			auto responseMessage{ std::format("Invalid room ID < {} >", gameID) };
@@ -41,12 +41,13 @@ Server& Server::ChatHandlers()
 		if (game.GetTurn().GetWord() == message.text)
 		{
 			Log(std::format("Player < {} > guessed the word < {} >", message.author, message.text));
-			const auto& player{ game.GetPlayer(message.author) };
+			game.SetPlayerGuessStatus(message.author, true);
+			return crow::response{ literals::correctGuessResponse };
 		}
 
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
 		gameIt->second.ChatEmplace(std::move(message));
-		return crow::response{ 200 };
+		return crow::response{ literals::incorrectGuessResponse };
 			});
 
 
@@ -55,7 +56,7 @@ Server& Server::ChatHandlers()
 
 		static const crow::json::wvalue	errorValue{ crow::json::wvalue::list{{literals::error, literals::emptyCString}} };
 
-		auto gameIt = this->m_games.find(gameID);
+		auto gameIt{ this->m_games.find(gameID) };
 		if (gameIt == this->m_games.end())
 		{
 			Log(std::format("Invalid room ID < {} >", gameID), Logger::Level::Error);

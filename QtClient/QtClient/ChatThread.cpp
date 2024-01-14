@@ -22,7 +22,7 @@ void ChatThread::run()
 	{
 		if (IsPaused())
 		{
-			QThread::msleep(500);
+			QThread::msleep(1000);
 			continue;
 		}
 
@@ -33,7 +33,7 @@ void ChatThread::run()
 
 				emit ChatSignal(QList<common::Message>());
 
-				QThread::msleep(500);
+				QThread::msleep(1000);
 			}
 		}
 		catch (const std::exception& e)
