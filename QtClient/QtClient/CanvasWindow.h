@@ -98,9 +98,9 @@ private:
 
 #ifdef ONLINE
 	OnlineData m_onlineData;
-	ImageThread* m_imageThread;
-	GameStateThread* m_gameStateThread;
-	ChatThread* m_chatThread;
+	std::unique_ptr<ImageThread> m_imageThread;
+	std::unique_ptr<GameStateThread> m_gameStateThread;
+	std::unique_ptr<ChatThread> m_chatThread;
 	bool m_keepGoing;
 #endif
 

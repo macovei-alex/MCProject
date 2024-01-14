@@ -56,9 +56,9 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 	m_drawState{ DrawingState::DRAWING },
 	m_keepGoing{ true },
 	m_onlineData{ roomID, username },
-	m_imageThread{ new ImageThread(roomID, m_keepGoing, this) },
-	m_gameStateThread{ new GameStateThread(roomID, m_keepGoing, this) },
-	m_chatThread{ new ChatThread(roomID, username, m_keepGoing, this) }
+	m_imageThread{ std::make_unique<ImageThread>(roomID, m_keepGoing, this) },
+	m_gameStateThread{ std::make_unique<GameStateThread>(roomID, m_keepGoing, this) },
+	m_chatThread{ std::make_unique<ChatThread>(roomID, username, m_keepGoing, this) }
 {
 	ui->setupUi(this);
 
@@ -76,14 +76,14 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	connect(m_imageThread, &ImageThread::ImageSignal, this, &CanvasWindow::HandleImage);
-	connect(m_imageThread, &ImageThread::finished, m_imageThread, &QObject::deleteLater);
+	connect(&*m_imageThread, &ImageThread::ImageSignal, this, &CanvasWindow::HandleImage);
+	connect(&*m_imageThread, &ImageThread::finished, &*m_imageThread, &QObject::deleteLater);
 
-	connect(m_gameStateThread, &GameStateThread::GameStateSignal, this, &CanvasWindow::HandleGameState);
-	connect(m_gameStateThread, &GameStateThread::finished, m_gameStateThread, &QObject::deleteLater);
+	connect(&*m_gameStateThread, &GameStateThread::GameStateSignal, this, &CanvasWindow::HandleGameState);
+	connect(&*m_gameStateThread, &GameStateThread::finished, &*m_gameStateThread, &QObject::deleteLater);
 
-	connect(m_chatThread, &ChatThread::ChatSignal, this, &CanvasWindow::HandleChat);
-	connect(m_chatThread, &ChatThread::finished, m_chatThread, &QObject::deleteLater);
+	connect(&*m_chatThread, &ChatThread::ChatSignal, this, &CanvasWindow::HandleChat);
+	connect(&*m_chatThread, &ChatThread::finished, &*m_chatThread, &QObject::deleteLater);
 
 	m_imageThread->start();
 	m_gameStateThread->start();
@@ -292,9 +292,9 @@ void CanvasWindow::closeEvent(QCloseEvent* event)
 	m_gameStateThread->wait();
 	m_chatThread->wait();
 
-	delete m_imageThread;
-	delete m_gameStateThread;
-	delete m_chatThread;
+	m_imageThread;
+	m_gameStateThread;
+	m_chatThread;
 #endif
 
 	parentWidget()->show();

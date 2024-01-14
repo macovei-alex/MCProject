@@ -42,6 +42,7 @@ Server& Server::ChatHandlers()
 		{
 			Log(std::format("Player < {} > guessed the word < {} >", message.author, message.text));
 			game.SetPlayerGuessStatus(message.author, true);
+			gameIt->second.ChatEmplace(std::move(message));
 			return crow::response{ literals::correctGuessResponse };
 		}
 
