@@ -385,19 +385,20 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 
 
 void CanvasPaint::HandleChat(const QList<common::Message>& messages)
-{
-	for (const auto& message : messages)
+{ auto recievedMessages{ services::ReceiveNewMessages(m_onlineData.username.toStdString()
+	, m_onlineData.roomID) };
+	for (const auto& message : recievedMessages)
 	{
-		qDebug() << "Received message: "
-			<< QString::fromStdString(message.author) << " "
-			<< QString::fromStdString(message.text);
+		QString formattedMessage{ QString{"[%1]: %2"}
+		.arg(QString::fromStdString(message.author))
+		.arg(QString::fromStdString(message.text)) };
+		qDebug() << " Recieved message: " << formattedMessage << "\n";
+		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
+	
 	}
-	for (const auto& message : messages)
-	{
-		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" +
-			QString::fromStdString(message.author) +
-			": " + QString::fromStdString(message.text));
-	}
+	ui->chatMessages->update();
+
+
 }
 
 void CanvasPaint::SetAllThreadsPauseStatus(bool paused)
