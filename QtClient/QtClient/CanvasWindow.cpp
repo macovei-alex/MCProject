@@ -48,7 +48,6 @@ void CanvasWindow::setRoomID(uint64_t roomID)
 	this->roomID = roomID;
 	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
-	updateChosenWordLabel("none");
 }
 
 #ifdef ONLINE
@@ -351,7 +350,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		if (chooseWordWindow->exec() == QDialog::Accepted)
 		{ 
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
-			updateChosenWordLabel(m_onlineData.chosenWord);
 			m_chatThread->Unpause();
 		}
 
@@ -392,7 +390,7 @@ void CanvasWindow::HandleChat(const QList<common::Message>& messages)
 		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
 	
 	}
-	ui->gameChatLabel->update();	
+	ui->gameChatLabel->update();
 }
 
 void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
@@ -409,11 +407,6 @@ void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
 		m_gameStateThread->Unpause();
 		m_chatThread->Unpause();
 	}
-}
-
-void CanvasWindow::updateChosenWordLabel(const QString& word)
-{
-	ui->chosedWord->setText("Chosen Word: " + word);
 }
 
 void CanvasWindow::updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores)
