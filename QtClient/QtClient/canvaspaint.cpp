@@ -1,6 +1,7 @@
 ﻿#include "canvaspaint.h"
 #include "mainwindow.h"
 #include "ui_canvaspaint.h"
+#include "choosewordwindow.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -339,15 +340,16 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		if (m_onlineData.playerRole == common::game::PlayerRole::DRAWING)
 		{
 			auto words{ services::ReceiveWordOptions(m_onlineData.roomID) };
+			choosewordwindow*chooseWordWindow=new choosewordwindow(this);
+			chooseWordWindow->setButtonNames(words);
+			chooseWordWindow->show();
+			
+			delete chooseWordWindow;
 
 			// open choosewordwindow and choose a word
-			for (int i = 0; i < words.size(); i++)
-			{
-				qDebug() << words[i];
-			}
-
+			
 			// send the chosen word
-			services::SendGuessingWord(m_onlineData.roomID, words[0]);
+			//services::SendGuessingWord(m_onlineData.roomID, chosenWord);
 			m_imageThread->Pause();
 		}
 		else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)

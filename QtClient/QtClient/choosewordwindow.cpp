@@ -8,7 +8,7 @@ choosewordwindow::choosewordwindow(QWidget* parent) :
     
 {
     ui->setupUi(this);
-    LoadWords();
+   
 }
 
 choosewordwindow::~choosewordwindow()
@@ -16,39 +16,32 @@ choosewordwindow::~choosewordwindow()
     delete ui;
 }
 
-void choosewordwindow::HandleCloseChoosingWindow()
+void choosewordwindow::setButtonNames(const std::vector<std::string>& words)
 {
-    hide();
-}
-
-QStringList choosewordwindow::readWordsFromFile(const QString& filePath)
-{
-    return QStringList();
-}
-
-QStringList choosewordwindow::loadRandomWords(int count)
-{
-    return QStringList();
-}
-
-void choosewordwindow::LoadWords()
-{
-   
-}
-
-void choosewordwindow::reloadWords()
-{
-}
-void  choosewordwindow::openCanvasPaintWithWord(const QString& chosenWord)
-{
-    accept();
-    if (!canvasPaint)
+    if (words.size() >= 3)
     {
-        canvasPaint = new CanvasPaint(this);
+        ui->firstWordButton->setText(QString::fromStdString(words[0]));
+        ui->secondWordButton->setText(QString::fromStdString(words[1]));
+        ui->thirdWordButton->setText(QString::fromStdString(words[2]));
     }
-    //canvasPaint->setChosenWord(chosenWord);
-    canvasPaint->show();
+    else
+    {
+        
+        qDebug() << "Error: Insufficient words .";
+    }
 }
+
+
+//void  choosewordwindow::openCanvasPaintWithWord(const QString& chosenWord)
+//{
+//    accept();
+//    if (!canvasPaint)
+//    {
+//        canvasPaint = new CanvasPaint(this);
+//    }
+//    //canvasPaint->setChosenWord(chosenWord);
+//    canvasPaint->show();
+//}
 
 void choosewordwindow::on_firstWordButton_clicked()
 {
