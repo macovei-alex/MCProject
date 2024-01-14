@@ -36,13 +36,19 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 
 	roomLabel = new QLabel(this);
 	roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	chosedWord = new QLabel(this);
+	chosedWord->setText("Chosen Word: none");
+	chosedWord->move(10, 10); 
+	chosedWord->show();
 }
+
 
 void CanvasPaint::setRoomID(uint64_t roomID)
 {
 	this->roomID = roomID;
 	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
+	updateChosenWordLabel("none");
 }
 
 #ifdef ONLINE
@@ -340,9 +346,9 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		m_onlineData.chosenWord = "not empty";
 
 		if (chooseWordWindow->exec() == QDialog::Accepted)
-		{
+		{ 
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
-
+			updateChosenWordLabel(m_onlineData.chosenWord);
 			m_imageThread->Pause();
 			m_chatThread->Unpause();
 		}
@@ -403,6 +409,11 @@ void CanvasPaint::SetAllThreadsPauseStatus(bool paused)
 		m_gameStateThread->Unpause();
 		m_chatThread->Unpause();
 	}
+}
+
+void CanvasPaint::updateChosenWordLabel(const QString& word)
+{
+	ui->chosedWord->setText("Chosen Word: " + word);
 }
 
 void CanvasPaint::SetAllButtonsEnabled(bool enabled)

@@ -34,12 +34,14 @@ public:
     QLabel *roomLabel;
     QPushButton *startGameButton;
     QLabel *timerLabel;
+    QLabel *playerScore;
+    QLabel *chosedWord;
 
     void setupUi(QDialog *CanvasPaint)
     {
         if (CanvasPaint->objectName().isEmpty())
             CanvasPaint->setObjectName("CanvasPaint");
-        CanvasPaint->resize(1852, 967);
+        CanvasPaint->resize(1888, 967);
         resetCanvas = new QPushButton(CanvasPaint);
         resetCanvas->setObjectName("resetCanvas");
         resetCanvas->setGeometry(QRect(1200, 720, 80, 24));
@@ -71,13 +73,19 @@ public:
         undoButton->setGeometry(QRect(1400, 690, 80, 24));
         roomLabel = new QLabel(CanvasPaint);
         roomLabel->setObjectName("roomLabel");
-        roomLabel->setGeometry(QRect(1320, 750, 49, 21));
+        roomLabel->setGeometry(QRect(1300, 720, 61, 21));
         startGameButton = new QPushButton(CanvasPaint);
         startGameButton->setObjectName("startGameButton");
         startGameButton->setGeometry(QRect(1400, 720, 75, 24));
         timerLabel = new QLabel(CanvasPaint);
         timerLabel->setObjectName("timerLabel");
-        timerLabel->setGeometry(QRect(1220, 750, 49, 16));
+        timerLabel->setGeometry(QRect(1210, 750, 51, 16));
+        playerScore = new QLabel(CanvasPaint);
+        playerScore->setObjectName("playerScore");
+        playerScore->setGeometry(QRect(1020, 20, 151, 20));
+        chosedWord = new QLabel(CanvasPaint);
+        chosedWord->setObjectName("chosedWord");
+        chosedWord->setGeometry(QRect(1020, 50, 151, 16));
 
         retranslateUi(CanvasPaint);
 
@@ -96,6 +104,8 @@ public:
         roomLabel->setText(QCoreApplication::translate("CanvasPaint", "Room:", nullptr));
         startGameButton->setText(QCoreApplication::translate("CanvasPaint", "Start Game", nullptr));
         timerLabel->setText(QString());
+        playerScore->setText(QCoreApplication::translate("CanvasPaint", "Your Score:", nullptr));
+        chosedWord->setText(QCoreApplication::translate("CanvasPaint", "word: ", nullptr));
     } // retranslateUi
 
 };
