@@ -17,7 +17,8 @@
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog{ parent },
 	ui{ new Ui::CanvasPaint },
-	m_drawState{ DrawingState::DRAWING }
+	m_drawState{ DrawingState::DRAWING }, 
+	m_chooseWordWindowOpen{ false }
 {
 	ui->setupUi(this);
 
@@ -217,6 +218,11 @@ void CanvasPaint::ClearCanvas()
 	update();
 }
 
+void CanvasPaint::setChooseWordWindowOpen(bool isOpen)
+{
+	m_chooseWordWindowOpen = isOpen;
+}
+
 void CanvasPaint::on_resetCanvas_clicked()
 {
 	/*ClearCanvas();
@@ -317,6 +323,8 @@ void CanvasPaint::HandleImage(QList<Line>* newLines)
 
 void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
+	if (m_chooseWordWindowOpen)
+		return;
 	if (m_onlineData.gameState != gameStatePair.first)
 	{
 		m_onlineData.gameState = gameStatePair.first;

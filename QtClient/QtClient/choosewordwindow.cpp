@@ -4,15 +4,26 @@
 
 choosewordwindow::choosewordwindow(QWidget* parent) :
     QDialog(parent),
-    ui(new Ui::choosewordwindow)
+    ui(new Ui::choosewordwindow),
+    canvasPaint(nullptr)
     
 {
     ui->setupUi(this);
+    if (auto canvas = dynamic_cast<CanvasPaint*>(parent))
+    {
+        canvas->setChooseWordWindowOpen(true);
+        canvasPaint = canvas;
+    }
    
 }
 
 choosewordwindow::~choosewordwindow()
 {
+
+    if (canvasPaint)
+    {
+        canvasPaint->setChooseWordWindowOpen(false);
+    }
     delete ui;
 }
 
@@ -35,18 +46,6 @@ QString choosewordwindow::getChosenWord() const
 {
     return chosenWord;
 }
-
-
-//void  choosewordwindow::openCanvasPaintWithWord(const QString& chosenWord)
-//{
-//    accept();
-//    if (!canvasPaint)
-//    {
-//        canvasPaint = new CanvasPaint(this);
-//    }
-//    //canvasPaint->setChosenWord(chosenWord);
-//    canvasPaint->show();
-//}
 
 void choosewordwindow::on_firstWordButton_clicked()
 {

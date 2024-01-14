@@ -49,6 +49,7 @@ public:
 public:
 	void setRoomID(uint64_t roomID);
 	void ClearCanvas();
+	void setChooseWordWindowOpen(bool isOpen);
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -89,7 +90,6 @@ private:
 	QPoint lastPoint;
 	QLabel* roomLabel;
 
-
 	DrawingState m_drawState;
 	Ui::CanvasPaint* ui;
 	QString chosenWord;
@@ -100,6 +100,8 @@ private:
 	GameStateThread* m_gameStateThread;
 	ChatThread* m_chatThread;
 	bool m_keepGoing;
+	bool m_chooseWordWindowOpen;
+
 #endif
 
 private:
