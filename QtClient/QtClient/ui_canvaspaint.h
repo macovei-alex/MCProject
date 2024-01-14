@@ -82,10 +82,10 @@ public:
         timerLabel->setGeometry(QRect(1210, 750, 51, 16));
         playerScore = new QLabel(CanvasPaint);
         playerScore->setObjectName("playerScore");
-        playerScore->setGeometry(QRect(1020, 20, 151, 20));
+        playerScore->setGeometry(QRect(1020, 29, 151, 21));
         chosedWord = new QLabel(CanvasPaint);
         chosedWord->setObjectName("chosedWord");
-        chosedWord->setGeometry(QRect(1020, 50, 151, 16));
+        chosedWord->setGeometry(QRect(1020, 60, 151, 16));
 
         retranslateUi(CanvasPaint);
 
