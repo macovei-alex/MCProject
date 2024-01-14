@@ -3,8 +3,7 @@
 #include "constantLiterals.h"
 
 Chat::Chat() noexcept:
-	m_messages{},
-	m_sharedMutex{ std::make_shared<std::mutex>() }
+	m_messages{}
 {
 	/* empty */
 }
@@ -66,9 +65,4 @@ bool Chat::Empty() const noexcept
 common::Message& Chat::operator[](size_t index)
 {
 	return m_messages[index];
-}
-
-std::mutex& Chat::GetMutex()
-{
-	return *m_sharedMutex;
 }

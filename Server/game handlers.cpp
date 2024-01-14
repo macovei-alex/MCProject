@@ -42,14 +42,12 @@ Server& Server::GameHandlers()
 
 		try
 		{
-			uint16_t drawTime{ (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second) };
-			game.GetGameSettings().m_drawTime = drawTime;
+			common::game::GameSettings gameSettings{
+				static_cast<uint16_t>(std::stoi(jsonMap.find(literals::jsonKeys::settings::drawTime)->second)),
+				static_cast<uint16_t>(std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second)),
+				static_cast<uint16_t>(std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second)) };
 
-			uint16_t roundCount{ (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::roundCount)->second) };
-			game.GetGameSettings().m_roundCount = roundCount;
-
-			uint16_t chooseWordOptionCount{ (uint16_t)std::stoi(jsonMap.find(literals::jsonKeys::settings::chooseWordOptionCount)->second) };
-			game.GetGameSettings().m_chooseWordOptionCount = chooseWordOptionCount;
+			game.SetGameSettings(gameSettings);
 		}
 		catch (...)
 		{
@@ -207,7 +205,7 @@ Server& Server::GameHandlers()
 
 		try
 		{
-			game.GetTurn().SetWord(wordIt->second);
+			game.SetTurnWord(wordIt->second);
 		}
 		catch (const std::exception& exception)
 		{

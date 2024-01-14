@@ -18,15 +18,13 @@ public:
 	void AddUpdate(const common::img::Update& update);
 	void AddUpdate(common::img::Update&& update);
 	void Clear();
-	std::vector<common::img::Update> GetUpdatesAfter(uint64_t timestamp);
-	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp);
-	std::mutex& GetMutex();
+	std::vector<common::img::Update> GetUpdatesAfter(uint64_t timestamp) const;
+	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp) const;
 	
 public:
 	static crow::json::wvalue UpdatesToJson(const std::vector<common::img::Update>& updates);
 
 private:
 	std::vector<common::img::Update> m_updates;
-	std::shared_ptr<std::mutex> m_sharedMutex;
 };
 
