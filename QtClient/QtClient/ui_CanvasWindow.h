@@ -15,7 +15,6 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
@@ -23,11 +22,6 @@ class Ui_CanvasWindow
 {
 public:
     QPushButton *resetCanvas;
-    QWidget *gameChat;
-    QLabel *gameChatLabel;
-    QWidget *chatMessages;
-    QPushButton *messageButton;
-    QLineEdit *messageBox;
     QPushButton *drawButton;
     QPushButton *eraseButton;
     QPushButton *undoButton;
@@ -36,6 +30,9 @@ public:
     QLabel *timerLabel;
     QLabel *playerScore;
     QLabel *chosedWord;
+    QLineEdit *messageBox;
+    QPushButton *messageButton;
+    QLabel *gameChatLabel;
 
     void setupUi(QDialog *CanvasWindow)
     {
@@ -45,23 +42,6 @@ public:
         resetCanvas = new QPushButton(CanvasWindow);
         resetCanvas->setObjectName("resetCanvas");
         resetCanvas->setGeometry(QRect(1200, 720, 80, 24));
-        gameChat = new QWidget(CanvasWindow);
-        gameChat->setObjectName("gameChat");
-        gameChat->setGeometry(QRect(1200, 30, 301, 641));
-        gameChatLabel = new QLabel(gameChat);
-        gameChatLabel->setObjectName("gameChatLabel");
-        gameChatLabel->setGeometry(QRect(110, 10, 81, 21));
-        chatMessages = new QWidget(gameChat);
-        chatMessages->setObjectName("chatMessages");
-        chatMessages->setGeometry(QRect(-20, -130, 381, 781));
-        messageButton = new QPushButton(chatMessages);
-        messageButton->setObjectName("messageButton");
-        messageButton->setGeometry(QRect(220, 730, 80, 24));
-        messageBox = new QLineEdit(chatMessages);
-        messageBox->setObjectName("messageBox");
-        messageBox->setGeometry(QRect(40, 730, 171, 24));
-        messageBox->raise();
-        messageButton->raise();
         drawButton = new QPushButton(CanvasWindow);
         drawButton->setObjectName("drawButton");
         drawButton->setGeometry(QRect(1200, 690, 80, 24));
@@ -82,10 +62,19 @@ public:
         timerLabel->setGeometry(QRect(1210, 750, 51, 16));
         playerScore = new QLabel(CanvasWindow);
         playerScore->setObjectName("playerScore");
-        playerScore->setGeometry(QRect(1020, 29, 151, 21));
+        playerScore->setGeometry(QRect(950, 10, 211, 111));
         chosedWord = new QLabel(CanvasWindow);
         chosedWord->setObjectName("chosedWord");
-        chosedWord->setGeometry(QRect(1020, 60, 151, 16));
+        chosedWord->setGeometry(QRect(760, 40, 171, 41));
+        messageBox = new QLineEdit(CanvasWindow);
+        messageBox->setObjectName("messageBox");
+        messageBox->setGeometry(QRect(1200, 650, 181, 24));
+        messageButton = new QPushButton(CanvasWindow);
+        messageButton->setObjectName("messageButton");
+        messageButton->setGeometry(QRect(1400, 650, 80, 24));
+        gameChatLabel = new QLabel(CanvasWindow);
+        gameChatLabel->setObjectName("gameChatLabel");
+        gameChatLabel->setGeometry(QRect(1200, 60, 271, 571));
 
         retranslateUi(CanvasWindow);
 
@@ -96,8 +85,6 @@ public:
     {
         CanvasWindow->setWindowTitle(QCoreApplication::translate("CanvasWindow", "Canvas", nullptr));
         resetCanvas->setText(QCoreApplication::translate("CanvasWindow", "ResetCanvas", nullptr));
-        gameChatLabel->setText(QCoreApplication::translate("CanvasWindow", "Game Chat", nullptr));
-        messageButton->setText(QCoreApplication::translate("CanvasWindow", "Send", nullptr));
         drawButton->setText(QCoreApplication::translate("CanvasWindow", "Draw", nullptr));
         eraseButton->setText(QCoreApplication::translate("CanvasWindow", "Erase", nullptr));
         undoButton->setText(QCoreApplication::translate("CanvasWindow", "Undo", nullptr));
@@ -106,6 +93,8 @@ public:
         timerLabel->setText(QString());
         playerScore->setText(QCoreApplication::translate("CanvasWindow", "Your Score:", nullptr));
         chosedWord->setText(QCoreApplication::translate("CanvasWindow", "word: ", nullptr));
+        messageButton->setText(QCoreApplication::translate("CanvasWindow", "Send", nullptr));
+        gameChatLabel->setText(QString());
     } // retranslateUi
 
 };

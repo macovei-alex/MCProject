@@ -23,7 +23,7 @@ CanvasWindow::CanvasWindow(QWidget* parent) :
 
 	ui->roomLabel->setText("Room ID: none");
 	ui->gameChatLabel->setStyleSheet("border: none;");
-	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
+	//ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
 	QSize screenSize{ QGuiApplication::primaryScreen()->geometry().size() };
 	setGeometry(0, 0, screenSize.width(), screenSize.height());
@@ -67,7 +67,7 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
 	ui->gameChatLabel->setStyleSheet("border: none;");
-	ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
+	//ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
 
 	QSize screenSize{ QGuiApplication::primaryScreen()->geometry().size() };
 	setGeometry(0, 0, screenSize.width(), screenSize.height());
@@ -397,7 +397,7 @@ void CanvasWindow::HandleChat(const QList<common::Message>& messages)
 		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
 	
 	}
-	ui->chatMessages->update();
+	ui->gameChatLabel->update();	
 }
 
 void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
@@ -442,7 +442,7 @@ void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 	ui->undoButton->setEnabled(enabled);
 	ui->messageButton->setEnabled(enabled);
 	ui->messageBox->setEnabled(enabled);
-	ui->gameChat->setEnabled(enabled);
+	//ui->gameChat->setEnabled(enabled);
 }
 
 const OnlineData& CanvasWindow::GetOnlineData()
