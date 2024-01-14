@@ -34,6 +34,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loginButton_clicked()
 {
+	static QString username{ "" };
+
 	if (ui->usernameLineEdit->text().isEmpty() || ui->passwordLineEdit->text().isEmpty())
 	{
 		QMessageBox::warning(this, "Sign up / Sign in", "Username or password is empty");
@@ -41,10 +43,34 @@ void MainWindow::on_loginButton_clicked()
 	}
 
 #ifdef ONLINE
+	if (m_isConnected)
+	{
+		QMessageBox msgBox;
+		msgBox.setText("You are already connected " + username +
+			"Do you want to disconnect from this account and sign in as " + ui->usernameLineEdit->text() + "?");
+
+		QPushButton* yesButton{ msgBox.addButton(tr("Yes"), QMessageBox::YesRole) };
+		QPushButton* noButton{ msgBox.addButton(tr("No"), QMessageBox::NoRole) };
+		msgBox.setDefaultButton(noButton);
+
+		msgBox.exec();
+
+		if (msgBox.clickedButton() == yesButton)
+		{
+			if(!services::SignOut(username.toStdString()))
+				QMessageBox::warning(this, "Sign out", "Could not sign out");
+			else
+				m_isConnected = false;
+		}
+		else
+			return;
+	}
+
 	if (services::SignIn(
 		ui->usernameLineEdit->text().toStdString(),
 		ui->passwordLineEdit->text().toStdString()))
 	{
+		username = ui->usernameLineEdit->text();
 		m_isConnected = true;
 		return;
 	}
@@ -89,7 +115,7 @@ void MainWindow::on_joinRoomButton_clicked()
 	{
 		QString numberStr{ ui->joinRoomLineEdit->text() };
 
-		if(numberStr.isEmpty())
+		if (numberStr.isEmpty())
 			throw std::exception{};
 
 		roomID = static_cast<uint64_t>(numberStr.toULongLong());
@@ -112,9 +138,9 @@ void MainWindow::on_joinRoomButton_clicked()
 #endif
 
 	hide();
-	
+
 	canvasPaint->show();
-}
+	}
 
 void MainWindow::on_createRoomButton_clicked()
 {
@@ -128,7 +154,7 @@ void MainWindow::on_createRoomButton_clicked()
 	try
 	{
 		roomID = services::CreateRoom(ui->usernameLineEdit->text().toStdString());
-		if(roomID == MAXUINT64)
+		if (roomID == MAXUINT64)
 			throw std::exception{};
 	}
 	catch (...)
@@ -139,7 +165,7 @@ void MainWindow::on_createRoomButton_clicked()
 
 	hide();
 	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
-		
+
 #else
 	canvasPaint = new CanvasPaint(this);
 #endif
@@ -148,6 +174,12 @@ void MainWindow::on_createRoomButton_clicked()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+
+#ifdef ONLINE
+	if (m_isConnected)
+		services::SignOut(ui->usernameLineEdit->text().toStdString());
+#endif
+
 	QCoreApplication::quit();
 	event->accept();
 }
