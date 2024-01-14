@@ -90,8 +90,8 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 	m_gameStateThread->start();
 	m_chatThread->start();
 
-	m_imageThread->Pause();
-	m_chatThread->Pause();
+	/*m_imageThread->Pause();
+	m_chatThread->Pause();*/
 }
 #endif
 
@@ -334,7 +334,12 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		{
 			ClearCanvas();
 			auto scores{ services::ReceivePlayerScores(m_onlineData.roomID) };
-			ui->playerScore->setText("Score: " + QString::number(scores[0].second));
+			for(const auto& [name, score]: scores)
+				if (name == m_onlineData.username.toStdString())
+				{
+					ui->playerScore->setText("Score: " + QString::number(score));
+					break;
+				}
 		}
 
 		if (m_onlineData.playerRole != common::game::PlayerRole::DRAWING
@@ -372,8 +377,8 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 	else if (m_onlineData.gameState == common::game::GameState::NONE)
 	{
 		m_onlineData.chosenWord = "";
-		m_chatThread->Pause();
-		m_imageThread->Pause();
+		/*m_chatThread->Pause();
+		m_imageThread->Pause();*/
 	}
 }
 
@@ -382,9 +387,7 @@ void CanvasWindow::HandleChat(const QList<common::Message>& messages)
 { 
 	for (const auto& message : messages)
 	{
-		QString formattedMessage{ QString{"[%1]: %2"}
-			.arg(QString::fromStdString(message.author))
-			.arg(QString::fromStdString(message.text)) };
+		QString formattedMessage{ '[' + QString::fromStdString(message.author) + "]: " + QString::fromStdString(message.text) };
 
 		qDebug() << " Recieved message: " << formattedMessage << "\n";
 		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
