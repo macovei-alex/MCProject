@@ -62,5 +62,5 @@ common::Message& Chat::operator[](size_t index)
 
 std::mutex& Chat::GetMutex()
 {
-	return *m_sharedMutex
+	return *m_sharedMutex;
 }
