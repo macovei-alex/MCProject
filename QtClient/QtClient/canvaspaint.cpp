@@ -17,8 +17,7 @@
 CanvasPaint::CanvasPaint(QWidget* parent) :
 	QDialog{ parent },
 	ui{ new Ui::CanvasPaint },
-	m_drawState{ DrawingState::DRAWING }, 
-	m_chooseWordWindowOpen{ false }
+	m_drawState{ DrawingState::DRAWING }
 {
 	ui->setupUi(this);
 
@@ -218,11 +217,6 @@ void CanvasPaint::ClearCanvas()
 	update();
 }
 
-void CanvasPaint::setChooseWordWindowOpen(bool isOpen)
-{
-	m_chooseWordWindowOpen = isOpen;
-}
-
 void CanvasPaint::on_resetCanvas_clicked()
 {
 	/*ClearCanvas();
@@ -323,17 +317,8 @@ void CanvasPaint::HandleImage(QList<Line>* newLines)
 
 void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
-	if (m_chooseWordWindowOpen)
-		return;
-	if (m_onlineData.gameState != gameStatePair.first)
-	{
-		m_onlineData.gameState = gameStatePair.first;
-		auto newPlayerRole{ services::ReceivePlayerRole(m_onlineData.roomID, m_onlineData.username.toStdString()) };
-		if (m_onlineData.playerRole != newPlayerRole)
-		{
-			m_onlineData.playerRole = newPlayerRole;
-		}
-	}
+	m_onlineData.gameState = gameStatePair.first;
+	m_onlineData.playerRole = services::ReceivePlayerRole(m_onlineData.roomID, m_onlineData.username.toStdString());
 
 	if (gameStatePair.second < UINT64_MAX)
 		ui->timerLabel->setText(QString::number(gameStatePair.second));
@@ -342,24 +327,29 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 
 	if (m_onlineData.gameState == common::game::GameState::PICK_WORD)
 	{
-		auto words = services::ReceiveWordOptions(m_onlineData.roomID);
-		choosewordwindow* chooseWordWindow = new choosewordwindow(this);
+		if (m_onlineData.playerRole != common::game::PlayerRole::DRAWING
+			|| !m_onlineData.chosenWord.isEmpty())
+		{
+			return;
+		}
+
+		auto words{ services::ReceiveWordOptions(m_onlineData.roomID) };
+		choosewordwindow* chooseWordWindow{ new choosewordwindow(this) };
 		chooseWordWindow->setButtonNames(words);
+
+		m_onlineData.chosenWord = "not empty";
 
 		if (chooseWordWindow->exec() == QDialog::Accepted)
 		{
-			QString chosenWord = chooseWordWindow->getChosenWord();
-			std::string chosenWordStdString = chosenWord.toStdString();
-			services::SendGuessingWord(m_onlineData.roomID, chosenWordStdString);
+			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
+
 			m_imageThread->Pause();
+			m_chatThread->Unpause();
 		}
 
 		delete chooseWordWindow;
 	}
-	else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
-	{
-		m_imageThread->Unpause();
-	}
+
 	else if (m_onlineData.gameState == common::game::GameState::DRAW_AND_GUESS)
 	{
 		if (m_onlineData.playerRole == common::game::PlayerRole::DRAWING)
@@ -368,8 +358,17 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		}
 		else if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
 		{
+			m_onlineData.chosenWord = "";
 			m_imageThread->Unpause();
+			m_chatThread->Unpause();
 		}
+	}
+
+	else if (m_onlineData.gameState == common::game::GameState::NONE)
+	{
+		m_onlineData.chosenWord = "";
+		m_imageThread->Pause();
+		m_chatThread->Pause();
 	}
 }
 

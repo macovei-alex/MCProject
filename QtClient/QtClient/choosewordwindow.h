@@ -12,31 +12,24 @@ class choosewordwindow;
 
 class choosewordwindow : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit choosewordwindow(QWidget *parent = nullptr);
-    ~choosewordwindow();
-    void setButtonNames(const std::vector<std::string>& words);
-    QString getChosenWord() const;
+	explicit choosewordwindow(QWidget *parent);
+	~choosewordwindow();
+	void setButtonNames(const std::vector<std::string>& words);
 
 private slots:
-    void on_firstWordButton_clicked();
-
-    void on_secondWordButton_clicked();
-
-    void on_thirdWordButton_clicked();
+	void on_firstWordButton_clicked();
+	void on_secondWordButton_clicked();
+	void on_thirdWordButton_clicked();
 
 signals:
-    void Signal();
+	void Signal();
 
 private:
-    Ui::choosewordwindow *ui;
-    CanvasPaint *canvasPaint;
-    QString chosenWord;
-
-
-   
+	Ui::choosewordwindow *ui;
+	CanvasPaint *canvasPaint;
 };
 
 #endif // CHOOSEWORDWINDOW_H
