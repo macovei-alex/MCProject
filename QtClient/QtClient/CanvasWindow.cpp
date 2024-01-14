@@ -387,8 +387,7 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 
 void CanvasWindow::HandleChat(const QList<common::Message>& messages)
 { 
-	auto recievedMessages{ services::ReceiveNewMessages(m_onlineData.username.toStdString(), m_onlineData.roomID) };
-	for (const auto& message : recievedMessages)
+	for (const auto& message : messages)
 	{
 		QString formattedMessage{ QString{"[%1]: %2"}
 			.arg(QString::fromStdString(message.author))
@@ -427,10 +426,12 @@ void CanvasWindow::updatePlayerScoreLabel(const std::vector<std::pair<std::strin
 	QString labelText;
 	for (const auto& playerScore : scores)
 	{
-		labelText += QString("%1: %2\n").arg(playerScore.first.c_str()).arg(playerScore.second);
+		labelText += QString("%1: %2\n")
+			.arg(playerScore.first.c_str())
+			.arg(playerScore.second);
 	}
 
-	ui->playerScore->setText("Score: " + labelText);
+	ui->playerScore->setText("Scores: " + labelText);
 }
 void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 {
