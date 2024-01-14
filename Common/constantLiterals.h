@@ -6,6 +6,8 @@ namespace literals
 	const std::string emptyString{ "" };
 	constexpr char error[] = "error";
 	constexpr char intMinStr[] = "-2147483648";
+	constexpr uint8_t correctGuessResponse{ 200 };
+	constexpr uint8_t incorrectGuessResponse{ 201 };
 
 	namespace jsonKeys
 	{
