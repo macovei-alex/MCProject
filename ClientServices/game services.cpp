@@ -19,9 +19,9 @@ void services::SendGameSettings(uint64_t gameID, const common::game::GameSetting
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(response.reason.c_str());
+				throw std::exception{ response.reason.c_str() };
 			else
-				throw std::exception("Server didn't provide an explanation");
+				throw std::exception{ "Server didn't provide an explanation" };
 		}
 	}
 	catch (const std::exception& exception)
@@ -41,7 +41,7 @@ common::game::GameSettings services::ReceiveGameSettings(uint64_t gameID, std::o
 		auto response = cpr::Get(cpr::Url{ url });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(std::format("Invalid game ID < {} >", gameID).c_str());
+			throw std::exception{ std::format("Invalid game ID < {} >", gameID).c_str() };
 	}
 	catch (const std::exception& execption)
 	{
@@ -51,9 +51,8 @@ common::game::GameSettings services::ReceiveGameSettings(uint64_t gameID, std::o
 
 std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTime(uint64_t gameID, std::ostream& errStream)
 {
-	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::state::simple} + "/" };
-
-	static bool serverErrorDetected = false;
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::state::simple} + "/" };
+	static bool serverErrorDetected{ false };
 
 	std::string url{ urlBlueprint + std::to_string(gameID) };
 
@@ -67,9 +66,9 @@ std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTime(u
 			{
 				serverErrorDetected = true;
 				if (!response.reason.empty())
-					throw std::exception(response.reason.c_str());
+					throw std::exception{ response.reason.c_str() };
 				else
-					throw std::exception("Server didn't provide an explanation");
+					throw std::exception{ "Server didn't provide an explanation" };
 			}
 		}
 		else
@@ -77,7 +76,7 @@ std::pair<common::game::GameState, uint64_t> services::ReceiveGameStateAndTime(u
 
 		auto responseJson{ std::move(crow::json::load(response.text)) };
 		if (responseJson.has(literals::error))
-			throw std::exception("Json has error");
+			throw std::exception{ "Json has error" };
 
 		return std::make_pair(
 			static_cast<common::game::GameState>(responseJson[literals::jsonKeys::game::state].u()),
@@ -103,12 +102,12 @@ common::game::PlayerRole services::ReceivePlayerRole(uint64_t roomID, const std:
 			cpr::Parameters{ {literals::jsonKeys::account::username, username} });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(response.reason.c_str());
+			throw std::exception{ response.reason.c_str() };
 
 
 		auto responseJson{ std::move(crow::json::load(response.text)) };
 		if (responseJson.has(literals::error))
-			throw std::exception("Json has error");
+			throw std::exception{ "Json has error" };
 
 		return static_cast<common::game::PlayerRole>(responseJson[literals::jsonKeys::player::role].u());
 	}
@@ -131,7 +130,7 @@ std::vector<std::pair<std::string, int32_t>> services::ReceivePlayerScores(uint6
 
 		auto responseJson{ std::move(crow::json::load(response.text)) };
 		if (responseJson.has(literals::error))
-			throw std::exception("Json has error");
+			throw std::exception{ "Json has error" };
 
 		std::vector<std::pair<std::string, int32_t>> scores;
 
@@ -170,7 +169,7 @@ std::vector<std::string> services::ReceiveWordOptions(uint64_t roomID, std::ostr
 
 		auto responseJson{ std::move(crow::json::load(response.text)) };
 		if (responseJson.has(literals::error))
-			throw std::exception("Json has error");
+			throw std::exception{ "Json has error" };
 
 		std::vector<std::string> words;
 
@@ -196,7 +195,7 @@ std::vector<std::string> services::ReceiveWordOptions(uint64_t roomID, std::ostr
 
 void services::SendGuessingWord(uint64_t roomID, const std::string& word, std::ostream& errStream)
 {
-	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + std::string{literals::routes::game::words::simple} + "/" };
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + literals::routes::game::words::simple + "/" };
 
 	std::string url{ urlBlueprint + std::to_string(roomID) };
 
@@ -207,7 +206,7 @@ void services::SendGuessingWord(uint64_t roomID, const std::string& word, std::o
 			cpr::Payload{ {literals::jsonKeys::game::word, word} });
 
 		if (response.status_code != 200 && response.status_code != 201)
-			throw std::exception(response.reason.c_str());
+			throw std::exception{ response.reason.c_str() };
 	}
 	catch (const std::exception& exception)
 	{

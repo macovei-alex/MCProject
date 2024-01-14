@@ -72,15 +72,15 @@ Server& Server::GameHandlers()
 		Game& game{ gameIt->second };
 		auto gameState{ game.GetGameState() };
 
-		if (gameState == common::game::GameState::NONE)
+		if (gameState == common::game::GameState::DRAW_AND_GUESS)
 			return crow::json::wvalue{
-				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameState)},
-				{literals::jsonKeys::game::timeRemaining, 0} };
+					{literals::jsonKeys::game::state, static_cast<uint64_t>(gameState)},
+					{literals::jsonKeys::game::timeRemaining, static_cast<uint64_t>(
+						game.GetGameSettings().m_drawTime) - game.GetTurn().GetTimer().count()} };
 
 		return crow::json::wvalue{
 				{literals::jsonKeys::game::state, static_cast<uint64_t>(gameState)},
-				{literals::jsonKeys::game::timeRemaining, static_cast<uint64_t>(
-					game.GetGameSettings().m_drawTime) - game.GetTurn().GetTimer().count()} };
+				{literals::jsonKeys::game::timeRemaining, 0} };
 			});
 
 
