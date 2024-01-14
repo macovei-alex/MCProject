@@ -70,7 +70,14 @@ std::vector<common::Message> services::ReceiveNewMessages(const std::string& use
 
 		std::vector<common::Message> messages;
 
-		for (auto& messageJson : messagesJsonList)
+		std::ranges::for_each(messagesJsonList, [&messages](const auto& messageJson) {
+			messages.emplace_back(common::Message{
+				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
+				std::string{ std::move(messageJson[literals::jsonKeys::message::text].s()) },
+				messageJson[literals::jsonKeys::message::timestamp].u() });
+		});
+
+		/*for (auto& messageJson : messagesJsonList)
 		{
 			common::Message message{
 				std::string{ std::move(messageJson[literals::jsonKeys::message::author].s()) },
@@ -78,7 +85,7 @@ std::vector<common::Message> services::ReceiveNewMessages(const std::string& use
 				messageJson[literals::jsonKeys::message::timestamp].u() };
 
 			messages.emplace_back(std::move(message));
-		}
+		}*/
 
 		return messages;
 	}

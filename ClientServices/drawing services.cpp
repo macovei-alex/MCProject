@@ -12,11 +12,18 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<common::img::
 		crow::json::wvalue::list pointsJsonList;
 		pointsJsonList.reserve(points.size());
 
-		for (auto& point : points)
+		std::ranges::for_each(points, [&pointsJsonList](const auto& point) {
 			pointsJsonList.emplace_back(crow::json::wvalue{ {
 				{literals::jsonKeys::draw::pointX, point.x},
 				{literals::jsonKeys::draw::pointY, point.y},
 				{literals::jsonKeys::draw::color, point.color.ToInt32()}} });
+			});
+
+		/*for (auto& point : points)
+			pointsJsonList.emplace_back(crow::json::wvalue{ {
+				{literals::jsonKeys::draw::pointX, point.x},
+				{literals::jsonKeys::draw::pointY, point.y},
+				{literals::jsonKeys::draw::color, point.color.ToInt32()}} });*/
 
 		auto flattened = crow::json::wvalue(pointsJsonList);
 		std::string str = flattened.dump();
@@ -83,7 +90,16 @@ std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, s
 		std::vector<common::img::Point> points;
 		points.reserve(pointsJsonList.size());
 
-		for (auto& pointJson : pointsJsonList)
+		std::ranges::for_each(pointsJsonList, [&points](const auto& pointJson) {
+			common::img::Point point{
+				pointJson[literals::jsonKeys::draw::pointX].i(),
+				pointJson[literals::jsonKeys::draw::pointY].i(),
+				pointJson[literals::jsonKeys::draw::color].i() };
+
+			points.emplace_back(point.x, point.y, common::img::Color{ point.color.r, point.color.g, point.color.b });
+			});
+
+		/*for (auto& pointJson : pointsJsonList)
 		{
 			common::img::Point point{
 				pointJson[literals::jsonKeys::draw::pointX].i(),
@@ -91,7 +107,7 @@ std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, s
 				pointJson[literals::jsonKeys::draw::color].i() };
 
 			points.emplace_back(point.x, point.y, common::img::Color{ point.color.r, point.color.g, point.color.b });
-		}
+		}*/
 
 		return points;
 	}
