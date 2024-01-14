@@ -19,7 +19,7 @@ namespace services
 	bool SignUp(const std::string& username, const std::string& password, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 	bool SignOut(const std::string& username, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 
-	void SendNewMessage(const std::string& username, const std::string& content, uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
+	bool SendNewMessage(const std::string& username, const std::string& content, uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 	std::vector<common::Message> ReceiveNewMessages(const std::string& username, uint64_t gameID, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);
 
 	void SendImageUpdates(uint64_t gameID, const std::vector<common::img::Point>& points, std::ostream& outStream = std::cout, std::ostream& errStream = std::cerr);

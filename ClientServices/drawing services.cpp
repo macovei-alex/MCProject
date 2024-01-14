@@ -2,7 +2,7 @@
 
 void services::SendImageUpdates(uint64_t gameID, const std::vector<common::img::Point>& points, std::ostream& outStream, std::ostream& errStream)
 {
-	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + literals::routes::game::draw::updates + "/" };
 
 	std::string url{ urlBlueprint + std::to_string(gameID) };
 
@@ -25,20 +25,20 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<common::img::
 				{literals::jsonKeys::draw::pointY, point.y},
 				{literals::jsonKeys::draw::color, point.color.ToInt32()}} });*/
 
-		auto flattened = crow::json::wvalue(pointsJsonList);
-		std::string str = flattened.dump();
-		std::cout << str;
+		crow::json::wvalue flattened{ pointsJsonList };
+		std::string str{ flattened.dump() };
+		outStream << str;
 
-		auto response = cpr::Put(
+		auto response{ cpr::Put(
 			cpr::Url{ url },
-			cpr::Payload{ {literals::jsonKeys::draw::points, str} });
+			cpr::Payload{ {literals::jsonKeys::draw::points, str} }) };
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(response.reason.c_str());
+				throw std::exception{ response.reason.c_str() };
 			else
-				throw std::exception("Server didn't provide an explanation");
+				throw std::exception{ "Server didn't provide an explanation" };
 		}
 	}
 	catch (const std::exception& exception)
@@ -49,18 +49,17 @@ void services::SendImageUpdates(uint64_t gameID, const std::vector<common::img::
 
 std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, std::ostream& errStream)
 {
-	static const std::string urlBlueprint = { std::string{literals::routes::baseAddress} + std::string{literals::routes::game::draw::updates} + "/" };
-
-	static uint64_t lastTimestamp = 0;
-	static bool serverErrorDetected = false;
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + literals::routes::game::draw::updates + "/" };
+	static uint64_t lastTimestamp{ 0 };
+	static bool serverErrorDetected{ false };
 
 	std::string url{ urlBlueprint + std::to_string(gameID) };
 
 	try
 	{
-		auto response = cpr::Get(
+		auto response{ cpr::Get(
 			cpr::Url{ url },
-			cpr::Parameters{ {literals::jsonKeys::draw::timestamp, std::to_string(lastTimestamp)} });
+			cpr::Parameters{ {literals::jsonKeys::draw::timestamp, std::to_string(lastTimestamp)} }) };
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
@@ -68,9 +67,9 @@ std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, s
 			{
 				serverErrorDetected = true;
 				if (!response.reason.empty())
-					throw std::exception(response.reason.c_str());
+					throw std::exception{ response.reason.c_str() };
 				else
-					throw std::exception("Server didn't provide an explanation");
+					throw std::exception{ "Server didn't provide an explanation" };
 			}
 		}
 		else
@@ -79,11 +78,13 @@ std::vector<common::img::Point> services::ReceiveImageUpdates(uint64_t gameID, s
 		if (serverErrorDetected)
 			return {};
 
-		auto pointsJsonList = crow::json::load(response.text);
+		auto pointsJsonList{ crow::json::load(response.text) };
 		if (pointsJsonList.size() == 0)
 			lastTimestamp = std::max(lastTimestamp, 1ULL);
+
 		else if (pointsJsonList.size() == 1 && pointsJsonList[0].has(literals::error))
-			throw std::exception("Json has error");
+			throw std::exception{ "Json has error" };
+
 		else
 			lastTimestamp = pointsJsonList[pointsJsonList.size() - 1][literals::jsonKeys::draw::timestamp].u() + 1;
 

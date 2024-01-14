@@ -2,24 +2,22 @@
 
 bool services::SignIn(const std::string& username, const std::string& password, std::ostream& outStream, std::ostream& errStream)
 {
+	static const std::string url{ std::string{literals::routes::baseAddress} + literals::routes::account::signIn };
 	try
 	{
-		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::account::signIn;
-
-		auto response = cpr::Get(
-			cpr::Url{ url.str() },
+		auto response{ cpr::Get(
+			cpr::Url{ url },
 			cpr::Parameters{
 				{literals::jsonKeys::account::username, username},
 				{literals::jsonKeys::account::password, password}
-			});
+			}) };
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(response.reason.c_str());
+				throw std::exception{ response.reason.c_str() };
 			else
-				throw std::exception("Server didn't return an error explanation");
+				throw std::exception{ "Server didn't return an error explanation" };
 		}
 
 		outStream << std::format("[Sign In] {}\n", response.text);
@@ -34,24 +32,22 @@ bool services::SignIn(const std::string& username, const std::string& password, 
 
 bool services::SignUp(const std::string& username, const std::string& password, std::ostream& outStream, std::ostream& errStream)
 {
+	static const std::string url{ std::string{literals::routes::baseAddress} + literals::routes::account::singUp };
 	try
 	{
-		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::account::singUp;
-
-		auto response = cpr::Post(
-			cpr::Url{ url.str() },
+		auto response{ cpr::Post(
+			cpr::Url{ url },
 			cpr::Payload{
 				{literals::jsonKeys::account::username, username},
 				{literals::jsonKeys::account::password, password}
-			});
+			}) };
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(response.reason.c_str());
+				throw std::exception{ response.reason.c_str() };
 			else
-				throw std::exception("Server didn't return an error explanation");
+				throw std::exception{ "Server didn't return an error explanation" };
 		}
 
 		outStream << std::format("[Sign Up]: Account created with username < {} >\n", username);
@@ -67,21 +63,19 @@ bool services::SignUp(const std::string& username, const std::string& password, 
 
 bool services::SignOut(const std::string& username, std::ostream& outStream, std::ostream& errStream)
 {
+	static const std::string url{ std::string{literals::routes::baseAddress} + literals::routes::account::signOut };
 	try
 	{
-		std::stringstream url;
-		url << literals::routes::baseAddress << literals::routes::account::signOut;
-
-		auto response = cpr::Put(
-			cpr::Url{ url.str() },
-			cpr::Payload{ {literals::jsonKeys::account::username, username} });
+		auto response{ cpr::Put(
+			cpr::Url{ url },
+			cpr::Payload{ {literals::jsonKeys::account::username, username} }) };
 
 		if (response.status_code != 200 && response.status_code != 201)
 		{
 			if (!response.reason.empty())
-				throw std::exception(response.reason.c_str());
+				throw std::exception{ response.reason.c_str() };
 			else
-				throw std::exception("Server didn't return an error explanation");
+				throw std::exception{ "Server didn't return an error explanation" };
 		}
 
 		outStream << std::format("Signed out from < {} >\n", username);
