@@ -110,13 +110,17 @@ void Turn::Start(utils::ThreadSafe<std::vector<Player>>& players, chr::seconds d
 				currentTimeLambda()).count());
 		} };
 
+	auto drawingPlayer{ *std::ranges::find_if(players.GetRef(), [](const Player& player) {
+			return player.GetRole() == common::game::PlayerRole::DRAWING;
+		}) };
+
 	std::cout << "Drawing player initial score:\n";
-	std::cout << players.GetRef()[0].GetName() << " score: " << players.GetRef()[0].GetCurrentScore() << std::endl;
+	std::cout << drawingPlayer.GetName() << " score: " << drawingPlayer.GetCurrentScore() << ' ' << drawingPlayer.GetScore() << std::endl;
 
 	std::cout << "Guessing players initial scores:\n";
 	std::ranges::for_each(players.GetRef(), [](Player& player) {
 		if (player.GetRole() == common::game::PlayerRole::GUESSING)
-			std::cout << player.GetName() << " score: " << player.GetCurrentScore() << std::endl;
+			std::cout << player.GetName() << " score: " << player.GetCurrentScore() << ' ' << player.GetScore() << std::endl;
 		});
 
 	do
@@ -162,14 +166,17 @@ void Turn::Start(utils::ThreadSafe<std::vector<Player>>& players, chr::seconds d
 		std::cout << "Drawing player scores:\n";
 		std::cout << drawingPlayer.GetName() << " score: " << drawingPlayer.GetCurrentScore() << ' ' << drawingPlayer.GetScore() << std::endl;
 
-		std::cout << "All players scores:\n";
+		std::cout << "Guessing players scores:\n";
 		std::ranges::for_each(players.GetRef(), [maxSeconds](Player& player) {
+
 			if (!player.GetGuessStatus())
-			{
 				player.CalculateScore(UINT16_MAX, maxSeconds);
+
+			if (player.GetRole() == common::game::PlayerRole::GUESSING)
+			{
+				player.AddScore();
+				std::cout << player.GetName() << " score: " << player.GetCurrentScore() << ' ' << player.GetScore() << std::endl;
 			}
-			player.AddScore();
-			std::cout << player.GetName() << " score: " << player.GetCurrentScore() << ' ' << player.GetScore() << std::endl;
 			});
 	}
 
