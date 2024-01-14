@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "canvaspaint.h"
+#include "CanvasWindow.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -132,14 +132,14 @@ void MainWindow::on_joinRoomButton_clicked()
 		return;
 	}
 
-	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
+	canvasWindow = new CanvasWindow(roomID, ui->usernameLineEdit->text(), this);
 #else
-	canvasPaint = new CanvasPaint(this);
+	canvasWindow = new CanvasWindow(this);
 #endif
 
 	hide();
 
-	canvasPaint->show();
+	canvasWindow->show();
 	}
 
 void MainWindow::on_createRoomButton_clicked()
@@ -164,12 +164,13 @@ void MainWindow::on_createRoomButton_clicked()
 	}
 
 	hide();
-	canvasPaint = new CanvasPaint(roomID, ui->usernameLineEdit->text(), this);
+	canvasWindow = new CanvasWindow(roomID, ui->usernameLineEdit->text(), this);
 
 #else
-	canvasPaint = new CanvasPaint(this);
+	canvasWindow = new CanvasWindow(this);
 #endif
-	canvasPaint->show();
+
+	canvasWindow->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

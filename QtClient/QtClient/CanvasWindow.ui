@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CanvasPaint</class>
- <widget class="QDialog" name="CanvasPaint">
+ <class>CanvasWindow</class>
+ <widget class="QDialog" name="CanvasWindow">
   <property name="geometry">
    <rect>
     <x>0</x>

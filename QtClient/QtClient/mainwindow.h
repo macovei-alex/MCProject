@@ -5,7 +5,7 @@
 
 #include <QMainWindow>
 
-class CanvasPaint;
+class CanvasWindow;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,7 +29,7 @@ private slots:
 
 private:
 	Ui::MainWindow *ui;
-	CanvasPaint *canvasPaint;
+	CanvasWindow *canvasWindow;
 	uint64_t roomID;
 	bool m_isConnected;
 };

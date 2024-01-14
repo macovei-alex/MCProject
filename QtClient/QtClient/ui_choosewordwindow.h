@@ -1,5 +1,5 @@
 /********************************************************************************
-** Form generated from reading UI file 'choosewordwindow.ui'
+** Form generated from reading UI file 'ChooseWordWindow.ui'
 **
 ** Created by: Qt User Interface Compiler version 6.6.0
 **
@@ -16,45 +16,45 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_choosewordwindow
+class Ui_ChooseWordWindow
 {
 public:
     QPushButton *firstWordButton;
     QPushButton *secondWordButton;
     QPushButton *thirdWordButton;
 
-    void setupUi(QDialog *choosewordwindow)
+    void setupUi(QDialog *ChooseWordWindow)
     {
-        if (choosewordwindow->objectName().isEmpty())
-            choosewordwindow->setObjectName("choosewordwindow");
-        choosewordwindow->resize(400, 400);
-        firstWordButton = new QPushButton(choosewordwindow);
+        if (ChooseWordWindow->objectName().isEmpty())
+            ChooseWordWindow->setObjectName("ChooseWordWindow");
+        ChooseWordWindow->resize(400, 400);
+        firstWordButton = new QPushButton(ChooseWordWindow);
         firstWordButton->setObjectName("firstWordButton");
         firstWordButton->setGeometry(QRect(100, 130, 191, 31));
-        secondWordButton = new QPushButton(choosewordwindow);
+        secondWordButton = new QPushButton(ChooseWordWindow);
         secondWordButton->setObjectName("secondWordButton");
         secondWordButton->setGeometry(QRect(100, 180, 191, 31));
-        thirdWordButton = new QPushButton(choosewordwindow);
+        thirdWordButton = new QPushButton(ChooseWordWindow);
         thirdWordButton->setObjectName("thirdWordButton");
         thirdWordButton->setGeometry(QRect(100, 230, 191, 31));
 
-        retranslateUi(choosewordwindow);
+        retranslateUi(ChooseWordWindow);
 
-        QMetaObject::connectSlotsByName(choosewordwindow);
+        QMetaObject::connectSlotsByName(ChooseWordWindow);
     } // setupUi
 
-    void retranslateUi(QDialog *choosewordwindow)
+    void retranslateUi(QDialog *ChooseWordWindow)
     {
-        choosewordwindow->setWindowTitle(QCoreApplication::translate("choosewordwindow", "Dialog", nullptr));
-        firstWordButton->setText(QCoreApplication::translate("choosewordwindow", "Word1", nullptr));
-        secondWordButton->setText(QCoreApplication::translate("choosewordwindow", "Word2", nullptr));
-        thirdWordButton->setText(QCoreApplication::translate("choosewordwindow", "Word3", nullptr));
+        ChooseWordWindow->setWindowTitle(QCoreApplication::translate("ChooseWordWindow", "Dialog", nullptr));
+        firstWordButton->setText(QCoreApplication::translate("ChooseWordWindow", "Word1", nullptr));
+        secondWordButton->setText(QCoreApplication::translate("ChooseWordWindow", "Word2", nullptr));
+        thirdWordButton->setText(QCoreApplication::translate("ChooseWordWindow", "Word3", nullptr));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class choosewordwindow: public Ui_choosewordwindow {};
+    class ChooseWordWindow: public Ui_ChooseWordWindow {};
 } // namespace Ui
 
 QT_END_NAMESPACE

@@ -4,10 +4,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mainwindow.cpp">
+    <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="canvaspaint.cpp">
+    <ClCompile Include="CanvasWindow.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
     <ClCompile Include="Line.cpp">
@@ -25,7 +25,7 @@
     <ClCompile Include="OnlineData.cpp">
       <Filter>Source Files\Canvas Window</Filter>
     </ClCompile>
-    <ClCompile Include="choosewordwindow.cpp">
+    <ClCompile Include="ChooseWordWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ThreadExtension.cpp">
@@ -36,10 +36,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ui_canvaspaint.h">
+    <ClInclude Include="ui_CanvasWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ui_mainwindow.h">
+    <ClInclude Include="ui_MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="macro.h">
@@ -57,6 +57,9 @@
     <ClInclude Include="ThreadExtension.h">
       <Filter>Header Files\Canvas Window</Filter>
     </ClInclude>
+    <ClInclude Include="ui_ChooseWordWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -67,10 +70,10 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="mainwindow.h">
+    <QtMoc Include="MainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="canvaspaint.h">
+    <QtMoc Include="CanvasWindow.h">
       <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
     <QtMoc Include="ImageThread.h">
@@ -82,7 +85,7 @@
     <QtMoc Include="ChatThread.h">
       <Filter>Header Files\Canvas Window</Filter>
     </QtMoc>
-    <QtMoc Include="choosewordwindow.h">
+    <QtMoc Include="ChooseWordWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="TimerLabel.h">
@@ -90,13 +93,13 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="mainwindow.ui">
+    <QtUic Include="MainWindow.ui">
       <Filter>UI Files</Filter>
     </QtUic>
-    <QtUic Include="canvaspaint.ui">
+    <QtUic Include="CanvasWindow.ui">
       <Filter>UI Files</Filter>
     </QtUic>
-    <QtUic Include="choosewordwindow.ui">
+    <QtUic Include="ChooseWordWindow.ui">
       <Filter>UI Files</Filter>
     </QtUic>
   </ItemGroup>

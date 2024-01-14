@@ -1,21 +1,21 @@
-#include "choosewordwindow.h"
-#include "ui_choosewordwindow.h"
-#include "canvaspaint.h"
+#include "ChooseWordWindow.h"
+#include "ui_ChooseWordWindow.h"
+#include "CanvasWindow.h"
 
-choosewordwindow::choosewordwindow(QWidget* parent) :
+ChooseWordWindow::ChooseWordWindow(QWidget* parent) :
 	QDialog(parent),
-	ui(new Ui::choosewordwindow),
-	canvasPaint(nullptr)
+	ui(new Ui::ChooseWordWindow),
+	canvasWindow(nullptr)
 {
 	ui->setupUi(this);
 }
 
-choosewordwindow::~choosewordwindow()
+ChooseWordWindow::~ChooseWordWindow()
 {
 	delete ui;
 }
 
-void choosewordwindow::setButtonNames(const std::vector<std::string>& words)
+void ChooseWordWindow::setButtonNames(const std::vector<std::string>& words)
 {
 	if (words.size() == 3)
 	{
@@ -29,23 +29,23 @@ void choosewordwindow::setButtonNames(const std::vector<std::string>& words)
 	}
 }
 
-void choosewordwindow::on_firstWordButton_clicked()
+void ChooseWordWindow::on_firstWordButton_clicked()
 {
-	dynamic_cast<CanvasPaint*>(parentWidget())->GetOnlineData().chosenWord = ui->firstWordButton->text();
+	dynamic_cast<CanvasWindow*>(parentWidget())->SetChosenWord(ui->firstWordButton->text());
 	accept();
 }
 
 
-void choosewordwindow::on_secondWordButton_clicked()
+void ChooseWordWindow::on_secondWordButton_clicked()
 {
-	dynamic_cast<CanvasPaint*>(parentWidget())->GetOnlineData().chosenWord = ui->secondWordButton->text();
+	dynamic_cast<CanvasWindow*>(parentWidget())->SetChosenWord(ui->secondWordButton->text());
 	accept();
 }
 
 
-void choosewordwindow::on_thirdWordButton_clicked()
+void ChooseWordWindow::on_thirdWordButton_clicked()
 {
-	dynamic_cast<CanvasPaint*>(parentWidget())->GetOnlineData().chosenWord = ui->thirdWordButton->text();
+	dynamic_cast<CanvasWindow*>(parentWidget())->SetChosenWord(ui->thirdWordButton->text());
 	accept();
 }
 

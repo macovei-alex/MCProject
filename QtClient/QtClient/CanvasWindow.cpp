@@ -1,7 +1,7 @@
-﻿#include "canvaspaint.h"
-#include "mainwindow.h"
-#include "ui_canvaspaint.h"
-#include "choosewordwindow.h"
+﻿#include "CanvasWindow.h"
+#include "MainWindow.h"
+#include "ui_CanvasWindow.h"
+#include "ChooseWordWindow.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -14,9 +14,9 @@
 #endif
 
 
-CanvasPaint::CanvasPaint(QWidget* parent) :
+CanvasWindow::CanvasWindow(QWidget* parent) :
 	QDialog{ parent },
-	ui{ new Ui::CanvasPaint },
+	ui{ new Ui::CanvasWindow },
 	m_drawState{ DrawingState::DRAWING }
 {
 	ui->setupUi(this);
@@ -43,7 +43,7 @@ CanvasPaint::CanvasPaint(QWidget* parent) :
 }
 
 
-void CanvasPaint::setRoomID(uint64_t roomID)
+void CanvasWindow::setRoomID(uint64_t roomID)
 {
 	this->roomID = roomID;
 	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
@@ -52,9 +52,9 @@ void CanvasPaint::setRoomID(uint64_t roomID)
 }
 
 #ifdef ONLINE
-CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent) :
+CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* parent) :
 	QDialog{ parent },
-	ui{ new Ui::CanvasPaint },
+	ui{ new Ui::CanvasWindow },
 	m_drawState{ DrawingState::DRAWING },
 	m_keepGoing{ true },
 	m_onlineData{ roomID, username },
@@ -78,13 +78,13 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-	connect(m_imageThread, &ImageThread::ImageSignal, this, &CanvasPaint::HandleImage);
+	connect(m_imageThread, &ImageThread::ImageSignal, this, &CanvasWindow::HandleImage);
 	connect(m_imageThread, &ImageThread::finished, m_imageThread, &QObject::deleteLater);
 
-	connect(m_gameStateThread, &GameStateThread::GameStateSignal, this, &CanvasPaint::HandleGameState);
+	connect(m_gameStateThread, &GameStateThread::GameStateSignal, this, &CanvasWindow::HandleGameState);
 	connect(m_gameStateThread, &GameStateThread::finished, m_gameStateThread, &QObject::deleteLater);
 
-	connect(m_chatThread, &ChatThread::ChatSignal, this, &CanvasPaint::HandleChat);
+	connect(m_chatThread, &ChatThread::ChatSignal, this, &CanvasWindow::HandleChat);
 	connect(m_chatThread, &ChatThread::finished, m_chatThread, &QObject::deleteLater);
 
 	m_imageThread->start();
@@ -96,12 +96,12 @@ CanvasPaint::CanvasPaint(uint64_t roomID, const QString& username, QWidget* pare
 }
 #endif
 
-CanvasPaint::~CanvasPaint()
+CanvasWindow::~CanvasWindow()
 {
 	delete ui;
 }
 
-void CanvasPaint::paintEvent(QPaintEvent* event)
+void CanvasWindow::paintEvent(QPaintEvent* event)
 {
 	Q_UNUSED(event);
 
@@ -113,7 +113,7 @@ void CanvasPaint::paintEvent(QPaintEvent* event)
 	painter.drawPixmap(2, 2, canvasPixmap);
 }
 
-void CanvasPaint::mousePressEvent(QMouseEvent* event)
+void CanvasWindow::mousePressEvent(QMouseEvent* event)
 {
 
 #ifdef ONLINE
@@ -130,7 +130,7 @@ void CanvasPaint::mousePressEvent(QMouseEvent* event)
 	}
 }
 
-void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
+void CanvasWindow::mouseMoveEvent(QMouseEvent* event)
 {
 
 #ifdef ONLINE
@@ -179,7 +179,7 @@ void CanvasPaint::mouseMoveEvent(QMouseEvent* event)
 	}
 }
 
-void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
+void CanvasWindow::mouseReleaseEvent(QMouseEvent* event)
 {
 
 #ifdef ONLINE
@@ -204,7 +204,7 @@ void CanvasPaint::mouseReleaseEvent(QMouseEvent* event)
 	}
 }
 
-void CanvasPaint::resizeEvent(QResizeEvent* event)
+void CanvasWindow::resizeEvent(QResizeEvent* event)
 {
 	QPixmap newPixmap{ event->size().width() * 3 / 4, event->size().height() };
 	newPixmap.fill(Qt::white);
@@ -216,30 +216,30 @@ void CanvasPaint::resizeEvent(QResizeEvent* event)
 	update();
 }
 
-void CanvasPaint::ClearCanvas()
+void CanvasWindow::ClearCanvas()
 {
 	canvasPixmap.fill(Qt::white);
 	lines.clear();
 	update();
 }
 
-void CanvasPaint::on_resetCanvas_clicked()
+void CanvasWindow::on_resetCanvas_clicked()
 {
 	/*ClearCanvas();
 	m_drawState = DrawingState::DRAWING;*/
 }
 
-void CanvasPaint::on_drawButton_clicked()
+void CanvasWindow::on_drawButton_clicked()
 {
 	m_drawState = DrawingState::DRAWING;
 }
 
-void CanvasPaint::on_eraseButton_clicked()
+void CanvasWindow::on_eraseButton_clicked()
 {
 	m_drawState = DrawingState::ERASING;
 }
 
-void CanvasPaint::on_undoButton_clicked()
+void CanvasWindow::on_undoButton_clicked()
 {
 	/*if (!lines.isEmpty())
 	{
@@ -259,7 +259,7 @@ void CanvasPaint::on_undoButton_clicked()
 	}*/
 }
 
-void CanvasPaint::on_messageButton_clicked()
+void CanvasWindow::on_messageButton_clicked()
 {
 	QString formattedMessage{ QString{"[%1]: %2"}.arg(m_onlineData.username).arg(ui->messageBox->text()) };
 
@@ -273,13 +273,13 @@ void CanvasPaint::on_messageButton_clicked()
 	ui->messageBox->clear();
 }
 
-void CanvasPaint::on_startGameButton_clicked()
+void CanvasWindow::on_startGameButton_clicked()
 {
 	services::StartGame(m_onlineData.roomID);
 	SetAllThreadsPauseStatus(false);
 }
 
-void CanvasPaint::closeEvent(QCloseEvent* event)
+void CanvasWindow::closeEvent(QCloseEvent* event)
 {
 
 #ifdef ONLINE
@@ -304,7 +304,7 @@ void CanvasPaint::closeEvent(QCloseEvent* event)
 }
 
 #ifdef ONLINE
-void CanvasPaint::HandleImage(QList<Line>* newLines)
+void CanvasWindow::HandleImage(QList<Line>* newLines)
 {
 	QPainter painter{ &canvasPixmap };
 
@@ -321,7 +321,7 @@ void CanvasPaint::HandleImage(QList<Line>* newLines)
 	update();
 }
 
-void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
+void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
 	auto lastGameState{ m_onlineData.gameState };
 	m_onlineData.gameState = gameStatePair.first;
@@ -333,6 +333,7 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 	{
 		if (lastGameState != common::game::GameState::PICK_WORD)
 		{
+			ClearCanvas();
 			auto scores{ services::ReceivePlayerScores(m_onlineData.roomID) };
 			ui->playerScore->setText("Score: " + QString::number(scores[0].second));
 		}
@@ -344,7 +345,7 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		}
 
 		auto words{ services::ReceiveWordOptions(m_onlineData.roomID) };
-		choosewordwindow* chooseWordWindow{ new choosewordwindow(this) };
+		ChooseWordWindow* chooseWordWindow{ new ChooseWordWindow(this) };
 		chooseWordWindow->setButtonNames(words);
 
 		if (chooseWordWindow->exec() == QDialog::Accepted)
@@ -384,24 +385,23 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 }
 
 
-void CanvasPaint::HandleChat(const QList<common::Message>& messages)
-{ auto recievedMessages{ services::ReceiveNewMessages(m_onlineData.username.toStdString()
-	, m_onlineData.roomID) };
+void CanvasWindow::HandleChat(const QList<common::Message>& messages)
+{ 
+	auto recievedMessages{ services::ReceiveNewMessages(m_onlineData.username.toStdString(), m_onlineData.roomID) };
 	for (const auto& message : recievedMessages)
 	{
 		QString formattedMessage{ QString{"[%1]: %2"}
-		.arg(QString::fromStdString(message.author))
-		.arg(QString::fromStdString(message.text)) };
+			.arg(QString::fromStdString(message.author))
+			.arg(QString::fromStdString(message.text)) };
+
 		qDebug() << " Recieved message: " << formattedMessage << "\n";
 		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
 	
 	}
 	ui->chatMessages->update();
-
-
 }
 
-void CanvasPaint::SetAllThreadsPauseStatus(bool paused)
+void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
 {
 	if (paused == true)
 	{
@@ -417,12 +417,12 @@ void CanvasPaint::SetAllThreadsPauseStatus(bool paused)
 	}
 }
 
-void CanvasPaint::updateChosenWordLabel(const QString& word)
+void CanvasWindow::updateChosenWordLabel(const QString& word)
 {
 	ui->chosedWord->setText("Chosen Word: " + word);
 }
 
-void CanvasPaint::updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores)
+void CanvasWindow::updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores)
 {
 	QString labelText;
 	for (const auto& playerScore : scores)
@@ -432,7 +432,7 @@ void CanvasPaint::updatePlayerScoreLabel(const std::vector<std::pair<std::string
 
 	ui->playerScore->setText("Score: " + labelText);
 }
-void CanvasPaint::SetAllButtonsEnabled(bool enabled)
+void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 {
 	ui->startGameButton->setEnabled(enabled);
 	ui->resetCanvas->setEnabled(enabled);
@@ -444,12 +444,12 @@ void CanvasPaint::SetAllButtonsEnabled(bool enabled)
 	ui->gameChat->setEnabled(enabled);
 }
 
-OnlineData& CanvasPaint::GetOnlineData()
+const OnlineData& CanvasWindow::GetOnlineData()
 {
 	return m_onlineData;
 }
 
-void CanvasPaint::SetChosenWord(const QString& word)
+void CanvasWindow::SetChosenWord(const QString& word)
 {
 	m_onlineData.chosenWord = word;
 }

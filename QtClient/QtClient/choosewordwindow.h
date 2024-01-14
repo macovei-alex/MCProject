@@ -3,20 +3,19 @@
 
 #include <QDialog>
 
-
-class CanvasPaint;
+class CanvasWindow;
 
 namespace Ui {
-class choosewordwindow;
+class ChooseWordWindow;
 }
 
-class choosewordwindow : public QDialog
+class ChooseWordWindow : public QDialog
 {
 	Q_OBJECT
 
 public:
-	explicit choosewordwindow(QWidget *parent);
-	~choosewordwindow();
+	explicit ChooseWordWindow(QWidget *parent);
+	~ChooseWordWindow();
 	void setButtonNames(const std::vector<std::string>& words);
 
 private slots:
@@ -28,8 +27,8 @@ signals:
 	void Signal();
 
 private:
-	Ui::choosewordwindow *ui;
-	CanvasPaint *canvasPaint;
+	Ui::ChooseWordWindow *ui;
+	CanvasWindow *canvasWindow;
 };
 
 #endif // CHOOSEWORDWINDOW_H

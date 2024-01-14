@@ -1,5 +1,5 @@
-﻿#ifndef CANVASPAINT_H
-#define CANVASPAINT_H
+﻿#ifndef CANVASWINDOW_H
+#define CANVASWINDOW_H
 
 #include "macro.h"
 
@@ -23,22 +23,22 @@
 class MainWindow;
 
 namespace Ui {
-	class CanvasPaint;
+	class CanvasWindow;
 }
 
-class CanvasPaint : public QDialog
+class CanvasWindow : public QDialog
 {
 
 	Q_OBJECT
 
 public:
-	CanvasPaint(QWidget* parent = nullptr);
+	CanvasWindow(QWidget* parent = nullptr);
 
 #ifdef ONLINE
-	CanvasPaint(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
+	CanvasWindow(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
 #endif
 
-	~CanvasPaint();
+	~CanvasWindow();
 
 public:
 	void mousePressEvent(QMouseEvent* event) override;
@@ -65,15 +65,12 @@ private slots:
 	void HandleImage(QList<Line>* newLines);
 	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
 	void HandleChat(const QList<common::Message>& messages);
-
-	void SetChosenWord(const QString& word);
 	
-	
-
 public:
+	void SetChosenWord(const QString& word);
 
 #ifdef ONLINE
-	OnlineData& GetOnlineData();
+	const OnlineData& GetOnlineData();
 #endif
 
 signals:
@@ -96,7 +93,7 @@ private:
 	QLabel* chosedWord;
 
 	DrawingState m_drawState;
-	Ui::CanvasPaint* ui;
+	Ui::CanvasWindow* ui;
 	uint64_t roomID;
 
 #ifdef ONLINE
@@ -112,4 +109,4 @@ private:
 	const QPen kERASING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
 };
 
-#endif // CANVASPAINT_H
+#endif // CANVASWINDOW_H

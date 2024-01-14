@@ -32,9 +32,10 @@ uint64_t services::CreateRoom(const std::string& username, std::ostream& outStre
 
 bool services::ConnectToRoom(uint64_t roomID, const std::string& username, std::ostream& outStream, std::ostream& errStream)
 {
-	static const std::string url{ std::string{literals::routes::baseAddress} + literals::routes::game::connect::simple + "/" };
+	static const std::string urlBlueprint{ std::string{literals::routes::baseAddress} + literals::routes::game::connect::simple + "/" };
 	try
 	{
+		std::string url{ urlBlueprint + std::to_string(roomID) };
 		auto response{ cpr::Get(
 			cpr::Url{ url },
 			cpr::Parameters{ {literals::jsonKeys::account::username, username} }) };

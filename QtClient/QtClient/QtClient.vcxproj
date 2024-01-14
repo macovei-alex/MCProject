@@ -187,20 +187,20 @@
     </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="canvaspaint.cpp" />
+    <ClCompile Include="CanvasWindow.cpp" />
     <ClCompile Include="ChatThread.cpp" />
-    <ClCompile Include="choosewordwindow.cpp" />
+    <ClCompile Include="ChooseWordWindow.cpp" />
     <ClCompile Include="OnlineData.cpp" />
     <ClCompile Include="GameStateThread.cpp" />
     <ClCompile Include="ImageThread.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="ThreadExtension.cpp" />
     <ClCompile Include="timerLabel.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="mainwindow.h" />
+    <QtMoc Include="MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -221,17 +221,17 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="canvaspaint.ui" />
-    <QtUic Include="choosewordwindow.ui" />
-    <QtUic Include="mainwindow.ui" />
+    <QtUic Include="CanvasWindow.ui" />
+    <QtUic Include="ChooseWordWindow.ui" />
+    <QtUic Include="MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="resource.qrc" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="canvaspaint.h" />
+    <QtMoc Include="CanvasWindow.h" />
     <QtMoc Include="ChatThread.h" />
-    <QtMoc Include="choosewordwindow.h" />
+    <QtMoc Include="ChooseWordWindow.h" />
     <ClInclude Include="DrawingState.h" />
     <QtMoc Include="ImageThread.h" />
     <QtMoc Include="GameStateThread.h" />
@@ -240,8 +240,9 @@
     <ClInclude Include="Line.h" />
     <ClInclude Include="ThreadExtension.h" />
     <QtMoc Include="TimerLabel.h" />
-    <ClInclude Include="ui_canvaspaint.h" />
-    <ClInclude Include="ui_mainwindow.h" />
+    <ClInclude Include="ui_CanvasWindow.h" />
+    <ClInclude Include="ui_ChooseWordWindow.h" />
+    <ClInclude Include="ui_MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ClientServices\ClientServices.vcxproj">
