@@ -33,7 +33,7 @@ public:
 public:
 	void Reset(utils::ThreadSafe<std::vector<Player>>& players, size_t drawingPlayerID);
 	void Reset(utils::ThreadSafe<std::vector<Player>>& players, Player& drawingPlayer);
-	void Start(const utils::ThreadSafe<std::vector<Player>>& players, chr::seconds drawingTime, bool& m_stopped);
+	void Start(utils::ThreadSafe<std::vector<Player>>& players, chr::seconds drawingTime, bool& m_stopped);
 
 private:
 	std::atomic<uint8_t> m_turnNumber;

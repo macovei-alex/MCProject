@@ -323,18 +323,22 @@ void CanvasPaint::HandleImage(QList<Line>* newLines)
 
 void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
+	auto lastGameState{ m_onlineData.gameState };
 	m_onlineData.gameState = gameStatePair.first;
 	m_onlineData.playerRole = services::ReceivePlayerRole(m_onlineData.roomID, m_onlineData.username.toStdString());
 
-	if (gameStatePair.second < UINT64_MAX)
-		ui->timerLabel->setText(QString::number(gameStatePair.second));
-	else
-		ui->timerLabel->setText("");
+	ui->timerLabel->setText(QString::number(gameStatePair.second));
 
 	if (m_onlineData.gameState == common::game::GameState::PICK_WORD)
 	{
+		if (lastGameState != common::game::GameState::PICK_WORD)
+		{
+			auto scores{ services::ReceivePlayerScores(m_onlineData.roomID) };
+			ui->playerScore->setText("Score: " + QString::number(scores[0].second));
+		}
+
 		if (m_onlineData.playerRole != common::game::PlayerRole::DRAWING
-			|| !m_onlineData.chosenWord.isEmpty())
+			|| lastGameState == m_onlineData.gameState)
 		{
 			return;
 		}
@@ -342,8 +346,6 @@ void CanvasPaint::HandleGameState(const QPair<common::game::GameState, uint64_t>
 		auto words{ services::ReceiveWordOptions(m_onlineData.roomID) };
 		choosewordwindow* chooseWordWindow{ new choosewordwindow(this) };
 		chooseWordWindow->setButtonNames(words);
-
-		m_onlineData.chosenWord = "not empty";
 
 		if (chooseWordWindow->exec() == QDialog::Accepted)
 		{ 

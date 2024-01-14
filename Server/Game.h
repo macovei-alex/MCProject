@@ -40,6 +40,7 @@ public:
 	crow::json::wvalue GetUpdatesJsonAfter(uint64_t timestamp);
 	bool ChatEmpty();
 	crow::json::wvalue GetMessagesOrderedJsonList(uint64_t start, const std::string& author);
+	void SetPlayerGuessStatus(const std::string& username, bool status);
 
 public:
 	void Run();

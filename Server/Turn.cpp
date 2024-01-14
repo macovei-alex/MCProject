@@ -91,28 +91,71 @@ void Turn::Reset(utils::ThreadSafe<std::vector<Player>>& players, Player& drawin
 	std::cout << "Turn reset" << std::endl;
 }
 
-void Turn::Start(const utils::ThreadSafe<std::vector<Player>>& players, chr::seconds drawingTime, bool& m_stopped)
+void Turn::Start(utils::ThreadSafe<std::vector<Player>>& players, chr::seconds drawingTime, bool& m_stopped)
 {
 	std::cout << "Turn started" << std::endl;
 
 	m_playStartTime = chr::system_clock::now();
+	uint32_t maxSeconds{ static_cast<uint32_t>(drawingTime.count()) };
+	uint16_t drawingPlayerSeconds{ 0 };
+	size_t playersGuessedCount{ 0 };
+
+	auto currentTimeLambda{ [this]() -> chr::system_clock::duration {
+			return chr::system_clock::now() - m_playStartTime.Get();
+		} };
+
+	auto currentSecondsLambda{ [this, &currentTimeLambda]() -> uint16_t {
+			return static_cast<uint16_t>(chr::duration_cast<chr::seconds>(
+				currentTimeLambda()).count());
+		} };
+
 	do
 	{
 		std::this_thread::sleep_for(chr::seconds{ 1 });
 
 		{
-			/*std::lock_guard<std::mutex> lock{ players.GetMutex() };
+			LOCK(players.GetMutex());
+
+			uint16_t currentSeconds{ currentSecondsLambda() };
+
+			std::ranges::for_each(players.GetRef(), [currentSeconds, maxSeconds, &playersGuessedCount](Player& player) {
+				if (player.GetGuessStatus() && player.GetCurrentScore() == INT_MIN)
+				{
+					player.CalculateScore(currentSeconds, maxSeconds);
+					playersGuessedCount++;
+				}
+				});
 
 			if (std::ranges::all_of(players.GetRef(), [](const Player& player) {
 				return player.GetGuessStatus();
 				}))
 			{
 				std::cout << "All players guessed the word" << std::endl;
+				drawingPlayerSeconds = currentSeconds;
 				break;
-			}*/
+			}
 		}
 
-	} while (!m_stopped && chr::system_clock::now() - m_playStartTime.Get() < drawingTime);
+	} while (!m_stopped && currentTimeLambda() < drawingTime);
+
+	{
+		std::cout << "Calculating scores" << std::endl;
+
+		LOCK(players.GetMutex());
+
+		auto& drawingPlayer{ *std::ranges::find_if(players.GetRef(), [](const Player& player) {
+				return player.GetRole() == common::game::PlayerRole::DRAWING;
+			}) };
+
+		if (drawingPlayer.GetCurrentScore() == INT_MIN)
+			drawingPlayer.CalculateScore(drawingPlayerSeconds, maxSeconds, playersGuessedCount);
+
+		std::ranges::for_each(players.GetRef(), [maxSeconds](Player& player) {
+			if(!player.GetGuessStatus())
+				player.CalculateScore(UINT16_MAX, maxSeconds);
+			player.AddScore();
+			});
+	}
 
 	std::cout << "Turn over" << std::endl;
 }

@@ -36,6 +36,14 @@ Server& Server::ChatHandlers()
 			utils::DecodeMessage(authorIt->second),
 			utils::MillisFromDateTime(std::chrono::system_clock::now()) };
 
+		Game& game{ gameIt->second };
+
+		if (game.GetTurn().GetWord() == message.text)
+		{
+			Log(std::format("Player < {} > guessed the word < {} >", message.author, message.text));
+			const auto& player{ game.GetPlayer(message.author) };
+		}
+
 		Log(std::format("New message at ({}) from [{}]: {}\n", message.timestamp, message.author, message.text));
 		gameIt->second.ChatEmplace(std::move(message));
 		return crow::response{ 200 };

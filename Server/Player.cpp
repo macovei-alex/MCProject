@@ -41,7 +41,7 @@ int Player::GetCurrentScore() const noexcept
 
 void Player::ResetCurrentScore() noexcept
 {
-	m_currentScore = 0;
+	m_currentScore = INT_MIN;
 }
 
 void Player::ResetScore() noexcept
@@ -105,11 +105,11 @@ int Player::CalculateScoreDrawingPlayer(uint16_t seconds, uint32_t maxSeconds, i
 {
 	if (playerCount == 0)
 	{
-		m_currentScore += -100;
+		m_currentScore = -100;
 	}
 	else
 	{
-		m_currentScore += ((maxSeconds - (seconds / playerCount)) * 100) / maxSeconds;
+		m_currentScore = ((maxSeconds - (seconds / playerCount)) * 100) / maxSeconds;
 	}
 	return m_currentScore;
 }

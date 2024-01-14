@@ -233,6 +233,14 @@ crow::json::wvalue Game::GetMessagesOrderedJsonList(uint64_t start, const std::s
 	return m_chat.GetRef().GetMessagesOrderedJsonList(start, author);
 }
 
+void Game::SetPlayerGuessStatus(const std::string& username, bool status)
+{
+	LOCK(m_players.GetMutex());
+	std::ranges::find_if(m_players.GetRef(), [&username, status](Player& player) {
+		return player.GetName() == username; })
+		->SetGuessStatus(status);
+}
+
 void Game::RemoveDisconnectedPlayers()
 {
 	m_players.GetRef().erase(
@@ -263,7 +271,7 @@ void Game::AppendImageUpdates(const std::vector<std::unordered_map<std::string, 
 	const static std::string pointYStrKey{ literals::jsonKeys::draw::pointY };
 	const static std::string colorStrKey{ literals::jsonKeys::draw::color };
 
-	std::lock_guard<std::mutex> lock{ m_image.GetMutex() };
+	LOCK(m_image.GetMutex());
 	for (const auto& pointMap : jsonVector)
 	{
 		try
