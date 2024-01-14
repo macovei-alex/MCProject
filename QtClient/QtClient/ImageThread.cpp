@@ -21,7 +21,7 @@ void ImageThread::run()
 	{
 		if (IsPaused())
 		{
-			QThread::msleep(500);
+			QThread::msleep(1000);
 			continue;
 		}
 
@@ -33,7 +33,7 @@ void ImageThread::run()
 
 				if (commonPoints.empty())
 				{
-					QThread::msleep(500);
+					QThread::msleep(1000);
 					continue;
 				}
 
@@ -57,7 +57,7 @@ void ImageThread::run()
 
 				emit ImageSignal(newLines);
 
-				QThread::msleep(500);
+				QThread::msleep(1000);
 			}
 		}
 		catch (const std::exception& e)

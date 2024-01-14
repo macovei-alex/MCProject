@@ -21,7 +21,7 @@ void GameStateThread::run()
 	{
 		if (IsPaused())
 		{
-			QThread::msleep(500);
+			QThread::msleep(1000);
 			continue;
 		}
 
@@ -34,7 +34,7 @@ void GameStateThread::run()
 
 				emit GameStateSignal(gameStateQPair);
 
-				QThread::msleep(500);
+				QThread::msleep(1000);
 			}
 		}
 		catch (const std::exception& e)

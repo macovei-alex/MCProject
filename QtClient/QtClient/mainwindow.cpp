@@ -154,7 +154,7 @@ void MainWindow::on_createRoomButton_clicked()
 	try
 	{
 		roomID = services::CreateRoom(ui->usernameLineEdit->text().toStdString());
-		if (roomID == MAXUINT64)
+		if (roomID == UINT64_MAX)
 			throw std::exception{};
 	}
 	catch (...)
