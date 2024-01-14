@@ -67,6 +67,8 @@ private slots:
 	void HandleChat(const QList<common::Message>& messages);
 
 	void SetChosenWord(const QString& word);
+	
+	
 
 public:
 
@@ -80,6 +82,7 @@ signals:
 private:
 	void SetAllButtonsEnabled(bool enabled);
 	void SetAllThreadsPauseStatus(bool paused);
+	void updateChosenWordLabel(const QString& word);
 
 	MainWindow* signInWindow;
 
@@ -88,6 +91,8 @@ private:
 	Line currentLine;
 	QPoint lastPoint;
 	QLabel* roomLabel;
+	QLabel* playerScore;
+	QLabel* chosedWord;
 
 	DrawingState m_drawState;
 	Ui::CanvasPaint* ui;
