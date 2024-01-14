@@ -65,10 +65,15 @@ void utils::MessagesReceiver(uint64_t gameID, const std::string& username, bool*
 	while (*keepGoing)
 	{
 		auto messages{ std::move(services::ReceiveNewMessages(username, gameID)) };
-		for (const auto& message : messages)
+
+		std::ranges::for_each(messages, [](const auto& message) {
+			std::cout << std::format("({}) [{}]: {}\n", utils::DateTimeFromMillis(message.timestamp), message.author, message.text);
+			});
+
+		/*for (const auto& message : messages)
 		{
 			std::cout << std::format("({}) [{}]: {}\n", utils::DateTimeFromMillis(message.timestamp), message.author, message.text);
-		}
+		}*/
 		std::this_thread::sleep_for(0.5s);
 	}
 }
@@ -80,8 +85,13 @@ void utils::ImageUpdatesReceiver(uint64_t gameID, bool* keepGoing)
 	while (*keepGoing)
 	{
 		auto points{ services::ReceiveImageUpdates(gameID) };
-		for(const auto& point : points)
+
+		std::ranges::for_each(points, [](const auto& point) {
 			std::cout << std::format("({},{},{})\n", point.x, point.y, point.color.ToInt32());
+			});
+
+		/*for(const auto& point : points)
+			std::cout << std::format("({},{},{})\n", point.x, point.y, point.color.ToInt32());*/
 
 		std::this_thread::sleep_for(0.5s);
 	}

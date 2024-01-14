@@ -27,9 +27,17 @@ void Chat::Clear()
 std::vector<common::Message> Chat::GetMessagesOrdered(uint64_t start, const std::string& skipAuthor) const
 {
 	std::vector<common::Message> messages;
-	for (auto it = m_messages.rbegin(); it != m_messages.rend() && it->timestamp > start; it++)
+
+	auto condition = [start, &skipAuthor](const auto& message) {
+		return (start == 0 || message.timestamp > start) && (start == 0 || message.author != skipAuthor);
+		};
+
+	std::copy_if(m_messages.rbegin(), m_messages.rend(), std::back_inserter(messages), condition);
+
+	/*for (auto it = m_messages.rbegin(); it != m_messages.rend() && it->timestamp > start; it++)
 		if (start == 0 || it->author != skipAuthor)
-			messages.emplace_back(*it);
+			messages.emplace_back(*it);*/
+
 	return messages;
 }
 

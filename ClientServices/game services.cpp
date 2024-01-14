@@ -134,13 +134,21 @@ std::vector<std::pair<std::string, int32_t>> services::ReceivePlayerScores(uint6
 			throw std::exception("Json has error");
 
 		std::vector<std::pair<std::string, int32_t>> scores;
-		for (auto& playerScore : responseJson)
+
+		std::ranges::for_each(responseJson, [&scores](const auto& playerScore) {
+			std::string name{ std::move(playerScore[literals::jsonKeys::account::username].s()) };
+			int32_t score{ static_cast<int32_t>(playerScore[literals::jsonKeys::game::score].i()) };
+
+			scores.emplace_back(std::move(name), score);
+			});
+
+		/*for (auto& playerScore : responseJson)
 		{
 			std::string name{ std::move(playerScore[literals::jsonKeys::account::username].s()) };
 			int32_t score{ static_cast<int32_t>(playerScore[literals::jsonKeys::game::score].i()) };
 
 			scores.emplace_back(std::move(name), score);
-		}
+		}*/
 
 		return scores;
 	}
@@ -165,11 +173,17 @@ std::vector<std::string> services::ReceiveWordOptions(uint64_t roomID, std::ostr
 			throw std::exception("Json has error");
 
 		std::vector<std::string> words;
-		for (auto& wordJson : responseJson)
+
+		std::ranges::for_each(responseJson, [&words](const auto& wordJson) {
+			std::string word{ std::move(wordJson[literals::jsonKeys::game::word].s()) };
+			words.emplace_back(std::move(word));
+			});
+
+		/*for (auto& wordJson : responseJson)
 		{
 			std::string word{ std::move(wordJson[literals::jsonKeys::game::word].s()) };
 			words.emplace_back(std::move(word));
-		}
+		}*/
 
 		return words;
 	}
