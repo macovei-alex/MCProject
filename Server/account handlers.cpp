@@ -26,7 +26,7 @@ Server& Server::AccountHandlers()
 			if (!returnValue.success)
 			{
 				Log(returnValue.reason, Logger::Level::Error);
-				return crow::response{ 404, returnValue.reason };
+				return crow::response{ 404, returnValue.reason.data() };
 			}
 		}
 
@@ -71,7 +71,7 @@ Server& Server::AccountHandlers()
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
-			return crow::response(404, returnValue.reason);
+			return crow::response{ 404, returnValue.reason.data() };
 		}
 
 		auto responseMessage{ std::format("Player logged in as < {} >", username) };
@@ -113,7 +113,7 @@ Server& Server::AccountHandlers()
 		if (!returnValue.success)
 		{
 			Log(returnValue.reason, Logger::Level::Error);
-			return crow::response{ 404, returnValue.reason };
+			return crow::response{ 404, returnValue.reason.data() };
 		}
 
 		for (auto& game : m_games)

@@ -19,10 +19,10 @@ db::Database::Database(const std::string& filename) :
 void db::Database::PopulateStorage()
 {
 	std::vector<db::Word> words;
+	std::string text;
+	std::string difficulty;
 	for (std::ifstream wordsIn{ "words.txt" }; !wordsIn.eof(); /* empty */)
 	{
-		std::string text;
-		std::string difficulty;
 		wordsIn >> text >> difficulty;
 		words.push_back(db::Word{ std::move(text), std::move(difficulty) });
 	}
@@ -31,34 +31,26 @@ void db::Database::PopulateStorage()
 
 	// The first word is being memorized wrongly, for some unknown reason. 
 	// When we first initialize the database, we have to make sure the first word starts with a letter.
-
 	db::Word firstWord{ std::move(m_storage.get<db::Word>(1)) };
-	/*std::ranges::for_each(firstWord.text, [&firstWord](char& c) {
-		while (!std::isalpha(c) && !firstWord.text.empty()) {
-			c = firstWord.text.erase(0, 1)[0];
-		}
-		});*/ //The code above seems too complicated
 	for (uint8_t c{ (uint8_t)firstWord.text[0] }; !std::isalpha(c); c = firstWord.text.erase(0, 1)[0]);
+
 	m_storage.update(firstWord);
 }
 
 bool db::Database::IfPlayerExist(const std::string& playerName)
 {
-	auto result{ std::move(m_storage.get_all<db::Player>(
-		sql::where(sql::c(&db::Player::playerName) == playerName))) };
+	auto players{ std::move(m_storage.get_all<db::Player>(
+		sql::where(sql::c(&db::Player::username) == playerName))) };
 
-	return result.size() == 1;
+	return players.size() == 1;
 }
 
-db::ReturnValue db::Database::SignUp(const std::string& playerName, const std::string& password)
+db::ReturnValue db::Database::SignUp(const std::string& username, const std::string& password)
 {
-	if (IfPlayerExist(playerName))
+	if (IfPlayerExist(username))
 		return { false, "Player already exists" };
 
-	db::Player player;
-
-	player.playerName = playerName;
-	player.password = std::move(utils::GetHashSHA256(password));
+	db::Player player{ username, password };
 	player.isOnline = true;
 
 	m_storage.insert(player);
@@ -66,30 +58,30 @@ db::ReturnValue db::Database::SignUp(const std::string& playerName, const std::s
 	return { true, "Account succesfully created" };
 }
 
-db::ReturnValue db::Database::SignIn(const std::string& playerName, const std::string& password)
+db::ReturnValue db::Database::SignIn(const std::string& username, const std::string& password)
 {
-	auto result{ std::move(m_storage.get_all<db::Player>(
-		sql::where(sql::c(&db::Player::playerName) == playerName))) };
+	auto players{ std::move(m_storage.get_all<db::Player>(
+		sql::where(sql::c(&db::Player::username) == username))) };
 
-	if (result.empty())
+	if (players.empty())
 		return{ false, "Player does not exist!" };
 
-	if (result[0].isOnline)
+	if (players[0].isOnline)
 		return{ false, "Player is already online!" };
 
-	if (result[0].password != utils::GetHashSHA256(password))
+	if (players[0].password != utils::GetHashSHA256(password))
 		return{ false, "Wrong password!" };
 
-	result[0].isOnline = true;
-	m_storage.update(result[0]);
+	players[0].isOnline = true;
+	m_storage.update(players[0]);
 
 	return { true, "Succesfully logged in" };
 }
 
-db::ReturnValue db::Database::SignOut(const std::string& playerName)
+db::ReturnValue db::Database::SignOut(const std::string& username)
 {
 	auto result{ std::move(m_storage.get_all<db::Player>(
-		sql::where(sql::c(&db::Player::playerName) == playerName))) };
+		sql::where(sql::c(&db::Player::username) == username))) };
 
 	if (result.empty())
 		return { false, "Player does not exist!" };
@@ -103,16 +95,12 @@ db::ReturnValue db::Database::SignOut(const std::string& playerName)
 db::ReturnValue db::Database::AddGame(const std::string& playerName, int score, const std::string& difficulty, const std::string& date)
 {
 	auto player{ std::move(m_storage.get_all<db::Player>(
-		sql::where(sql::c(&db::Player::playerName) == playerName))) };
+		sql::where(sql::c(&db::Player::username) == playerName))) };
 
 	if (player.empty())
-		return { false, std::format("No player with name {} has been found", playerName) };
+		return { false, std::move(std::format("No player with name {} has been found", playerName)) };
 
-	db::GameHistory game;
-	game.playerID = player[0].id;
-	game.score = score;
-	game.difficulty = difficulty;
-	game.date = date;
+	db::GameHistory game{ player[0].id, score, difficulty, date };
 
 	m_storage.insert(game);
 
@@ -122,7 +110,7 @@ db::ReturnValue db::Database::AddGame(const std::string& playerName, int score, 
 db::ReturnValueForHistory db::Database::GetGameHistory(const std::string& playerName)
 {
 	auto players{ std::move(m_storage.get_all<db::Player>(
-		sql::where(sql::c(&db::Player::playerName) == playerName))) };
+		sql::where(sql::c(&db::Player::username) == playerName))) };
 
 	std::vector<int> scores;
 	std::vector<std::string> dates;

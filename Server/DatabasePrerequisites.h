@@ -10,7 +10,15 @@ namespace db
 	struct ReturnValue
 	{
 		bool success;
-		std::string reason;
+		std::string_view reason;
+
+		ReturnValue() = default;
+		ReturnValue(bool success, const std::string_view& reason)
+			: success{ success }, reason{ reason }
+		{ /* empty */ }
+		ReturnValue(bool success, std::string_view&& reason)
+			: success{ success }, reason{ reason }
+		{ /* empty */ }
 	};
 
 	struct ReturnValueForHistory
@@ -38,9 +46,17 @@ namespace db
 	struct Player
 	{
 		int id;
-		std::string playerName;
+		std::string username;
 		std::string password;
 		bool isOnline;
+
+		Player() = default;
+		Player(const std::string& username, const std::string& password)
+			: id{ 0 }, username{ username }, password{ password }, isOnline{ false }
+		{ /* empty */ }
+		Player(std::string&& username, std::string&& password)
+			: id{ 0 }, username{ std::move(username) }, password{ std::move(password) }, isOnline{ false }
+		{ /* empty */  }
 	};
 	
 	struct GameHistory
@@ -50,6 +66,14 @@ namespace db
 		int score;
 		std::string difficulty;
 		std::string date;
+
+		GameHistory() = default;
+		GameHistory(int playerID, int score, const std::string& difficulty, const std::string& date)
+			: id{ 0 }, playerID{ playerID }, score{ score }, difficulty{ difficulty }, date{ date }
+		{ /* empty */ }
+		GameHistory(int playerID, int score, std::string&& difficulty, std::string&& date)
+			: id{ 0 }, playerID{ playerID }, score{ score }, difficulty{ difficulty }, date{ date }
+		{ /* empty */ }
 	};
 	
 	inline auto CreateStorage(const std::string& filename)
@@ -61,7 +85,7 @@ namespace db
 				sql::make_column("difficulty", &Word::difficulty)),
 			sql::make_table("player",
 				sql::make_column("id", &Player::id, sql::primary_key().autoincrement()),
-				sql::make_column("playerName", &Player::playerName),
+				sql::make_column("username", &Player::username),
 				sql::make_column("password", &Player::password),
 				sql::make_column("isOnline", &Player::isOnline)),
 			sql::make_table("gameHistory",
