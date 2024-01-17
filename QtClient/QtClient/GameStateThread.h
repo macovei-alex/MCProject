@@ -1,4 +1,5 @@
 #pragma once
+#include "macro.h"
 
 #include <QThread>
 #include <QPair>

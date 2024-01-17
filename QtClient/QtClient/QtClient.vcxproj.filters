@@ -121,8 +121,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="resource.qrc">
+    <Image Include="Images\Background.jpg">
       <Filter>Resource Files</Filter>
-    </QtRcc>
+    </Image>
+    <Image Include="Images\LoginIcon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

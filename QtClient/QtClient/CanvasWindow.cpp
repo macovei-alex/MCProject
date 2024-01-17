@@ -213,15 +213,22 @@ void CanvasWindow::resizeEvent(QResizeEvent* event)
 
 void CanvasWindow::ClearCanvas()
 {
-	/*canvasPixmap.fill(Qt::white);
+
+#ifndef ONLINE
+	canvasPixmap.fill(Qt::white);
 	lines.clear();
-	update();*/
+	update();
+#endif
 }
 
 void CanvasWindow::on_resetCanvas_clicked()
 {
-	/*ClearCanvas();
-	m_drawState = DrawingState::DRAWING;*/
+
+#ifndef ONLINE
+	ClearCanvas();
+	m_drawState = DrawingState::DRAWING;
+#endif
+
 }
 
 void CanvasWindow::on_drawButton_clicked()
@@ -236,7 +243,9 @@ void CanvasWindow::on_eraseButton_clicked()
 
 void CanvasWindow::on_undoButton_clicked()
 {
-	/*if (!lines.isEmpty())
+
+#ifndef ONLINE
+	if (!lines.isEmpty())
 	{
 		canvasPixmap.fill(Qt::white);
 		QPainter painter{ &canvasPixmap };
@@ -251,7 +260,9 @@ void CanvasWindow::on_undoButton_clicked()
 		}
 
 		update();
-	}*/
+	}
+#endif
+
 }
 
 void CanvasWindow::on_messageButton_clicked()

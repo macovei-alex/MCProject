@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 #ifdef ONLINE
 	roomID{ },
-	m_isConnected{ false }
+	m_isConnected{ false },
 #endif
 
 	QMainWindow{ parent },
@@ -21,11 +21,11 @@ MainWindow::MainWindow(QWidget* parent) :
 {
 	ui->setupUi(this);
 
-	QPixmap backgroundImage{ ":Resource Files/Images/Background.jpg" };
-	ui->backgroundLabel->setPixmap(backgroundImage.scaled(size(), Qt::KeepAspectRatio));
+	QPixmap backgroundImage{ "Background.jpg" };
+	ui->backgroundLabel->setPixmap(backgroundImage.scaled(QSize{ 1000, 600 }, Qt::KeepAspectRatio));
 	ui->backgroundLabel->raise();
 
-	QPixmap humanFigure{ ":Resource Files/Images/login_icon.png" };
+	QPixmap humanFigure{ "LoginIcon.png" };
 	ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
 	ui->humanFigureLabel->raise();
 
@@ -44,8 +44,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	ui->passwordLineEdit->hide();
 #endif
 
+	update();
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -78,7 +78,7 @@ void MainWindow::on_loginButton_clicked()
 
 		if (msgBox.clickedButton() == yesButton)
 		{
-			if(!services::SignOut(username.toStdString()))
+			if (!services::SignOut(username.toStdString()))
 				QMessageBox::warning(this, "Sign out", "Could not sign out");
 			else
 				m_isConnected = false;
