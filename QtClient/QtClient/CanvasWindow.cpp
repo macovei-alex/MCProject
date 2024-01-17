@@ -30,7 +30,16 @@ CanvasWindow::CanvasWindow(QWidget* parent) :
 	canvasPixmap = QPixmap{ screenSize.width() * 3 / 4, screenSize.height() };
 	canvasPixmap.fill(Qt::white);
 
-	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
+
+#ifndef ONLINE
+	ui->startGameButton->hide();
+	ui->chosenWord->hide();
+	ui->playerScore->hide();
+	ui->timerLabel->hide();
+	ui->roomLabel->hide();
+#endif
+
 }
 
 #ifdef ONLINE
@@ -97,6 +106,8 @@ void CanvasWindow::paintEvent(QPaintEvent* event)
 
 void CanvasWindow::mousePressEvent(QMouseEvent* event)
 {
+	if (event->button() != Qt::LeftButton)
+		return;
 
 #ifdef ONLINE
 	if (m_onlineData.playerRole != common::game::PlayerRole::DRAWING)
@@ -114,14 +125,16 @@ void CanvasWindow::mousePressEvent(QMouseEvent* event)
 
 void CanvasWindow::mouseMoveEvent(QMouseEvent* event)
 {
+	if (event->buttons() != Qt::LeftButton)
+		return;
+
+	if (!canvasPixmap.rect().contains(event->pos()))
+		return;
 
 #ifdef ONLINE
 	if (m_onlineData.playerRole != common::game::PlayerRole::DRAWING)
 		return;
 #endif
-
-	if (!canvasPixmap.rect().contains(event->pos()))
-		return;
 
 	QPoint currentPos{ event->pos() };
 
@@ -243,16 +256,17 @@ void CanvasWindow::on_undoButton_clicked()
 
 void CanvasWindow::on_messageButton_clicked()
 {
+
+#ifdef ONLINE
 	QString formattedMessage{ QString{"[%1]: %2"}.arg(m_onlineData.username).arg(ui->messageBox->text()) };
 
 	ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
 
-#ifdef ONLINE
 	services::SendNewMessage(m_onlineData.username.toStdString(),
 		ui->messageBox->text().toStdString(), m_onlineData.roomID);
+	ui->messageBox->clear();
 #endif
 
-	ui->messageBox->clear();
 }
 
 void CanvasWindow::on_startGameButton_clicked()
@@ -289,9 +303,10 @@ void CanvasWindow::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
-#ifdef ONLINE
 void CanvasWindow::HandleImage(QList<Line>* newLines)
 {
+
+#ifdef ONLINE
 	QPainter painter{ &canvasPixmap };
 
 	for (auto& line : *newLines)
@@ -305,15 +320,19 @@ void CanvasWindow::HandleImage(QList<Line>* newLines)
 
 	delete newLines;
 	update();
+#endif
+
 }
 
 void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair)
 {
+
+#ifdef ONLINE
 	auto lastGameState{ m_onlineData.gameState };
 	m_onlineData.gameState = gameStatePair.first;
 	m_onlineData.playerRole = services::ReceivePlayerRole(m_onlineData.roomID, m_onlineData.username.toStdString());
 
-	ui->timerLabel->setText("Text: " + QString::number(gameStatePair.second));
+	ui->timerLabel->setText("Time left: " + QString::number(gameStatePair.second));
 
 	if (m_onlineData.gameState == common::game::GameState::PICK_WORD)
 	{
@@ -332,7 +351,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 			{
 				m_onlineData.chosenWord = "";
 				ui->chosenWord->hide();
-				ui->chosenWord->update();
 				return;
 			}
 		}
@@ -352,7 +370,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
 			ui->chosenWord->setText("Chosen Word: " + m_onlineData.chosenWord);
 			ui->chosenWord->show();
-			ui->chosenWord->update();
 
 			m_chatThread->Unpause();
 		}
@@ -368,9 +385,6 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		{
 			if (lastGameState != common::game::GameState::DRAW_AND_GUESS)
 			{
-				/*m_onlineData.chosenWord = "";
-				ui->chosedWord->setText("");
-				ui->chosedWord->update();*/
 				m_chatThread->Unpause();
 			}
 		}
@@ -382,24 +396,31 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		/*m_chatThread->Pause();
 		m_imageThread->Pause();*/
 	}
+#endif
+
 }
 
-
 void CanvasWindow::HandleChat(const QList<common::Message>& messages)
-{ 
+{
+
+#ifdef ONLINE
 	for (const auto& message : messages)
 	{
 		QString formattedMessage{ '[' + QString::fromStdString(message.author) + "]: " + QString::fromStdString(message.text) };
 
-		qDebug() << " Recieved message: " << formattedMessage << "\n";
+		qDebug() << "Recieved message: " << formattedMessage << "\n";
 		ui->gameChatLabel->setText(ui->gameChatLabel->text() + "\n" + formattedMessage);
 	
 	}
 	ui->gameChatLabel->update();
+#endif
+
 }
 
+#ifdef ONLINE
 void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
 {
+
 	if (paused == true)
 	{
 		m_imageThread->Pause();
@@ -413,6 +434,7 @@ void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
 		m_chatThread->Unpause();
 	}
 }
+#endif
 
 void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 {
@@ -425,11 +447,14 @@ void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 	ui->messageBox->setEnabled(enabled);
 }
 
+#ifdef ONLINE
 const OnlineData& CanvasWindow::GetOnlineData()
 {
 	return m_onlineData;
 }
+#endif
 
+#ifdef ONLINE
 void CanvasWindow::SetChosenWord(const QString& word)
 {
 	m_onlineData.chosenWord = word;

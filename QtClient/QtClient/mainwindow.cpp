@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "MainWindow.h"
 #include "CanvasWindow.h"
 #include "ui_mainwindow.h"
 
@@ -10,20 +10,40 @@
 #endif
 
 MainWindow::MainWindow(QWidget* parent) :
-	QMainWindow{ parent },
-	ui{ new Ui::MainWindow },
+
+#ifdef ONLINE
 	roomID{ },
 	m_isConnected{ false }
+#endif
+
+	QMainWindow{ parent },
+	ui{ new Ui::MainWindow }
 {
 	ui->setupUi(this);
 
 	QPixmap backgroundImage{ ":Resource Files/Images/Background.jpg" };
-	ui->backgroundLabel->setPixmap(backgroundImage.scaled(ui->centralwidget->size(), Qt::KeepAspectRatio));
+	ui->backgroundLabel->setPixmap(backgroundImage.scaled(size(), Qt::KeepAspectRatio));
 	ui->backgroundLabel->raise();
 
 	QPixmap humanFigure{ ":Resource Files/Images/login_icon.png" };
 	ui->humanFigureLabel->setPixmap(humanFigure.scaled(100, 100, Qt::KeepAspectRatio));
 	ui->humanFigureLabel->raise();
+
+#ifndef ONLINE
+	ui->createRoomButton->setBaseSize(200, 50);
+	ui->createRoomButton->setText("Start the game (offline)");
+	ui->createRoomButton->update();
+
+	ui->SignIn_GroupBox->hide();
+	ui->loginButton->hide();
+	ui->joinRoomLineEdit->hide();
+	ui->joinRoomButton->hide();
+	ui->usernameLabel->hide();
+	ui->usernameLineEdit->hide();
+	ui->passwordLabel->hide();
+	ui->passwordLineEdit->hide();
+#endif
+
 }
 
 
@@ -34,6 +54,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_loginButton_clicked()
 {
+
+#ifdef ONLINE
 	static QString username{ "" };
 
 	if (ui->usernameLineEdit->text().isEmpty() || ui->passwordLineEdit->text().isEmpty())
@@ -42,7 +64,6 @@ void MainWindow::on_loginButton_clicked()
 		return;
 	}
 
-#ifdef ONLINE
 	if (m_isConnected)
 	{
 		QMessageBox msgBox;
@@ -100,10 +121,12 @@ void MainWindow::on_loginButton_clicked()
 
 	QMessageBox::warning(this, "Sign up", "Could not cerate a new account");
 #endif
+
 }
 
 void MainWindow::on_joinRoomButton_clicked()
 {
+
 #ifdef ONLINE
 	if (!m_isConnected)
 	{
@@ -132,15 +155,14 @@ void MainWindow::on_joinRoomButton_clicked()
 		return;
 	}
 
-	canvasWindow = new CanvasWindow(roomID, ui->usernameLineEdit->text(), this);
+	canvasWindow = std::make_unique<CanvasWindow>(roomID, ui->usernameLineEdit->text(), this);
 #else
-	canvasWindow = new CanvasWindow(this);
+	canvasWindow = std::make_unique<CanvasWindow>(this);
 #endif
 
 	hide();
-
 	canvasWindow->show();
-	}
+}
 
 void MainWindow::on_createRoomButton_clicked()
 {
@@ -164,12 +186,13 @@ void MainWindow::on_createRoomButton_clicked()
 	}
 
 	hide();
-	canvasWindow = new CanvasWindow(roomID, ui->usernameLineEdit->text(), this);
+	canvasWindow = std::make_unique<CanvasWindow>(roomID, ui->usernameLineEdit->text(), this);
 
 #else
-	canvasWindow = new CanvasWindow(this);
+	canvasWindow = std::make_unique<CanvasWindow>(this);
 #endif
 
+	hide();
 	canvasWindow->show();
 }
 

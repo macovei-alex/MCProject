@@ -34,20 +34,11 @@ class CanvasWindow : public QDialog
 
 public:
 	CanvasWindow(QWidget* parent = nullptr);
-
-#ifdef ONLINE
-	CanvasWindow(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
-#endif
-
 	~CanvasWindow();
-
-public:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void resizeEvent(QResizeEvent* event) override;
-
-public:
 	void ClearCanvas();
 
 protected:
@@ -65,28 +56,27 @@ private slots:
 	void HandleImage(QList<Line>* newLines);
 	void HandleGameState(const QPair<common::game::GameState, uint64_t>& gameStatePair);
 	void HandleChat(const QList<common::Message>& messages);
-	
-public:
-	void SetChosenWord(const QString& word);
-
-#ifdef ONLINE
-	const OnlineData& GetOnlineData();
-#endif
+	void SetAllButtonsEnabled(bool enabled);
 
 signals:
 	void Signal();
 
+#ifdef ONLINE
+public:
+	CanvasWindow(uint64_t roomID, const QString& username, QWidget* parent = nullptr);
+	void SetChosenWord(const QString& word);
+	const OnlineData& GetOnlineData();
+
 private:
-	void SetAllButtonsEnabled(bool enabled);
 	void SetAllThreadsPauseStatus(bool paused);
+#endif
 
+private:
 	Ui::CanvasWindow* ui;
-
 	QPixmap canvasPixmap;
 	QList<Line> lines;
 	Line currentLine;
 	QPoint lastPoint;
-
 	DrawingState m_drawState;
 	uint64_t roomID;
 
@@ -99,8 +89,10 @@ private:
 #endif
 
 private:
-	const QPen kDRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kDRAWING_COLOR_INT) }, 2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
-	const QPen kERASING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kERASING_COLOR_INT) }, 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
+	const QPen kDRAWING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kDRAWING_COLOR_INT) },
+		2, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin };
+	const QPen kERASING_PEN = QPen{ QColor{ static_cast<QRgb>(Line::kERASING_COLOR_INT) },
+		20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin };
 };
 
 #endif // CANVASWINDOW_H

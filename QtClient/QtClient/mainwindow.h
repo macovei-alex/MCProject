@@ -4,6 +4,7 @@
 #include "macro.h"
 
 #include <QMainWindow>
+#include <memory>
 
 class CanvasWindow;
 
@@ -29,8 +30,13 @@ private slots:
 
 private:
 	Ui::MainWindow *ui;
-	CanvasWindow *canvasWindow;
+	std::unique_ptr<CanvasWindow> canvasWindow;
+
+#ifdef ONLINE
+private:
 	uint64_t roomID;
 	bool m_isConnected;
+#endif
+
 };
 #endif // MAINWINDOW_H

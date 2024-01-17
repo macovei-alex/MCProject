@@ -1,5 +1,6 @@
 #include "ThreadExtension.h"
 
+#ifdef ONLINE
 #include <QDebug>
 
 ThreadExtension::ThreadExtension() :
@@ -34,3 +35,4 @@ void ThreadExtension::Unpause(const QString& from)
 	qDebug() << from << " unpaused";
 	m_pause = false;
 }
+#endif

@@ -31,21 +31,33 @@ void ChooseWordWindow::setButtonNames(const std::vector<std::string>& words)
 
 void ChooseWordWindow::on_firstWordButton_clicked()
 {
+
+#ifdef ONLINE
 	dynamic_cast<CanvasWindow*>(parentWidget())->SetChosenWord(ui->firstWordButton->text());
 	accept();
+#endif
+
 }
 
 
 void ChooseWordWindow::on_secondWordButton_clicked()
 {
+
+#ifdef ONLINE
 	dynamic_cast<CanvasWindow*>(parentWidget())->SetChosenWord(ui->secondWordButton->text());
 	accept();
+#endif
+
 }
 
 
 void ChooseWordWindow::on_thirdWordButton_clicked()
 {
+
+#ifdef ONLINE
 	dynamic_cast<CanvasWindow*>(parentWidget())->SetChosenWord(ui->thirdWordButton->text());
 	accept();
+#endif
+
 }
 

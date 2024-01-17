@@ -1,6 +1,8 @@
 #ifndef CHOOSEWORDWINDOW_H
 #define CHOOSEWORDWINDOW_H
 
+#include "macro.h"
+
 #include <QDialog>
 
 class CanvasWindow;
@@ -14,7 +16,7 @@ class ChooseWordWindow : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ChooseWordWindow(QWidget *parent);
+	ChooseWordWindow(QWidget *parent);
 	~ChooseWordWindow();
 	void setButtonNames(const std::vector<std::string>& words);
 
