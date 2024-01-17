@@ -13,7 +13,6 @@
 #include "services.h"
 #endif
 
-
 CanvasWindow::CanvasWindow(QWidget* parent) :
 	QDialog{ parent },
 	ui{ new Ui::CanvasWindow },
@@ -34,10 +33,9 @@ CanvasWindow::CanvasWindow(QWidget* parent) :
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
 	roomLabel = new QLabel(this);
-	roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
 	chosedWord = new QLabel(this);
 	chosedWord->setText("Chosen Word: none");
-	chosedWord->move(10, 10); 
 	chosedWord->show();
 }
 
@@ -45,7 +43,7 @@ CanvasWindow::CanvasWindow(QWidget* parent) :
 void CanvasWindow::setRoomID(uint64_t roomID)
 {
 	this->roomID = roomID;
-	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	ui->roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
 }
 
@@ -62,10 +60,10 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 {
 	ui->setupUi(this);
 
-	ui->roomLabel->setText(QString{ "Room ID: " } + QString::number(static_cast<qint64>(roomID)));
+	ui->roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
 	ui->roomLabel->update();
 	ui->gameChatLabel->setStyleSheet("border: none;");
-	//ui->gameChat->setStyleSheet("QWidget { border: 1px solid black; }");
+	//ui->gameChatLabel->setStyleSheet("QWidget { border: 1px solid black; }");
 
 	QSize screenSize{ QGuiApplication::primaryScreen()->geometry().size() };
 	setGeometry(0, 0, screenSize.width(), screenSize.height());
@@ -74,7 +72,7 @@ CanvasWindow::CanvasWindow(uint64_t roomID, const QString& username, QWidget* pa
 	canvasPixmap = QPixmap{ screenSize.width() * 3 / 4, screenSize.height() };
 	canvasPixmap.fill(Qt::white);
 
-	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
 	connect(&*m_imageThread, &ImageThread::ImageSignal, this, &CanvasWindow::HandleImage);
 	connect(&*m_imageThread, &ImageThread::finished, &*m_imageThread, &QObject::deleteLater);
@@ -216,9 +214,9 @@ void CanvasWindow::resizeEvent(QResizeEvent* event)
 
 void CanvasWindow::ClearCanvas()
 {
-	canvasPixmap.fill(Qt::white);
+	/*canvasPixmap.fill(Qt::white);
 	lines.clear();
-	update();
+	update();*/
 }
 
 void CanvasWindow::on_resetCanvas_clicked()
@@ -325,7 +323,7 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 	m_onlineData.gameState = gameStatePair.first;
 	m_onlineData.playerRole = services::ReceivePlayerRole(m_onlineData.roomID, m_onlineData.username.toStdString());
 
-	ui->timerLabel->setText(QString::number(gameStatePair.second));
+	ui->timerLabel->setText("Text: " + QString::number(gameStatePair.second));
 
 	if (m_onlineData.gameState == common::game::GameState::PICK_WORD)
 	{
@@ -343,8 +341,8 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 			if (m_onlineData.playerRole == common::game::PlayerRole::GUESSING)
 			{
 				m_onlineData.chosenWord = "";
-				ui->chosedWord->setText("");
-				ui->chosedWord->update();
+				ui->chosenWord->hide();
+				ui->chosenWord->update();
 				return;
 			}
 		}
@@ -362,8 +360,10 @@ void CanvasWindow::HandleGameState(const QPair<common::game::GameState, uint64_t
 		if (chooseWordWindow->exec() == QDialog::Accepted)
 		{
 			services::SendGuessingWord(m_onlineData.roomID, m_onlineData.chosenWord.toStdString());
-			ui->chosedWord->setText("Chosen Word: " + m_onlineData.chosenWord);
-			ui->chosedWord->update();
+			ui->chosenWord->setText("Chosen Word: " + m_onlineData.chosenWord);
+			ui->chosenWord->show();
+			ui->chosenWord->update();
+
 			m_chatThread->Unpause();
 		}
 	}

@@ -17,20 +17,20 @@
    <property name="geometry">
     <rect>
      <x>1200</x>
-     <y>720</y>
+     <y>590</y>
      <width>80</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>ResetCanvas</string>
+    <string>Reset canvas</string>
    </property>
   </widget>
   <widget class="QPushButton" name="drawButton">
    <property name="geometry">
     <rect>
      <x>1200</x>
-     <y>690</y>
+     <y>550</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -43,7 +43,7 @@
    <property name="geometry">
     <rect>
      <x>1300</x>
-     <y>690</y>
+     <y>550</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -55,8 +55,8 @@
   <widget class="QPushButton" name="undoButton">
    <property name="geometry">
     <rect>
-     <x>1400</x>
-     <y>690</y>
+     <x>1390</x>
+     <y>550</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -68,8 +68,8 @@
   <widget class="QLabel" name="roomLabel">
    <property name="geometry">
     <rect>
-     <x>1300</x>
-     <y>720</y>
+     <x>1390</x>
+     <y>650</y>
      <width>61</width>
      <height>21</height>
     </rect>
@@ -81,8 +81,8 @@
   <widget class="QPushButton" name="startGameButton">
    <property name="geometry">
     <rect>
-     <x>1400</x>
-     <y>720</y>
+     <x>1390</x>
+     <y>590</y>
      <width>75</width>
      <height>24</height>
     </rect>
@@ -94,47 +94,47 @@
   <widget class="QLabel" name="timerLabel">
    <property name="geometry">
     <rect>
-     <x>1210</x>
-     <y>750</y>
+     <x>1390</x>
+     <y>630</y>
      <width>51</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Time left:</string>
    </property>
   </widget>
   <widget class="QLabel" name="playerScore">
    <property name="geometry">
     <rect>
-     <x>950</x>
-     <y>10</y>
-     <width>211</width>
-     <height>111</height>
+     <x>1210</x>
+     <y>620</y>
+     <width>121</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>Your Score:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="chosedWord">
+  <widget class="QLabel" name="chosenWord">
    <property name="geometry">
     <rect>
-     <x>760</x>
-     <y>40</y>
-     <width>171</width>
-     <height>41</height>
+     <x>1210</x>
+     <y>660</y>
+     <width>161</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>word: </string>
+    <string>Chosen word:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="messageBox">
    <property name="geometry">
     <rect>
      <x>1200</x>
-     <y>650</y>
+     <y>510</y>
      <width>181</width>
      <height>24</height>
     </rect>
@@ -143,8 +143,8 @@
   <widget class="QPushButton" name="messageButton">
    <property name="geometry">
     <rect>
-     <x>1400</x>
-     <y>650</y>
+     <x>1390</x>
+     <y>510</y>
      <width>80</width>
      <height>24</height>
     </rect>
@@ -159,7 +159,7 @@
      <x>1200</x>
      <y>60</y>
      <width>271</width>
-     <height>571</height>
+     <height>431</height>
     </rect>
    </property>
    <property name="text">
