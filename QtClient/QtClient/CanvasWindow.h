@@ -48,7 +48,6 @@ public:
 	void resizeEvent(QResizeEvent* event) override;
 
 public:
-	void setRoomID(uint64_t roomID);
 	void ClearCanvas();
 
 protected:
@@ -78,22 +77,17 @@ signals:
 	void Signal();
 
 private:
-	void updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores);
 	void SetAllButtonsEnabled(bool enabled);
 	void SetAllThreadsPauseStatus(bool paused);
-	
-	MainWindow* signInWindow;
+
+	Ui::CanvasWindow* ui;
 
 	QPixmap canvasPixmap;
 	QList<Line> lines;
 	Line currentLine;
 	QPoint lastPoint;
-	QLabel* roomLabel;
-	QLabel* playerScore;
-	QLabel* chosedWord;
 
 	DrawingState m_drawState;
-	Ui::CanvasWindow* ui;
 	uint64_t roomID;
 
 #ifdef ONLINE

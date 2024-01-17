@@ -31,20 +31,6 @@ CanvasWindow::CanvasWindow(QWidget* parent) :
 	canvasPixmap.fill(Qt::white);
 
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
-
-	roomLabel = new QLabel(this);
-	roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
-	chosedWord = new QLabel(this);
-	chosedWord->setText("Chosen Word: none");
-	chosedWord->show();
-}
-
-
-void CanvasWindow::setRoomID(uint64_t roomID)
-{
-	this->roomID = roomID;
-	ui->roomLabel->setText("Room ID: " + QString::number(static_cast<qint64>(roomID)));
-	ui->roomLabel->update();
 }
 
 #ifdef ONLINE
@@ -271,8 +257,12 @@ void CanvasWindow::on_messageButton_clicked()
 
 void CanvasWindow::on_startGameButton_clicked()
 {
+
+#ifdef ONLINE
 	services::StartGame(m_onlineData.roomID);
 	SetAllThreadsPauseStatus(false);
+#endif
+
 }
 
 void CanvasWindow::closeEvent(QCloseEvent* event)
@@ -424,18 +414,6 @@ void CanvasWindow::SetAllThreadsPauseStatus(bool paused)
 	}
 }
 
-void CanvasWindow::updatePlayerScoreLabel(const std::vector<std::pair<std::string, int32_t>>& scores)
-{
-	QString labelText;
-	for (const auto& playerScore : scores)
-	{
-		labelText += QString("%1: %2\n")
-			.arg(playerScore.first.c_str())
-			.arg(playerScore.second);
-	}
-
-	ui->playerScore->setText("Scores: " + labelText);
-}
 void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 {
 	ui->startGameButton->setEnabled(enabled);
@@ -445,7 +423,6 @@ void CanvasWindow::SetAllButtonsEnabled(bool enabled)
 	ui->undoButton->setEnabled(enabled);
 	ui->messageButton->setEnabled(enabled);
 	ui->messageBox->setEnabled(enabled);
-	//ui->gameChat->setEnabled(enabled);
 }
 
 const OnlineData& CanvasWindow::GetOnlineData()
